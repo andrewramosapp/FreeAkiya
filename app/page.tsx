@@ -1,33 +1,9 @@
+import Link from "next/link";
+import { getFreeListing, listings } from "@/lib/listings";
+
 export default function Home() {
-  const listings = [
-    { price: "$7", name: "A Rare 1,000-Yen Countryside Home in Joetsu", location: "Niigata", beds: "10 bed", size: "1,367 sq ft", built: "1974", notes: "10-room wooden house on 150-tsubo lot. Ideal for DIY renovation.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$68", name: "Traditional Home in Sasebo", location: "Nagasaki", beds: "4 bed", size: "649 sq ft", built: "Est. 1960s", notes: "Traditional Japanese home in quiet area. Renovation required.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$69", name: "3LDK Home in Hakodate", location: "Hokkaido", beds: "4 bed", size: "682 sq ft", built: "1969", notes: "Quiet residential neighborhood. Classic Hokkaido living.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$640", name: "Spacious 3LDK on Large Lot — Sorachi District", location: "Hokkaido", beds: "3 bed", size: "1,989 sq ft", built: "1961", notes: "Near Sunagawa City. Large lot. Shops and schools nearby.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$1,281", name: "3LDK Home With Garden & Parking in Otaru", location: "Hokkaido", beds: "3 bed", size: "1,024 sq ft", built: "1966", notes: "Coastal city. Convenience store within 10 min walk. Parking included.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$1,921", name: "Wooden Home in Coastal Muroran", location: "Hokkaido", beds: "3 bed", size: "811 sq ft", built: "1976", notes: "Coastal location. Diamond-in-the-rough with renovation potential.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$2,036", name: "Charming Home in Seiyo", location: "Ehime", beds: "2 bed", size: "676 sq ft", built: "1975", notes: "Traditional 4DK with tatami rooms and shoji doors. Quiet residential area.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$2,695", name: "Akiya in Sasebo — Built 1900", location: "Nagasaki", beds: "3 bed", size: "637 sq ft", built: "1900", notes: "Over 100 years old. Affordable coastal property with rich history.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$2,957", name: "6DK Home in Kamijo, Kashiwazaki City", location: "Niigata", beds: "6 bed", size: "2,277 sq ft", built: "1936", notes: "Spacious wooden home with garden. Built in 1936 — loads of character.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$3,312", name: "4DK Home in Tane, Higashiomi", location: "Shiga", beds: "4 bed", size: "1,158 sq ft", built: "1975", notes: "Wooden interiors, tatami rooms. 2 parking spots. Ideal for rural living.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$3,370", name: "Traditional Home in Nagasaki City", location: "Nagasaki", beds: "4 bed", size: "598 sq ft", built: "1968", notes: "Tatami rooms, wood interiors. Culturally rich coastal area.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$3,427", name: "7-Bedroom Village Escape in Imizu", location: "Toyama", beds: "7 bed", size: "1,275 sq ft", built: "1971", notes: "7 bedrooms under $3,500. Classic Japanese countryside.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$4,042", name: "Spacious Akiya in Joetsu", location: "Niigata", beds: "5 bed", size: "1,274 sq ft", built: "1978", notes: "Tatami rooms, traditional charm. Near mountains and sea.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$4,560", name: "Ebino Hillside Hideaway", location: "Miyazaki", beds: "3 bed", size: "896 sq ft", built: "1975", notes: "Large yard and mountain views. Surrounded by nature.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$5,122", name: "Classic 4LDK Home in Otaru", location: "Hokkaido", beds: "4 bed", size: "1,208 sq ft", built: "Est. 1960s", notes: "Quiet residential neighborhood. Peaceful coastal Hokkaido living.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$5,122", name: "Budget 4LDK in Otaru — Suehiro-cho", location: "Hokkaido", beds: "4 bed", size: "875 sq ft", built: "1964", notes: "Rare affordable Hokkaido entry. Potential as guesthouse or rental.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$5,551", name: "Hillside Hideaway in Nagasaki City", location: "Nagasaki", beds: "5 bed", size: "1,139 sq ft", built: "1967", notes: "Mountain views. 5 bedrooms for under $6,000.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$5,786", name: "Mountain View Home in Nakagawa Honmachi", location: "Toyama", beds: "5 bed", size: "640 sq ft", built: "1964", notes: "5 bedrooms with mountain views. Traditional Japanese layout.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$6,245", name: "6DK with Bay Views in Sasebo", location: "Nagasaki", beds: "6 bed", size: "1,303 sq ft", built: "1967", notes: "Bay views, coastal retreat. ¥900,000 listing price.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$6,332", name: "5DK Two-Story House in Kurayoshi", location: "Tottori", beds: "5 bed", size: "1,119 sq ft", built: "1983", notes: "¥1,000,000. Storehouse included. Acquisition subsidy up to ¥400,000 available.", url: "https://www.allakiyas.com/all" },
-    { price: "$6,338", name: "Two-Story Home Near Takikawa Station", location: "Hokkaido", beds: "4 bed", size: "1,025 sq ft", built: "1973", notes: "Walk to train station. Full ownership. Under $7,000.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$6,500", name: "3DK Single-Story Home in Kitahara", location: "Fukushima", beds: "3 bed", size: "N/A", built: "1955", notes: "Single-story with parking. 1955 build with renovation potential.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$6,602", name: "Cozy Akiya in Kashiwazaki", location: "Niigata", beds: "7 bed", size: "3,195 sq ft", built: "1974", notes: "Over 3,000 sq ft for under $7,000. Near Sea of Japan. 2 parking spots.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$6,651", name: "5K Home in Nagasaki City", location: "Nagasaki", beds: "5 bed", size: "962 sq ft", built: "1967", notes: "Traditional 5DK with tatami rooms. Quiet residential neighborhood.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$6,854", name: "7-Bedroom Cultural Gem in Tate", location: "Toyama", beds: "7 bed", size: "1,698 sq ft", built: "1969", notes: "7 bedrooms for under $7,000. Spacious traditional home.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$7,590", name: "6DK Home in Saijo City", location: "Ehime", beds: "6 bed", size: "1,919 sq ft", built: "1991", notes: "Newer build (1991). Spacious with garden and mother-in-law suite.", url: "https://www.oldhousesjapan.com/all" },
-    { price: "$9,827", name: "4DK Home in Kameoka City", location: "Kyoto", beds: "4 bed", size: "810 sq ft", built: "1977", notes: "Budget-friendly hideaway near Kyoto. Garden + 3 parking spots.", url: "https://www.oldhousesjapan.com/all" },
-  ];
+  const featured = getFreeListing();
+  const total = listings.length;
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
@@ -38,9 +14,13 @@ export default function Home() {
           <span className="text-2xl">🏯</span>
           <span className="font-bold text-lg tracking-tight">CheapAkiya</span>
         </div>
-        <a href="#signup" className="bg-[#e85d2f] hover:bg-[#d44f23] text-white text-sm font-semibold px-4 py-2 rounded-full transition">
-          Get Free Listings
-        </a>
+        <div className="flex items-center gap-4">
+          <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">Listings</Link>
+          <Link href="/members" className="text-gray-400 hover:text-white text-sm transition">Members</Link>
+          <a href="#signup" className="bg-[#e85d2f] hover:bg-[#d44f23] text-white text-sm font-semibold px-4 py-2 rounded-full transition">
+            Get Free Listings
+          </a>
+        </div>
       </nav>
 
       {/* HERO */}
@@ -73,39 +53,49 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 grid grid-cols-3 gap-6 text-center">
           <div><div className="text-3xl font-black text-[#e85d2f]">9M+</div><div className="text-gray-400 text-sm mt-1">Vacant homes in Japan</div></div>
           <div><div className="text-3xl font-black text-[#e85d2f]">$7</div><div className="text-gray-400 text-sm mt-1">Lowest listing this week</div></div>
-          <div><div className="text-3xl font-black text-[#e85d2f]">27</div><div className="text-gray-400 text-sm mt-1">Active listings under $10k</div></div>
+          <div><div className="text-3xl font-black text-[#e85d2f]">{total}</div><div className="text-gray-400 text-sm mt-1">Active listings under $10k</div></div>
         </div>
       </section>
 
-      {/* LISTINGS */}
+      {/* FEATURED LISTINGS */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-black">Current listings</h2>
-            <p className="text-gray-400 mt-1">All under $10,000 USD. Updated weekly.</p>
+            <h2 className="text-3xl font-black">Sample listings</h2>
+            <p className="text-gray-400 mt-1">Real homes. Real prices. Subscribe for the full list.</p>
           </div>
-          <span className="bg-[#e85d2f]/10 text-[#e85d2f] text-sm font-medium px-3 py-1 rounded-full">{listings.length} listings</span>
+          <Link href="/listings" className="text-[#e85d2f] hover:underline text-sm">
+            View all {total} listings →
+          </Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {listings.map((l, i) => (
-            <a key={i} href={l.url} target="_blank" rel="noopener noreferrer"
+          {featured.map((l) => (
+            <Link key={l.slug} href={`/listings/${l.slug}`}
               className="bg-white/5 rounded-2xl p-5 border border-white/10 hover:border-[#e85d2f]/50 transition group block">
               <div className="flex items-start justify-between mb-3">
                 <div className="text-2xl font-black text-[#e85d2f]">{l.price}</div>
-                <span className="bg-white/10 text-xs px-2 py-1 rounded-full text-gray-300">🇯🇵 {l.location}</span>
+                <span className="bg-white/10 text-xs px-2 py-1 rounded-full text-gray-300">🇯🇵 {l.prefecture}</span>
               </div>
               <h3 className="font-semibold text-sm mb-2 group-hover:text-[#e85d2f] transition leading-snug">{l.name}</h3>
               <div className="text-xs text-gray-500 space-y-1">
-                <div>{l.beds} · {l.size} · Built {l.built}</div>
-                <div className="text-gray-500 leading-relaxed">{l.notes}</div>
+                <div>{l.beds} bed · {l.size} · Built {l.built}</div>
+                <div className="text-gray-600 leading-relaxed line-clamp-2">{l.notes}</div>
               </div>
-              <div className="mt-3 text-xs text-[#e85d2f] opacity-0 group-hover:opacity-100 transition">View listing →</div>
-            </a>
+              <div className="mt-3 text-xs text-[#e85d2f] opacity-0 group-hover:opacity-100 transition">View details →</div>
+            </Link>
           ))}
         </div>
-        <p className="text-center text-gray-600 text-sm mt-8">
-          Sign up for the newsletter to get new listings as they're found — plus premium members get direct contact info.
-        </p>
+
+        {/* Locked premium teaser */}
+        <div className="mt-6 bg-white/3 border border-white/10 rounded-2xl p-6 text-center">
+          <div className="text-2xl mb-2">🔒</div>
+          <p className="text-gray-400 text-sm mb-4">{total - featured.length} more listings available — including contact info, move-in ready filter, and new listings before they go public.</p>
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/listings" className="text-[#e85d2f] hover:underline text-sm">Browse all free listings →</Link>
+            <span className="text-gray-600">·</span>
+            <Link href="/members" className="text-[#e85d2f] hover:underline text-sm">Unlock premium access →</Link>
+          </div>
+        </div>
       </section>
 
       {/* HOW IT WORKS */}
@@ -145,7 +135,11 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="border-t border-white/10 py-8">
         <div className="max-w-4xl mx-auto px-6 flex items-center justify-between text-gray-600 text-sm">
-          <div className="flex items-center gap-2"><span>🏯</span><span>CheapAkiya.com</span></div>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1"><span>🏯</span><span>CheapAkiya.com</span></span>
+            <Link href="/listings" className="hover:text-gray-400 transition">Listings</Link>
+            <Link href="/members" className="hover:text-gray-400 transition">Members</Link>
+          </div>
           <div>© 2026 CheapAkiya. All rights reserved.</div>
         </div>
       </footer>
