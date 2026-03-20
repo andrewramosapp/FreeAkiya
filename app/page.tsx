@@ -16,8 +16,8 @@ export default function Home() {
           <span className="font-bold text-lg tracking-tight">CheapAkiya</span>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">Listings</Link>
-          <Link href="/members" className="text-gray-400 hover:text-white text-sm transition">Members</Link>
+          <Link href="/listings" className="hidden sm:block text-gray-400 hover:text-white text-sm transition">Listings</Link>
+          <Link href="/members" className="hidden sm:block text-gray-400 hover:text-white text-sm transition">Members</Link>
           <a href="#signup" className="bg-[#e85d2f] hover:bg-[#d44f23] text-white text-sm font-semibold px-4 py-2 rounded-full transition">
             Get Free Listings
           </a>
