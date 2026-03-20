@@ -7,8 +7,9 @@ export async function generateStaticParams() {
   return listings.map((l) => ({ slug: l.slug }));
 }
 
-export default function ListingPage({ params }: { params: { slug: string } }) {
-  const listing = getListing(params.slug);
+export default async function ListingPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const listing = getListing(slug);
   if (!listing) notFound();
 
   return (

@@ -1,5 +1,6 @@
 import { listings } from "@/lib/listings";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ListingsPage() {
   const sorted = [...listings].sort((a, b) => a.priceNum - b.priceNum);
@@ -30,9 +31,16 @@ export default function ListingsPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {sorted.map((l) => (
             <Link key={l.slug} href={`/listings/${l.slug}`}
-              className="bg-white/5 rounded-2xl p-5 border border-white/10 hover:border-[#e85d2f]/50 transition group block">
-              <div className="flex items-start justify-between mb-3">
-                <div className="text-2xl font-black text-[#e85d2f]">{l.price}</div>
+              className="bg-white/5 rounded-2xl overflow-hidden border border-white/10 hover:border-[#e85d2f]/50 transition group block">
+              <div className="relative h-44 w-full">
+                <Image src={l.images[0]} alt={l.name} fill className="object-cover group-hover:scale-105 transition duration-500" unoptimized />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-2xl font-black text-white">{l.price}</div>
+                {l.isPremium && <div className="absolute top-3 right-3 bg-black/60 text-xs px-2 py-0.5 rounded-full text-gray-300">🔒 Premium</div>}
+              </div>
+              <div className="p-5">
+              <div className="flex items-start justify-between mb-2">
+                <span className="bg-white/10 text-xs px-2 py-1 rounded-full text-gray-300">🇯🇵 {l.prefecture}</span>
                 <div className="flex items-center gap-2">
                   {l.isPremium && (
                     <span className="bg-white/10 text-xs px-2 py-0.5 rounded-full text-gray-400">🔒 Premium</span>
@@ -46,6 +54,7 @@ export default function ListingsPage() {
                 <div className="text-gray-600 leading-relaxed line-clamp-2">{l.notes}</div>
               </div>
               <div className="mt-3 text-xs text-[#e85d2f] opacity-0 group-hover:opacity-100 transition">View details →</div>
+              </div>
             </Link>
           ))}
         </div>
