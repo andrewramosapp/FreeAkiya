@@ -87,7 +87,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="text-sm text-gray-600 border-t border-white/10 pt-4">
-              Source: {listing.source} · Images are representative of the region/property type.
+              Listing curated by CheapAkiya.com
             </div>
           </div>
 
@@ -98,13 +98,13 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               {!listing.isPremium && listing.contact ? (
                 <>
                   <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 mb-4">
-                    <div className="text-green-400 text-sm font-medium mb-1">✓ Free listing</div>
+                    <div className="text-green-400 text-sm font-medium mb-1">✓ Contact info included</div>
                     <div className="text-gray-300 text-sm">{listing.contact}</div>
                   </div>
-                  <a href={listing.url} target="_blank" rel="noopener noreferrer"
+                  <Link href="/join"
                     className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold text-center py-3 rounded-full transition">
-                    View Original Listing →
-                  </a>
+                    Get Full Access →
+                  </Link>
                 </>
               ) : (
                 <>
@@ -116,10 +116,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                     className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold text-center py-3 rounded-full transition mb-3">
                     Unlock — Join Free or Premium
                   </Link>
-                  <a href={listing.url} target="_blank" rel="noopener noreferrer"
-                    className="block w-full bg-white/10 hover:bg-white/20 text-white text-center py-3 rounded-full transition text-sm">
-                    View on {listing.source} →
-                  </a>
+
                 </>
               )}
 
