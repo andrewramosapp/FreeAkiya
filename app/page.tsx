@@ -39,8 +39,8 @@ export default function Home() {
             method="POST"
             className="flex flex-col sm:flex-row gap-3"
           >
-            {/* Replace PUBLICATION_ID with your Beehiiv publication ID */}
-            <input type="hidden" name="publication_id" value="PUBLICATION_ID" />
+            {/* Replace pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015 with your Beehiiv publication ID */}
+            <input type="hidden" name="publication_id" value="pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015" />
             <input
               type="email"
               name="email"
@@ -184,7 +184,7 @@ export default function Home() {
             method="POST"
             className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
           >
-            <input type="hidden" name="publication_id" value="PUBLICATION_ID" />
+            <input type="hidden" name="publication_id" value="pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015" />
             <input
               type="email"
               name="email"
