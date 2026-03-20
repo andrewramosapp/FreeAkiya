@@ -123,7 +123,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               {/* Newsletter */}
               <div className="mt-4 pt-4 border-t border-white/10">
                 <div className="text-sm font-bold mb-2">📩 Free weekly listings</div>
-                <form action="https://www.beehiiv.com/subscribe" method="POST">
+                <form action="https://andrews-newsletter-5041fe.beehiiv.com/subscribe" method="POST">
                   <input type="hidden" name="publication_id" value="pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015" />
                   <input type="email" name="email" required placeholder="your@email.com"
                     className="w-full px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#e85d2f] mb-3 transition" />

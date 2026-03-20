@@ -37,7 +37,7 @@ export default function Home() {
           Japan has over 9 million vacant homes called <em>akiya</em>. Many sell for a few thousand dollars — sometimes less. We find the best ones and deliver them straight to your inbox.
         </p>
         <div id="signup" className="max-w-md mx-auto">
-          <form action="https://www.beehiiv.com/subscribe" method="POST" className="flex flex-col sm:flex-row gap-3">
+          <form action="https://andrews-newsletter-5041fe.beehiiv.com/subscribe" method="POST" className="flex flex-col sm:flex-row gap-3">
             <input type="hidden" name="publication_id" value="pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015" />
             <input type="email" name="email" required placeholder="Enter your email"
               className="flex-1 px-4 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-[#e85d2f] transition" />
@@ -128,7 +128,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-black mb-4">Start finding your Japan home.</h2>
           <p className="text-gray-400 mb-8">Free weekly listings delivered to your inbox. No Japanese required.</p>
-          <form action="https://www.beehiiv.com/subscribe" method="POST" className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <form action="https://andrews-newsletter-5041fe.beehiiv.com/subscribe" method="POST" className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input type="hidden" name="publication_id" value="pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015" />
             <input type="email" name="email" required placeholder="Enter your email"
               className="flex-1 px-4 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-[#e85d2f] transition" />

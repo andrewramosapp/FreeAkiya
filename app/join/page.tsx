@@ -47,7 +47,7 @@ export default function JoinPage() {
             </ul>
 
             <div>
-              <form action="https://www.beehiiv.com/subscribe" method="POST" className="space-y-3">
+              <form action="https://andrews-newsletter-5041fe.beehiiv.com/subscribe" method="POST" className="space-y-3">
                 <input type="hidden" name="publication_id" value="pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015" />
                 <input type="email" name="email" required placeholder="Enter your email"
                   className="w-full px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-white/50 transition" />
