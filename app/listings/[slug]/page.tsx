@@ -55,7 +55,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             {/* Price */}
             <div className="bg-[#e85d2f]/10 border border-[#e85d2f]/30 rounded-2xl p-6 mb-6">
               <div className="text-5xl font-black text-[#e85d2f] mb-1">{listing.price}</div>
-              <div className="text-gray-400">{listing.priceJPY} · As listed on {listing.source}</div>
+              <div className="text-gray-400">{listing.priceJPY} · CheapAkiya.com</div>
             </div>
 
             {/* Stats grid */}
