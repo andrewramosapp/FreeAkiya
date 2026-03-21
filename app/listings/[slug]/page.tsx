@@ -5,7 +5,7 @@ import Image from "next/image";
 import ImageGallery from "./ImageGallery";
 import MapEmbed from "./MapEmbed";
 import SubscribeForm from "@/app/components/SubscribeForm";
-import { getMemberEmail } from "@/lib/member";
+import { getMember } from "@/lib/member";
 
 export async function generateStaticParams() {
   return listings.map((l) => ({ slug: l.slug }));
@@ -15,8 +15,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const listing = getListing(slug);
   if (!listing) notFound();
-  const memberEmail = await getMemberEmail();
-  const isPremium = !!memberEmail;
+  const member = await getMember();
+  const isPremium = member?.tier === "premium";
+  const isSubscribed = !!member; // free or premium
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
@@ -27,6 +28,33 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         </Link>
         <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">← All listings</Link>
       </nav>
+
+      {/* Gate overlay for non-subscribers */}
+      {!isSubscribed && (
+        <div className="fixed inset-0 z-40 flex items-end justify-center pb-0" style={{top: '64px'}}>
+          {/* Blur backdrop */}
+          <div className="absolute inset-0 backdrop-blur-md bg-[#0a0a0a]/60" />
+          {/* Join card */}
+          <div className="relative w-full max-w-lg mx-auto mb-0 bg-[#0a0a0a] border-t border-x border-white/10 rounded-t-3xl p-8 text-center shadow-2xl">
+            <div className="text-4xl mb-3">🏯</div>
+            <h2 className="text-2xl font-black mb-2">Join free to view listings</h2>
+            <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+              Subscribe to our free weekly newsletter to unlock all listing details. Takes 30 seconds.
+            </p>
+            <div className="space-y-3">
+              <a href="/members"
+                className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg">
+                Sign In / Subscribe Free →
+              </a>
+              <a href="/join"
+                className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-full transition text-sm">
+                Get Premium — $12/mo (contact info + early access)
+              </a>
+            </div>
+            <p className="text-gray-600 text-xs mt-4">Already subscribed? <a href="/members" className="text-[#e85d2f] hover:underline">Sign in →</a></p>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-5xl mx-auto px-6 py-10">
         {/* BREADCRUMB */}
@@ -99,9 +127,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                     <div className="text-green-400 text-sm font-medium mb-1">✓ Contact info</div>
                     <div className="text-gray-300 text-sm break-all">{listing.contact}</div>
                   </div>
-                  {isPremium && (
+                  {member && (
                     <p className="text-xs text-gray-600 text-center mb-3">
-                      Signed in as {memberEmail}
+                      Signed in as {member.email}
                     </p>
                   )}
                 </>

@@ -1,19 +1,27 @@
 import Link from "next/link";
-import { getMemberEmail } from "@/lib/member";
+import { getMember } from "@/lib/member";
 import MemberGate from "@/app/components/MemberGate";
 
 export default async function MembersPage() {
-  const email = await getMemberEmail();
+  const member = await getMember();
 
   // Already logged in
-  if (email) {
+  if (member) {
+    const { email, tier } = member;
     return (
       <main className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6">
         <div className="max-w-md text-center">
           <div className="text-5xl mb-6">🏯</div>
           <h1 className="text-3xl font-black mb-2">Welcome back!</h1>
           <p className="text-gray-400 mb-1 text-sm">{email}</p>
-          <p className="text-gray-400 mb-8">Your premium access is active.</p>
+          <p className="text-gray-400 mb-2">
+            {tier === "premium" ? "🔒 Premium member" : "✓ Free subscriber"}
+          </p>
+          {tier === "free" && (
+            <a href="/join" className="text-[#e85d2f] text-sm hover:underline mb-6 block">
+              Upgrade to Premium for contact info →
+            </a>
+          )}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-6 text-left space-y-3">
             {[
               "Direct contact info on every listing",
