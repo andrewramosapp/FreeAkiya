@@ -943,3 +943,4 @@ export function getListing(slug: string): Listing | undefined {
 export function getFreeListing(): Listing[] {
   return listings.filter((l) => !l.isPremium).slice(0, 6);
 }
+// Rebuild trigger Sat Mar 21 10:26:27 EDT 2026
