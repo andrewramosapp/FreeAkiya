@@ -30,7 +30,7 @@ export const listings: Listing[] = [
     notes: "Extremely low price; 10-room wooden house on 150-tsubo lot. Ideal for DIY renovation. Land value likely exceeds asking price.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["renovation-project", "niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "sasebo-nagasaki-68",
@@ -41,7 +41,7 @@ export const listings: Listing[] = [
     notes: "Traditional Japanese home in quiet residential area. Renovation required but price is minimal. Scenic coastal region.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["renovation-project", "coastal", "nagasaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "hakodate-hokkaido-69",
@@ -52,7 +52,7 @@ export const listings: Listing[] = [
     notes: "Quiet residential neighborhood in historic port city. Classic Japanese layout with renovation potential.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["renovation-project", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "000 sq ft on large lot near Sunagawa City. Shops and schools nearby. Rare entry-level price for Hokkaido.",
@@ -63,7 +63,7 @@ export const listings: Listing[] = [
     notes: "Nearly 2",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/sorachi-hokkaido-640",
     tags: ["hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "otaru-hokkaido-1281",
@@ -74,7 +74,7 @@ export const listings: Listing[] = [
     notes: "Peaceful coastal living in Hokkaido's beloved Otaru. Convenience store within 10 min walk. Garden included. Historic canal and glass workshops.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["coastal", "garden", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "iwamizawa-hokkaido",
@@ -85,7 +85,7 @@ export const listings: Listing[] = [
     notes: "Peaceful Hokkaido living between Sapporo and Asahikawa. Convenience store within walking distance. Garden included.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["garden", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "muroran-hokkaido-1921",
@@ -96,7 +96,7 @@ export const listings: Listing[] = [
     notes: "Diamond-in-rough on Hokkaido coast. Industrial port city with dramatic cliff scenery and island access. Renovation required.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["renovation-project", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "seiyo-ehime-2036",
@@ -107,7 +107,7 @@ export const listings: Listing[] = [
     notes: "Traditional 4DK with tatami rooms and shoji doors. Quiet residential area in western Ehime. Renovation potential throughout.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["renovation-project", "ehime"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "tane-shiga-4dk",
@@ -118,7 +118,7 @@ export const listings: Listing[] = [
     notes: "Spacious wooden interiors with tatami rooms near Lake Biwa. 2 parking spots. Ideal for rural living in scenic area.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["shiga"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "nagasaki-city-traditional-2250",
@@ -129,7 +129,7 @@ export const listings: Listing[] = [
     notes: "Traditional akiya with tatami rooms and wood interiors. Walking distance to local amenities in culturally rich Nagasaki.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["nagasaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "000. Coastal city known for harbor and island scenery.",
@@ -140,7 +140,7 @@ export const listings: Listing[] = [
     notes: "Over 125 years old. A piece of Japanese history for under $3",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/sasebo-nagasaki-1900",
     tags: ["nagasaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "joetsu-niigata-5bed-v2",
@@ -151,7 +151,7 @@ export const listings: Listing[] = [
     notes: "Tatami rooms and traditional charm near mountains and sea. Gateway to Myoko and Hakuba ski resorts.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["coastal", "mountain", "niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "200 sq ft for under $3",
@@ -162,7 +162,7 @@ export const listings: Listing[] = [
     notes: "90-year-old wooden Japanese home with garden. Over 2",
     isPremium: false, contact: "000. Sea of Japan coast with bullet train access to Tokyo.",
     tags: ["garden", "niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "500. Toyama ranked #1 in Japan for quality of life. Traditional Japanese countryside layout.",
@@ -173,7 +173,7 @@ export const listings: Listing[] = [
     notes: "7 bedrooms for under $3",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/imizu-toyama-3427",
     tags: ["toyama", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "nagasaki-hillside-4dk",
@@ -184,7 +184,7 @@ export const listings: Listing[] = [
     notes: "4DK with mountain views in Nagasaki City — historically rich city with stunning harbor views.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["mountain", "nagasaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "sea",
@@ -195,7 +195,7 @@ export const listings: Listing[] = [
     notes: "Tatami rooms and traditional Japanese charm. Joetsu offers mountains",
     isPremium: false, contact: "and excellent skiing — gateway to ski resorts.",
     tags: ["mountain", "niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "000. Harbor dotted with over 200 beautiful islands.",
@@ -206,7 +206,7 @@ export const listings: Listing[] = [
     notes: "Bay views and coastal charm in Sasebo for under $5",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/sasebo-bay-views-6dk",
     tags: ["coastal", "nagasaki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "000 sq ft for under $5",
@@ -217,7 +217,7 @@ export const listings: Listing[] = [
     notes: "Over 3",
     isPremium: false, contact: "000 near Sea of Japan. 7 bedrooms. Classic Japanese coastal living.",
     tags: ["niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "ebino-miyazaki-4560",
@@ -228,7 +228,7 @@ export const listings: Listing[] = [
     notes: "Surrounded by nature with large yard and mountain views. Highland city near Kirishima National Park.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["mountain", "miyazaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "otaru-hokkaido-5122",
@@ -239,7 +239,7 @@ export const listings: Listing[] = [
     notes: "Quiet residential neighborhood in beloved Otaru. Famous for snow canal and seafood. Top tourist destination and highly livable.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["coastal", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "otaru-hokkaido-budget-4ldk",
@@ -250,7 +250,7 @@ export const listings: Listing[] = [
     notes: "Rare affordable entry into Hokkaido real estate in charming Otaru. Potential as guesthouse or rental.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "000 available from local government. Note: major floor and plumbing repairs needed.",
@@ -261,7 +261,7 @@ export const listings: Listing[] = [
     notes: "Includes storehouse. Acquisition subsidy up to ¥400",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/kurayoshi-tottori-6332",
     tags: ["tottori", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "takikawa-hokkaido-6338",
@@ -272,7 +272,7 @@ export const listings: Listing[] = [
     notes: "Walk to train station. Full ownership. Known for glider aviation and rapeseed fields. Easy access to Sapporo by train.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "minamisoma-fukushima",
@@ -283,7 +283,7 @@ export const listings: Listing[] = [
     notes: "2-story wooden house 2km from Haranomachi Station. 6 bedrooms with sunlight and parking. Fukushima coast.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["fukushima", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "000 sq ft for under $7",
@@ -294,7 +294,7 @@ export const listings: Listing[] = [
     notes: "Over 3",
     isPremium: false, contact: "000. 7 bedrooms. Near Sea of Japan. One of best value-per-sqft listings.",
     tags: ["niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "matsue-garden-akiya",
@@ -305,7 +305,7 @@ export const listings: Listing[] = [
     notes: "5DK akiya with yard and detached outbuilding in Matsue. Renovation-ready in Japan's charming water city.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["renovation-project", "shimane", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "saijo-ehime-7590",
@@ -316,7 +316,7 @@ export const listings: Listing[] = [
     notes: "One of newer builds (1991). Spacious 6-bedroom layout with garden. Known for pure groundwater and traditional festivals.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["garden", "ehime", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "755 sqft of classic Japanese countryside living.",
@@ -327,7 +327,7 @@ export const listings: Listing[] = [
     notes: "Sunny veranda and spacious garden with privacy near expressway. 1",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/kosaka-fukushima-6dk",
     tags: ["garden", "fukushima", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "600 sqft lot with parking. Japan's City of Water with preserved castle.",
@@ -338,7 +338,7 @@ export const listings: Listing[] = [
     notes: "3-min walk to Akikacho Station. Large 4",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/akikacho-matsue-shimane",
     tags: ["shimane", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "izumo-shimane-3dk",
@@ -349,7 +349,7 @@ export const listings: Listing[] = [
     notes: "Single-story home near sea in Izumo City with garden. Home to one of Japan's most sacred Shinto shrines.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["coastal", "garden", "shimane"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "hiking",
@@ -360,7 +360,7 @@ export const listings: Listing[] = [
     notes: "Unique akiya surrounded by scenic trails. Japan Alps country with skiing",
     isPremium: false, contact: "and onsen nearby.",
     tags: ["nagano"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "nagano-7bed-minamimaki",
@@ -371,7 +371,7 @@ export const listings: Listing[] = [
     notes: "7 bedrooms in serene Minamimaki Village. Quiet countryside living in heart of Japan Alps.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["nagano", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "000. 20 minutes from central Kyoto by train. Garden and parking. Budget-friendly Kyoto entry.",
@@ -382,7 +382,7 @@ export const listings: Listing[] = [
     notes: "Kyoto Prefecture for under $10",
     isPremium: false, contact: "https://www.cheapakiya.com/listings/kameoka-kyoto-9827",
     tags: ["kyoto"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "keihoku-kyoto-2dk",
@@ -393,7 +393,7 @@ export const listings: Listing[] = [
     notes: "Tucked in Kyoto City's serene Keihoku area. Single-story wooden home. Tranquility and affordability within Kyoto city limits.",
     isPremium: false, contact: "info@cheapakiya.com",
     tags: ["kyoto"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "spacious-3ldk-home-on-a-large-lot-in-sorachi-district",
@@ -404,7 +404,7 @@ export const listings: Listing[] = [
     notes: "Affordable entry-level Hokkaido property. Large lot with quiet residential feel near Sunagawa City. Easy access to shops and schools.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69398fc5f6891037223ca8c1_1931124888_500x348.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69398fcb12b82bb8545789d3_1931124808_500x346.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69398fceb5838bd712c62a71_1931124999_500x305.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6939d71ab36f3191badb63b1_78978327_0001.jpg"],
   },
   {
     slug: "classic-4ldk-home-in-otaru",
@@ -415,7 +415,7 @@ export const listings: Listing[] = [
     notes: "Peaceful Hokkaido living in quiet residential neighborhood. Close to city conveniences and local amenities.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb5a679b5875e1085ecff_1876961674_500x375%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb5a63036313f6c4640ca_1876961705_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb5a69fb221977474ffa5_1876961755_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb5a690438839911184b4_1876961788_500x375.jpeg"],
   },
   {
     slug: "budget-4ldk-house-in-otaru",
@@ -426,7 +426,7 @@ export const listings: Listing[] = [
     notes: "Rare affordable entry point into Hokkaido real estate. Potential for renovation into home or rental property with character.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb3900fc65f366008a955_78823878_0001.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb390ef9cdbc8570d306a_78823878_0013.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb3904b0c82a607f1f2a8_78823878_0014.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb390cca09ccc078704d8_78823878_0003.jpg"],
   },
   {
     slug: "wooden-home-in-coastal-muroran",
@@ -437,7 +437,7 @@ export const listings: Listing[] = [
     notes: "Diamond-in-the-rough coastal akiya market property. Traditional wooden home with renovation potential.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "coastal", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb1c8e28e5340d87c2b76_1929011446_376x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb1d13c64349b9708d585_1929011453_376x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb1d4ad763303298f3dc0_1929011459_376x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb1ce2420eccbf0039b1a_1929011442_376x500.jpeg"],
   },
   {
     slug: "two-story-home-in-iwamizawa-hokkaido",
@@ -448,7 +448,7 @@ export const listings: Listing[] = [
     notes: "Spacious two-story home with parking. Hokkaido countryside living near local amenities.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bab0fd3b94425db797709_77669232_0001%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bab1b1a3fa012d7961bcf_77669232_0010.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bab23c83ffaf827331c50_77669232_0014.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bab29323877bb754b6657_77669232_0016.jpg"],
   },
   {
     slug: "3ldk-home-with-garden-parking-in-otaru",
@@ -459,7 +459,7 @@ export const listings: Listing[] = [
     notes: "Charming Sakura neighborhood property. Quiet area with easy access to shops. Garden and parking included.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["garden", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692ba861878b06826a0b3982_1864238240_400x300.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692ba8689d856e310b569616_1864238244_400x300.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6939d71ab36f3191badb63b1_78978327_0001.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb1c8e28e5340d87c2b76_1929011446_376x500.jpeg"],
   },
   {
     slug: "affordable-two-story-home-near-takikawa-station",
@@ -470,7 +470,7 @@ export const listings: Listing[] = [
     notes: "Walk to train station. Full ownership. Two-story home with convenience and transit access.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692ba6b8a2341150661aa58e_78812536_0001%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692ba6bfc07766001bf0363e_78812536_0003.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692ba6c18a895bed7a13f2f0_78812536_0004.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692ba6c6c9bd427cef6a912a_78812536_0005.jpg"],
   },
   {
     slug: "3dk-single-story-home-in-kitahara",
@@ -481,7 +481,7 @@ export const listings: Listing[] = [
     notes: "Budget-friendly akiya in Fukushima. Single-story traditional layout with renovation potential.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "fukushima"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691160c0e01153676e1fd2ea_1917815813_500x376%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691160c7178f856fe53980ae_1917821403_500x376.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691160cb40879d3987eca22a_1917815373_500x376.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691160d1db365109924ff73e_1917815607_376x500.jpeg"],
   },
   {
     slug: "6dk-home-in-kamijo-kashiwazaki-city-niigata",
@@ -492,7 +492,7 @@ export const listings: Listing[] = [
     notes: "Spacious wooden home with garden. Historic 1936 build. Significant renovation potential on large lot.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "garden", "niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/690048833c4ba9b273bff6ff_1873316933_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69004995e71084103dec89f2_1873316995_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/690049987cb052423d3d6eb6_1873317040_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6900499d7ba2b0213dd69eaf_1873317239_500x375.jpeg"],
   },
   {
     slug: "charming-home-in-seiyo-ehime",
@@ -503,7 +503,7 @@ export const listings: Listing[] = [
     notes: "Traditional 4DK with tatami rooms and shoji doors. Quiet residential area in western Ehime. Renovation potential throughout.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "ehime"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4ff5550a5f674d49240ce_1898044896_500x373.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4ff5c0418f1197a7c0d51_1898044907_379x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4ff647cacf9d9f9e1f930_1898044903_374x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4ff6ba9bd484cee6253a0_1898044915_376x500.jpeg"],
   },
   {
     slug: "traditional-home-in-sasebo-nagasaki",
@@ -514,7 +514,7 @@ export const listings: Listing[] = [
     notes: "Traditional 4DK with tatami rooms and renovation potential in quiet residential neighborhood.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "nagasaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4fc222fbb2acaddd349d8_1894188773_500x378.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4fc2266157f9f5c733654_1894188959_373x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4fc22860902af7264be61_1894188963_209x280.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b4fc2256d5157f362c5404_1894188966_500x364.jpeg"],
   },
   {
     slug: "3ldk-home-in-hakodate-hokkaido",
@@ -525,7 +525,7 @@ export const listings: Listing[] = [
     notes: "Charming akiya in quiet residential area. Ideal for renovation with traditional features and convenient access to local amenities.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "hokkaido"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a9c17f140229633338c1_75494895_0001%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a9c130163fac86f4b2e8_75494895_0012.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a9c1df6eef22d0798f84_75494895_0018.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a9c1edcecf7649d61c74_75494895_0002.jpg"],
   },
   {
     slug: "5k-home-in-nagasaki-city",
@@ -536,7 +536,7 @@ export const listings: Listing[] = [
     notes: "Traditional 5DK with tatami rooms and shoji doors. Renovation potential in quiet residential neighborhood.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "nagasaki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b5013e0c57b5b1193d83a0_1878230031_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b5017d1f6e749ac3bdb5cf_1878230130_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b501818a91735b7e6fbae0_1878230055_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68b50187ea77044cbf0b3e80_1878230123_500x375.jpeg"],
   },
   {
     slug: "6dk-two-story-home-in-kosaka-kunimi-machi",
@@ -547,7 +547,7 @@ export const listings: Listing[] = [
     notes: "Sunny veranda with spacious garden and privacy near expressway. Classic Japanese countryside living.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["garden", "fukushima", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69116295bb0840652ce403e2_1876274668_500x375%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6911629cfb411272a41c1970_1876274700_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6911629fad3d56a09410e096_1876281850_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691162a4cb74b898d74da7cf_1876282107_500x375.jpeg"],
   },
   {
     slug: "cozy-3dk-countryside-home-in-koryocho-oike",
@@ -558,7 +558,7 @@ export const listings: Listing[] = [
     notes: "Single-story home near sea with garden and countryside charm. Izumo is known for cultural significance.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["coastal", "garden", "shimane"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69115f48324841f4de6fbb1a_75794059_0002%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69115f4f6d97c08c825327da_75794059_0004.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69115f5463aac5d8628fcf4f_75794059_0005.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69115f5aed8ea13be7dc563b_75794059_0017.jpg"],
   },
   {
     slug: "traditional-6dk-home-in-akikacho",
@@ -569,7 +569,7 @@ export const listings: Listing[] = [
     notes: "Charming wooden home near Akikacho Station. Large lot with parking for 3+. Quiet and sunny.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["shimane", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6911588129fcad44097e2a01_78357570_0001%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691158879c1764d489a1932d_78357570_0003.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/69115889cf085f5a3ee9f2a9_78357570_0004.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691158940eddf70723167a34_78357570_0016.jpg"],
   },
   {
     slug: "used-detached-house-in-takamicho",
@@ -580,7 +580,7 @@ export const listings: Listing[] = [
     notes: "2-story wooden house 2km from Haranomachi Station with sunlight and parking on Fukushima coast.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["fukushima", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691190dc4c3d2cb0b9fb3e43_1912492590_500x373%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691190e4ea9fd607a504ea42_1912492640_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691190e917ddf292ac246790_1912492652_500x369.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/691190ee1edb1952e18d799d_1912492750_500x374.jpeg"],
   },
   {
     slug: "4dk-home-in-tane",
@@ -591,7 +591,7 @@ export const listings: Listing[] = [
     notes: "Spacious layout with wooden interiors and renovation potential. Ideal for rural living in Japan.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "ehime"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a7411d1972f00f3cd729_1839309454_500x329%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a741b9b4f54b0dfa745d_1856574687_375x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a741f295a936bfb49592_1856574874_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843a741a2983055e4766079_1856574911_210x280.jpeg"],
   },
   {
     slug: "spacious-akiya-in-joetsu-niigata",
@@ -602,7 +602,7 @@ export const listings: Listing[] = [
     notes: "Tatami rooms and traditional charm near mountains and sea. Gateway to Myoko and Hakuba ski resorts.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["coastal", "mountain", "niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615bd5680f649def05b5_76746847_0013%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615bde2eaedb8b9704e8_76746847_0023.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615b08544f77a1099423_76746847_0016.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615bf085069d3d16ed49_76746847_0017.jpg"],
   },
   {
     slug: "500. Toyama ranked #1 in Japan for quality of life. Traditional Japanese countryside layout.",
@@ -613,7 +613,7 @@ export const listings: Listing[] = [
     notes: "7 bedrooms for under $3",
     isPremium: false, contact: "https://www.oldhousesjapan.com/properties-2/charming-7-bedroom-village-escape-in-imizu-honmachi-3-chome",
     tags: ["toyama", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"],
   },
   {
     slug: "ebino-hillside-hideaway",
@@ -624,7 +624,7 @@ export const listings: Listing[] = [
     notes: "5DK surrounded by nature with large yard and mountain views near Kirishima National Park.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["mountain", "miyazaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f73308c335e18751973c9_1858226690_500x375%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f732d4c49ff33177f630a_1858227372_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f732d3052ceb4ad664673_1858227874_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6939d71ab36f3191badb63b1_78978327_0001.jpg"],
   },
   {
     slug: "hillside-hideaway-in-nagasaki-city",
@@ -635,7 +635,7 @@ export const listings: Listing[] = [
     notes: "4DK traditional home with mountain views and renovation potential.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "mountain", "nagasaki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6a3a34255c742d4bbf00_1856133521_500x374%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6a3ad4df4bf4316491a6_1856138598_500x374.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6a3a024b8d7d04d726b0_1856144529_500x374.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6a3aa12d7f88b3b971a5_1856146224_500x374.jpeg"],
   },
   {
     slug: "matsue-city-garden-view-akiya",
@@ -646,7 +646,7 @@ export const listings: Listing[] = [
     notes: "5DK akiya with yard and detached structure in charming water city.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["shimane", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f70ba30a050b551f2c296_76199375_0001%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f70ba6fde92acfde29b88_76199375_0004.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f70baf2725d3766e827da_76199375_0006.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f70ba28483d6875d7617d_76199375_0003.jpg"],
   },
   {
     slug: "shimane-starter-akiya-in-matsue-city",
@@ -657,7 +657,7 @@ export const listings: Listing[] = [
     notes: "6K affordable fixer-upper in scenic Matsue.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["shimane", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6d76fe831de38d037ebe_77544680_0001%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6d74302a909a7f765c46_77544680_0006.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6d74302a909a7f765c37_77544680_0005.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f6d76fe831de38d037eb8_77544680_0003.jpg"],
   },
   {
     slug: "6dk-home-in-saijo-city-ehime",
@@ -668,7 +668,7 @@ export const listings: Listing[] = [
     notes: "One of newer builds (1991). Spacious 6-bedroom layout with garden. Known for pure groundwater and traditional festivals.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["garden", "ehime", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843abc9f4876251e8af9b40_1870809824_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843abc924542ff47dbe5ff7_1870811009_280x210.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843abc95474d831b35661b6_1870811084_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843abc944ea23b6f15a2a90_1870811099_500x375.jpeg"],
   },
   {
     slug: "traditional-4-bedroom-akiya-retreat-in-shiomigaoka-4-chome",
@@ -679,7 +679,7 @@ export const listings: Listing[] = [
     notes: "4DK traditional akiya with renovation potential.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ae1c58a0c7aef042864_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843bac57ceee808941c4f88_1865964542_358x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b89f6e38b21e0a852d3_uc.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843bac57cd860e4c1005f18_1865964549_500x375.jpeg"],
   },
   {
     slug: "spacious-2-bedroom-countryside-hideaway-in-kumiage",
@@ -690,7 +690,7 @@ export const listings: Listing[] = [
     notes: "2-bedroom rural property with countryside charm.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ad99018e8d3b8f6ff33_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b66666074d7174c47980_1865189630_500x281.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b666682d1cb1dddc86fb_1865187083_500x281.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b878f2cd1179a221c41_uc.jpeg"],
   },
   {
     slug: "tranquil-4-bedroom-country-home-in-sunazawacho",
@@ -701,7 +701,7 @@ export const listings: Listing[] = [
     notes: "4K country property with modern updates.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ad981c2c7b2d45f7d2c_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b3cc63841e5b9e1027b1_1691201253_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b3d0250125ed629407f3_1691201323_280x210.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b863b30c823bd83b006_uc.jpeg"],
   },
   {
     slug: "traditional-home-in-nagasaki-city",
@@ -712,7 +712,7 @@ export const listings: Listing[] = [
     notes: "4DK traditional akiya with tatami rooms in culturally rich city.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["nagasaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68226660f150d27e9832dcb9_1817181332_500x375%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682266602650d46812fcbc8c_1817181533_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822666064dffe46dd60771b_1817181541_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68226660c3d1f951f601053c_1817181358_500x375.jpeg"],
   },
   {
     slug: "akiya-in-sasebo-nagasaki",
@@ -723,7 +723,7 @@ export const listings: Listing[] = [
     notes: "3-bedroom affordable akiya with charm and renovation potential.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "nagasaki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68226416157f51d450384603_1863404304_500x375%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68226413494a53d68fd9c6a5_1863404419_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68226412aaa9e662c8dde187_1863404425_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682264135778c2aaff81de99_1863404503_500x375.jpeg"],
   },
   {
     slug: "affordable-6dk-home-with-bay-views-in-sasebo-city",
@@ -734,7 +734,7 @@ export const listings: Listing[] = [
     notes: "6DK akiya with coastal bay views and renovation potential.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["renovation-project", "coastal", "nagasaki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f66dcc75e20e03e490b24_1864892493_500x375%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f66e16c4f10533177eaad_1864892713_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f66e7a00067993648657f_1864900381_500x375%20(1).jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/682f66ee013782d1ba29b40b_1864900420_500x375%20(1).jpeg"],
   },
   {
     slug: "spacious-7-bedroom-cultural-gem-in-tate",
@@ -745,7 +745,7 @@ export const listings: Listing[] = [
     notes: "Spacious 7DK traditional home in rural Toyama.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["toyama", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b9bf90b3bee393102d2_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68568515b11e9d5a73d0f1af_1866167758_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68568515a3949c9ba7ad6077_1866167779_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68568515bc500d75cdf26603_1737135217_500x374.jpeg"],
   },
   {
     slug: "cozy-akiya-in-kashiwazaki-niigata",
@@ -756,7 +756,7 @@ export const listings: Listing[] = [
     notes: "7DK with exceptional square footage near Sea of Japan.",
     isPremium: false, contact: "contact@oldhousesjapan.com",
     tags: ["coastal", "niigata", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68225eb86d6e1c2f42053062_1862654851_500x374.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68225ec1e0c2f5ea1d7c8820_1862654871_373x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68225ec4030b18f4ace7a3c5_1862654857_500x373.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68225ec8494a53d68fd5e8bd_1862654858_500x379.jpeg"],
   },
   {
     slug: "traditional-5-bedroom-countryside-hideaway-in-ishize",
@@ -767,7 +767,7 @@ export const listings: Listing[] = [
     notes: "5DK traditional home in picturesque countryside setting.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["toyama", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b9e3190a0d2b3d95da9_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6856802b4e24c0729ad438ce_1865681309_400x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b9f3190a0d2b3d95de1_uc.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6939d71ab36f3191badb63b1_78978327_0001.jpg"],
   },
   {
     slug: "charming-1-bedroom-village-escape-in-soyama",
@@ -778,7 +778,7 @@ export const listings: Listing[] = [
     notes: "1LDK village escape with modern elements in Toyama.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["toyama"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b9d63699a3e8a2d78dc_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685682ac60358e1bf94bcc15_1867799174_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685682add5a802515d816c0d_1867799154_375x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b9f63699a3e8a2d794f_uc.jpeg"],
   },
   {
     slug: "vintage-4-bedroom-countryside-hideaway-in-okamicho",
@@ -789,7 +789,7 @@ export const listings: Listing[] = [
     notes: "4-bedroom classic home in Ibaraki countryside.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68620d29d388e6bbab8e97a6_77593875_0001.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68620d29f780921a679c1e53_77593875_0020.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68620d28cc3cad673e4ad586_77593875_0013.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68620d29f780921a679c1e56_77593875_0002.jpg"],
   },
   {
     slug: "restoration-ready-2-bedroom-cultural-gem-in-koya-garden",
@@ -800,7 +800,7 @@ export const listings: Listing[] = [
     notes: "2LDK restoration-ready home in Ibaraki with garden.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["garden", "ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ae8eb1fce50c79792dd_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68620a147c85c67961341f15_1865136643_500x334.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68620a14f780921a679b2bac_1865136699_500x334.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68620a146aa5521295ed8dc8_1865136506_500x319.jpeg"],
   },
   {
     slug: "tranquil-3-bedroom-mountain-view-home-in-mae",
@@ -811,7 +811,7 @@ export const listings: Listing[] = [
     notes: "3LDK mountain view home in peaceful Ibaraki.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["mountain", "ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/686208d92f587ae9e223dd69_1878844275_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685698548a7368e7b9bcf719_1835054374_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685698546298881729c7f767_1866342543_375x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/686208d9e222be0bc84ccb63_1866342559_375x500.jpeg"],
   },
   {
     slug: "vintage-3-bedroom-rustic-getaway-in-mae",
@@ -822,7 +822,7 @@ export const listings: Listing[] = [
     notes: "3LDK vintage property in rural Ibaraki area.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68569854a1b7df2abe020413_1866342535_375x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ae79b5bff4d4c068705_77574708_0001.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6856985553e53dcd1e12caf9_1866341668_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68569855e556a6dbd1af855b_1866342559_210x280.jpeg"],
   },
   {
     slug: "vintage-5-bedroom-countryside-hideaway-in-kamigo",
@@ -833,7 +833,7 @@ export const listings: Listing[] = [
     notes: "5DK spacious home in Ibaraki countryside.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ae79b5bff4d4c068705_77574708_0001.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6856975ffaa270cde13f7db6_77574708_0003.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6856975f3dca672b23b44b1c_77574708_0004.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6856975f83e3c6a37077dff2_77574708_0001.jpg"],
   },
   {
     slug: "cozy-3-bedroom-village-escape-in-iijima",
@@ -844,7 +844,7 @@ export const listings: Listing[] = [
     notes: "3DK village property with character in Ibaraki.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ae5391ae7932f81c64e_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6856937122e7bda4ba1e7abd_1865139210_500x281.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68569371ceb5eedbbab4c07a_1865137478_500x281.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68569371c8fa95412a97fe0a_1865137443_500x281.jpeg"],
   },
   {
     slug: "traditional-5-bedroom-cultural-gem-in-mayumi-town",
@@ -855,7 +855,7 @@ export const listings: Listing[] = [
     notes: "5DK classic home with traditional charm and stable bones.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425adc5394e937d6c47d32_77585517_0001.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843ba19144e3d99ea0d8be5_77585517_0003.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843ba1d1405ebdb01c29fe3_77585517_0010.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843ba15b0c0076e866e4cf6_77585517_0001.jpg"],
   },
   {
     slug: "historic-5-bedroom-mountain-view-home-in-oaza-shimana",
@@ -866,7 +866,7 @@ export const listings: Listing[] = [
     notes: "5DK countryside gem ready for restoration.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ad9daa51d37ec601c8c_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b844229182e74fb6cd06_1865725008_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b8444b1c8edbe1f4eda3_1865727008_375x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425b87c4be14c757976ff2_uc.jpeg"],
   },
   {
     slug: "idyllic-6-bedroom-japanese-house-in-mikanoharamachi-2-chome",
@@ -877,7 +877,7 @@ export const listings: Listing[] = [
     notes: "6SDK spacious home in authentic countryside setting.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["ibaraki", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425ade6709d548ddc61583_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b47af295a936bfb73552_1866129744_500x334.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b47d2c32108fa42806d2_1866132107_500x334.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6843b495f295a936bfb73b52_1866129524_500x334.jpeg"],
   },
   {
     slug: "peaceful-3-bedroom-countryside-hideaway-in-kohata",
@@ -888,7 +888,7 @@ export const listings: Listing[] = [
     notes: "3LDK peaceful retreat in Kyoto countryside.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["kyoto"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425a56c4be14c7579702f1_77103942_0001.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68564516379a5bd9f732f21a_77103942_0007.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68564516360005d389b739a7_77103942_0006.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685645160107b3921a745ae9_77103942_0008.jpg"],
   },
   {
     slug: "historic-2-bedroom-village-escape-in-uharashita",
@@ -899,7 +899,7 @@ export const listings: Listing[] = [
     notes: "2-bedroom village property with historic charm.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["kyoto"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425a4abfec06a3c98c4783_2.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6850f71272287d777565c776_1865187246_480x480.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6850f712d15c6af66b22fa98_1865187247_500x375.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6850f7123905e712b4f61b54_1865186856_500x499.jpeg"],
   },
   {
     slug: "charming-3-bedroom-akiya-retreat-in-ogura-town",
@@ -910,7 +910,7 @@ export const listings: Listing[] = [
     notes: "3DK charming akiya ready for restoration.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["kyoto"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425a4b8b75cf3584614be9_77592520_0001.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685639e47c5a739ec71cd02c_77778957_0003.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685639e40107b3921a71032c_77778957_0004.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/685639e51ba2a7bb73e77cc4_77778957_0001.jpg"],
   },
   {
     slug: "tranquil-4-bedroom-cultural-gem-in-hironocho",
@@ -921,7 +921,7 @@ export const listings: Listing[] = [
     notes: "4DK traditional home in quiet Kyoto neighborhood.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["kyoto"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68425a50f754c956e857d112_74431281_0036.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68563a9e41f0084db8bd1ed4_74431281_0028.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68563a9e7b751bd4fcacd03d_74431281_0037.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/68563a9e7f30f7baf063f92d_74431281_0039.jpg"],
   },
   {
     slug: "charming-akiya-in-hofu",
@@ -932,7 +932,7 @@ export const listings: Listing[] = [
     notes: "6DK traditional home with tatami rooms and cultural sites nearby.",
     isPremium: true, contact: "contact@oldhousesjapan.com",
     tags: ["yamaguchi", "spacious"],
-    images: ["https://via.placeholder.com/400x300?text=Akiya"],
+    images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/683f932586c4735ca0edb439_74784852_0001%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6939d71ab36f3191badb63b1_78978327_0001.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bb1c8e28e5340d87c2b76_1929011446_376x500.jpeg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/692bab0fd3b94425db797709_77669232_0001%20(1).jpg"],
   },
 ];
 
@@ -943,4 +943,3 @@ export function getListing(slug: string): Listing | undefined {
 export function getFreeListing(): Listing[] {
   return listings.filter((l) => !l.isPremium).slice(0, 6);
 }
-// Rebuild trigger Sat Mar 21 10:26:27 EDT 2026
