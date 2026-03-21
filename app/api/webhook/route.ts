@@ -5,47 +5,60 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
 const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY ?? "";
 const BEEHIIV_PUB_ID = "pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015";
 
-async function upgradeBeehiivSubscriber(email: string) {
-  // First subscribe (or reactivate) as premium tier
+async function getBeehiivSubId(email: string): Promise<string | null> {
   const res = await fetch(
-    `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${BEEHIIV_API_KEY}`,
-      },
-      body: JSON.stringify({
-        email,
-        reactivate_existing: true,
-        send_welcome_email: false,
-        tier: "premium",
-      }),
-    }
+    `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions?email=${encodeURIComponent(email)}`,
+    { headers: { Authorization: `Bearer ${BEEHIIV_API_KEY}` } }
   );
   const data = await res.json();
-  console.log("Beehiiv upgrade:", email, res.status, data?.data?.id ?? data?.errors);
+  return data?.data?.[0]?.id ?? null;
+}
+
+async function upgradeBeehiivSubscriber(email: string) {
+  // Subscribe/reactivate first to make sure they're in Beehiiv
+  await fetch(`https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${BEEHIIV_API_KEY}` },
+    body: JSON.stringify({ email, reactivate_existing: true, send_welcome_email: false }),
+  });
+
+  // Now tag them as premium
+  const subId = await getBeehiivSubId(email);
+  if (!subId) { console.error("No Beehiiv sub found for", email); return false; }
+
+  const res = await fetch(
+    `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions/${subId}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${BEEHIIV_API_KEY}` },
+      body: JSON.stringify({ tags: ["premium"] }),
+    }
+  );
+  console.log("Beehiiv tagged premium:", email, res.status);
   return res.ok;
 }
 
 async function downgradeBeehiivSubscriber(email: string) {
+  const subId = await getBeehiivSubId(email);
+  if (!subId) return false;
+
+  // Remove premium tag by patching with empty tags (or only non-premium ones)
+  const getRes = await fetch(
+    `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions/${subId}`,
+    { headers: { Authorization: `Bearer ${BEEHIIV_API_KEY}` } }
+  );
+  const current = await getRes.json();
+  const remainingTags = (current?.data?.tags ?? []).filter((t: string) => t !== "premium");
+
   const res = await fetch(
-    `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
+    `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions/${subId}`,
     {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${BEEHIIV_API_KEY}`,
-      },
-      body: JSON.stringify({
-        email,
-        reactivate_existing: true,
-        send_welcome_email: false,
-        tier: "free",
-      }),
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${BEEHIIV_API_KEY}` },
+      body: JSON.stringify({ tags: remainingTags }),
     }
   );
-  console.log("Beehiiv downgrade:", email, res.status);
+  console.log("Beehiiv removed premium tag:", email, res.status);
   return res.ok;
 }
 
