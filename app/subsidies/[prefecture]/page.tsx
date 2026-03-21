@@ -241,10 +241,7 @@ export default async function SubsidyPage({ params }: { params: Promise<{ prefec
               className="bg-[#e85d2f]/10 hover:bg-[#e85d2f]/20 border border-[#e85d2f]/30 text-[#e85d2f] text-sm px-4 py-2 rounded-full transition">
               🏛️ {data.name} Official Akiya Bank →
             </a>
-            <a href="https://www.iju-join.jp/en/" target="_blank" rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-sm px-4 py-2 rounded-full transition">
-              🇯🇵 National migration portal (English) →
-            </a>
+
           </div>
           <p className="text-gray-600 text-xs mt-4">⚠️ Grant amounts and eligibility change year to year. Always confirm current details directly with the prefecture before purchasing.</p>
         </div>
