@@ -22,7 +22,7 @@ export default async function Nav() {
             </Link>
           </>
         ) : (
-          <Link href="/join" className="bg-[#e85d2f] hover:bg-[#d44f23] text-white text-sm font-semibold px-4 py-2 rounded-full transition">
+          <Link href="/listings" className="bg-[#e85d2f] hover:bg-[#d44f23] text-white text-sm font-semibold px-4 py-2 rounded-full transition">
             Get Free Listings
           </Link>
         )}

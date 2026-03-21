@@ -94,23 +94,20 @@ export default function ListingsGrid({
     <div>
       {/* Filter bar */}
       <div className="mb-6">
-        <div className="flex items-center gap-3 flex-wrap">
-          <button
-            onClick={() => setFiltersOpen(!filtersOpen)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition ${
-              filtersOpen || activeFilters > 0
-                ? "bg-[#e85d2f]/10 border-[#e85d2f] text-[#e85d2f]"
-                : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
-            }`}
-          >
-            <span>⚙ Filters</span>
-            {activeFilters > 0 && (
-              <span className="bg-[#e85d2f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {activeFilters}
-              </span>
-            )}
-          </button>
+        {/* Full-width orange filter bar */}
+        <button
+          onClick={() => setFiltersOpen(!filtersOpen)}
+          className={`w-full flex items-center justify-between px-5 py-3 rounded-2xl font-semibold text-sm transition mb-3 ${
+            filtersOpen || activeFilters > 0
+              ? "bg-[#e85d2f] text-white"
+              : "bg-[#e85d2f] hover:bg-[#d44f23] text-white"
+          }`}
+        >
+          <span>⚙ Filters {activeFilters > 0 ? `(${activeFilters} active)` : ""}</span>
+          <span className="text-white/70 text-xs">{filtersOpen ? "▲ Hide" : "▼ Show"}</span>
+        </button>
 
+        <div className="flex items-center gap-3 flex-wrap">
           {/* Quick region pills */}
           {REGIONS.map((r) => (
             <button
