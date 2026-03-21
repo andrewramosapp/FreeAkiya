@@ -23,6 +23,9 @@ export default function ListingsGrid({
   const [tier, setTier] = useState<"all" | "free" | "premium">("all");
   const [condition, setCondition] = useState<"all" | "move_in_ready" | "renovation_needed">("all");
   const [subsidyOnly, setSubsidyOnly] = useState(false);
+  const [safeOnly, setSafeOnly] = useState(false);        // disaster_risk_score >= 4
+  const [fiberOnly, setFiberOnly] = useState(false);      // internet_type = fiber
+  const [stationMax, setStationMax] = useState(0);        // 0 = any, otherwise max walk min
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
@@ -35,6 +38,9 @@ export default function ListingsGrid({
       if (tier === "premium" && !l.isPremium) return false;
       if (condition !== "all" && (l as any).condition !== condition) return false;
       if (subsidyOnly && !(l as any).subsidyAvailable) return false;
+      if (safeOnly && ((l as any).disasterScore ?? 0) < 4) return false;
+      if (fiberOnly && (l as any).internetType !== "fiber") return false;
+      if (stationMax > 0 && (l as any).stationWalkMin > stationMax) return false;
       return true;
     });
   }, [listings, maxPrice, minBeds, region, tier]);
@@ -46,7 +52,10 @@ export default function ListingsGrid({
     (region !== "All" ? 1 : 0) +
     (tier !== "all" ? 1 : 0) +
     (condition !== "all" ? 1 : 0) +
-    (subsidyOnly ? 1 : 0);
+    (subsidyOnly ? 1 : 0) +
+    (safeOnly ? 1 : 0) +
+    (fiberOnly ? 1 : 0) +
+    (stationMax > 0 ? 1 : 0);
 
   const resetFilters = () => {
     setMinPrice(0);
@@ -56,6 +65,9 @@ export default function ListingsGrid({
     setTier("all");
     setCondition("all");
     setSubsidyOnly(false);
+    setSafeOnly(false);
+    setFiberOnly(false);
+    setStationMax(0);
   };
 
   return (
@@ -103,7 +115,7 @@ export default function ListingsGrid({
 
         {/* Expanded filter panel */}
         {filtersOpen && (
-          <div className="mt-4 bg-white/5 border border-white/10 rounded-2xl p-6 grid sm:grid-cols-3 gap-6">
+          <div className="mt-4 bg-white/5 border border-white/10 rounded-2xl p-6 grid sm:grid-cols-3 gap-6 items-start">
             {/* Price range — single dual-handle slider */}
             <div>
               <label className="block text-xs font-bold text-gray-400 mb-3">Price Range</label>
@@ -162,13 +174,29 @@ export default function ListingsGrid({
               </div>
             </div>
 
-            {/* Subsidy */}
-            <div>
-              <label className="block text-xs font-bold text-gray-400 mb-3">Subsidies</label>
-              <button onClick={() => setSubsidyOnly(!subsidyOnly)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${subsidyOnly ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
-                🏛️ Subsidy available
-              </button>
+            {/* Subsidy + Safety + Internet + Station — all in one row */}
+            <div className="sm:col-span-3">
+              <label className="block text-xs font-bold text-gray-400 mb-3">Special Filters</label>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setSubsidyOnly(!subsidyOnly)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${subsidyOnly ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
+                  🏛️ Govt subsidy available
+                </button>
+                <button onClick={() => setSafeOnly(!safeOnly)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${safeOnly ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
+                  ⭐ Low risk (4-5/5)
+                </button>
+                <button onClick={() => setFiberOnly(!fiberOnly)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${fiberOnly ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
+                  📡 Fiber internet
+                </button>
+                {[0, 15, 30, 60].map(mins => (
+                  <button key={mins} onClick={() => setStationMax(stationMax === mins && mins > 0 ? 0 : mins)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${stationMax === mins && mins > 0 ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
+                    🚉 {mins === 0 ? "Any station" : `≤${mins} min walk`}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}

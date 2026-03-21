@@ -101,14 +101,75 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* UNIQUE FEATURES SECTION */}
+      <section className="border-t border-white/10 max-w-6xl mx-auto px-6 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-black mb-3">More than just listings</h2>
+          <p className="text-gray-400 max-w-xl mx-auto">Every listing comes with data you won't find anywhere else in English — so you can make a real decision, not a guess.</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[
+            {
+              icon: "🏛️",
+              title: "Government Subsidy Finder",
+              desc: "Many Japanese prefectures pay you to move there — up to ¥3M. We flag every listing that qualifies and tell you exactly how much.",
+              badge: "Up to $20,000 free money",
+              color: "green",
+            },
+            {
+              icon: "🚉",
+              title: "Station Distance",
+              desc: "Every listing shows the nearest train station and exact walking time. No more guessing if you can get around without a car.",
+              badge: "Real walking times",
+              color: "blue",
+            },
+            {
+              icon: "⭐",
+              title: "Safety Risk Score",
+              desc: "Japan has flood zones, landslide areas, and seismic hot spots. We score every property 1-5 so you know what you're buying into.",
+              badge: "Flood + earthquake risk",
+              color: "amber",
+            },
+            {
+              icon: "📡",
+              title: "Internet Connectivity",
+              desc: "Working remotely from rural Japan? We show fiber vs DSL vs no coverage for every listing — critical if you need reliable internet.",
+              badge: "Essential for remote workers",
+              color: "purple",
+            },
+            {
+              icon: "🔧",
+              title: "Condition Rating",
+              desc: "Move-in ready, needs renovation, or tear-down? We tag every listing so you can filter to exactly what you're looking for.",
+              badge: "Filter by condition",
+              color: "orange",
+            },
+            {
+              icon: "🏪",
+              title: "Nearest Amenities",
+              desc: "Distance to the nearest convenience store and hospital. Rural Japan can be very rural — know what you're committing to.",
+              badge: "Real proximity data",
+              color: "teal",
+            },
+          ].map((f) => (
+            <div key={f.title} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-white/20 transition">
+              <div className="text-3xl mb-4">{f.icon}</div>
+              <h3 className="font-bold text-base mb-2">{f.title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-4">{f.desc}</p>
+              <span className="bg-[#e85d2f]/10 text-[#e85d2f] text-xs px-3 py-1 rounded-full">{f.badge}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
       <section className="border-t border-white/10 max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-black text-center mb-12">How it works</h2>
         <div className="grid sm:grid-cols-3 gap-8">
           {[
-            { step: "01", title: "We find them", desc: "We scan Japanese akiya banks and listing sites daily so you don't have to navigate them in Japanese." },
-            { step: "02", title: "We curate them", desc: "We filter for the best value homes — price, condition, location — and translate all the key details into English." },
-            { step: "03", title: "We send them to you", desc: "Free subscribers get weekly roundups. Premium members get the best listings first, with contact info included." },
+            { step: "01", title: "We find them", desc: "We scan Japanese akiya banks and listing sites daily across 20+ prefectures so you don't have to navigate them in Japanese." },
+            { step: "02", title: "We enrich them", desc: "Every listing gets translated, scored for risk, checked for subsidies, and enriched with station distance and amenity data." },
+            { step: "03", title: "We send them to you", desc: "Free subscribers get weekly roundups. Premium members get contact info, early access, and full data on every listing." },
           ].map((item) => (
             <div key={item.step} className="bg-white/5 rounded-2xl p-6 border border-white/10">
               <div className="text-[#e85d2f] font-black text-sm mb-3">{item.step}</div>
