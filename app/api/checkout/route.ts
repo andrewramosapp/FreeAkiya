@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
-  apiVersion: "2025-02-24.acacia",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
 
 const PRICE_ID = process.env.STRIPE_PRICE_ID ?? "price_1TDRg7F6Zzz24rbxii8NbThd";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://cheapakiya.com";
