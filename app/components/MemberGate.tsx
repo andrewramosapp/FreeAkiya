@@ -23,8 +23,8 @@ export default function MemberGate() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        router.push("/members");
-        router.refresh();
+        // Hard redirect so server re-reads the cookie
+        window.location.href = "/listings";
       } else {
         setErrorMsg(data.error ?? "No active subscription found.");
         setStatus("error");

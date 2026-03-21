@@ -1,4 +1,5 @@
 import { listings, getListing } from "@/lib/listings";
+export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -29,26 +30,46 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">← All listings</Link>
       </nav>
 
-      {/* Gate overlay for non-subscribers */}
-      {!isSubscribed && (
+      {/* Gate overlay — show for non-subscribers OR free members on premium listings */}
+      {(!isSubscribed || (member?.tier === "free" && listing.isPremium)) && (
         <div className="fixed inset-0 z-40 flex items-center justify-center px-6 bg-[#0a0a0a]/90 backdrop-blur-lg">
           <div className="w-full max-w-md text-center">
             <div className="text-5xl mb-4">🏯</div>
-            <h2 className="text-3xl font-black mb-3">Join free to view listings</h2>
-            <p className="text-gray-400 mb-8 leading-relaxed">
-              Subscribe to our free weekly newsletter to unlock all listing details — real homes, real prices, all in English.
-            </p>
-            <div className="space-y-3">
-              <a href="/join"
-                className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg">
-                Subscribe Free →
-              </a>
-              <a href="/join"
-                className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-full transition">
-                Get Premium — $12/mo
-              </a>
-            </div>
-            <p className="text-gray-600 text-sm mt-6">Already subscribed? <a href="/members" className="text-[#e85d2f] hover:underline">Sign in →</a></p>
+            {!isSubscribed ? (
+              <>
+                <h2 className="text-3xl font-black mb-3">Join free to view listings</h2>
+                <p className="text-gray-400 mb-8 leading-relaxed">
+                  Subscribe to our free weekly newsletter to unlock all listing details — real homes, real prices, all in English.
+                </p>
+                <div className="space-y-3">
+                  <a href="/join" className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg">
+                    Subscribe Free →
+                  </a>
+                  <a href="/join" className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-full transition">
+                    Get Premium — $12/mo
+                  </a>
+                </div>
+                <p className="text-gray-600 text-sm mt-6">Already subscribed? <a href="/members" className="text-[#e85d2f] hover:underline">Sign in →</a></p>
+              </>
+            ) : (
+              <>
+                <div className="bg-[#e85d2f]/10 border border-[#e85d2f]/30 rounded-2xl px-4 py-2 inline-block mb-4">
+                  <span className="text-[#e85d2f] text-sm font-bold">🔒 Members Only Listing</span>
+                </div>
+                <h2 className="text-3xl font-black mb-3">Upgrade to Premium</h2>
+                <p className="text-gray-400 mb-8 leading-relaxed">
+                  This listing is for premium members only. Upgrade to get access to exclusive listings, direct contact info, and early access.
+                </p>
+                <div className="space-y-3">
+                  <a href="/join" className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg">
+                    Upgrade to Premium — $12/mo →
+                  </a>
+                  <a href="/listings" className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-full transition">
+                    ← Back to Listings
+                  </a>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
