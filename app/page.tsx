@@ -188,13 +188,16 @@ export default async function Home() {
 
       {/* FOOTER */}
       <footer className="border-t border-white/10 py-8">
-        <div className="max-w-4xl mx-auto px-6 flex items-center justify-between text-gray-600 text-sm">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1"><span>🏯</span><span>CheapAkiya.com</span></span>
+        <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-600 text-sm">
+          <div className="flex items-center gap-4 flex-wrap">
+            <span className="font-bold text-gray-500">CheapAkiya.com</span>
             <Link href="/listings" className="hover:text-gray-400 transition">Listings</Link>
             <Link href="/members" className="hover:text-gray-400 transition">Members</Link>
+            <Link href="/subsidies" className="hover:text-gray-400 transition">Subsidies</Link>
+            <Link href="/join" className="hover:text-gray-400 transition">Pricing</Link>
+            <Link href="/disclaimer" className="hover:text-gray-400 transition">Disclaimer</Link>
           </div>
-          <div>© 2026 CheapAkiya. All rights reserved.</div>
+          <div className="text-gray-700">© 2026 CheapAkiya. All rights reserved.</div>
         </div>
       </footer>
     </main>
