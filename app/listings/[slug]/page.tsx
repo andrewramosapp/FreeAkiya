@@ -15,7 +15,7 @@ export async function generateStaticParams() {
 
 export default async function ListingPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const listing = getListing(slug);
+  const listing = await getListing(slug);
   if (!listing) notFound();
   const member = await getMember();
   const isPremium = member?.tier === "premium";

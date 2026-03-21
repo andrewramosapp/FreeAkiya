@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getListings } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
   const allListings = await getListings();
   const featured = allListings.filter(l => !l.isPremium).slice(0, 6);
   const total = allListings.length;
