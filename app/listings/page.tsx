@@ -3,6 +3,7 @@ import { getListings } from "@/lib/db";
 import { getMember } from "@/lib/member";
 import Link from "next/link";
 import ListingsGrid from "@/app/components/ListingsGrid";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 export default async function ListingsPage() {
   const sorted = await getListings();

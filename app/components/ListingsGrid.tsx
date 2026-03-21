@@ -4,6 +4,26 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Listing } from "@/lib/listings";
+// Extended listing type that includes enriched fields from DB
+type EnrichedListing = Listing & {
+  id?: string;
+  condition?: string | null;
+  conditionScore?: number | null;
+  stationName?: string | null;
+  stationWalkMin?: number | null;
+  subsidyAvailable?: boolean;
+  subsidyAmountJPY?: number | null;
+  subsidyNotes?: string | null;
+  floodRisk?: string | null;
+  earthquakeRisk?: string | null;
+  disasterScore?: number | null;
+  internetType?: string | null;
+  internetSpeedMbps?: number | null;
+  convenienceStoreKm?: number | null;
+  hospitalKm?: number | null;
+  lat?: number | null;
+  lng?: number | null;
+};
 import PriceRangeSlider from "./PriceRangeSlider";
 
 const REGIONS = ["Hokkaido", "Tohoku", "Kanto", "Chubu", "Kansai", "Chugoku", "Shikoku", "Kyushu"];
@@ -13,7 +33,7 @@ export default function ListingsGrid({
   listings,
   isPremium,
 }: {
-  listings: Listing[];
+  listings: EnrichedListing[];
   isPremium: boolean;
 }) {
   const [minPrice, setMinPrice] = useState(0);
@@ -36,11 +56,11 @@ export default function ListingsGrid({
       if (region !== "All" && l.region !== region) return false;
       if (tier === "free" && l.isPremium) return false;
       if (tier === "premium" && !l.isPremium) return false;
-      if (condition !== "all" && (l as any).condition !== condition) return false;
-      if (subsidyOnly && !(l as any).subsidyAvailable) return false;
-      if (safeOnly && ((l as any).disasterScore ?? 0) < 4) return false;
-      if (fiberOnly && (l as any).internetType !== "fiber") return false;
-      if (stationMax > 0 && (l as any).stationWalkMin > stationMax) return false;
+      if (condition !== "all" && l.condition !== condition) return false;
+      if (subsidyOnly && !l.subsidyAvailable) return false;
+      if (safeOnly && (l.disasterScore ?? 0) < 4) return false;
+      if (fiberOnly && l.internetType !== "fiber") return false;
+      if (stationMax > 0 && ( l.stationWalkMin ?? 999) > stationMax) return false;
       return true;
     });
   }, [listings, maxPrice, minBeds, region, tier]);
@@ -262,16 +282,16 @@ export default function ListingsGrid({
                   )}
                   {/* Enrichment badges */}
                   <div className="absolute bottom-3 right-3 flex gap-1">
-                    {(l as any).subsidyAvailable && (
+                    {l.subsidyAvailable && (
                       <span title="Government subsidy available" className="bg-green-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">🏛️</span>
                     )}
-                    {(l as any).condition === 'move_in_ready' && (
+                    {l.condition === 'move_in_ready' && (
                       <span title="Move-in ready" className="bg-blue-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">✓</span>
                     )}
-                    {(l as any).disasterScore >= 4 && (
-                      <span title={`Safety score: ${(l as any).disasterScore}/5`} className="bg-amber-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">⭐</span>
+                    {(l.disasterScore ?? 0) >= 4 && (
+                      <span title={`Safety score: ${l.disasterScore}/5`} className="bg-amber-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">⭐</span>
                     )}
-                    {(l as any).internetType === 'fiber' && (
+                    {l.internetType === 'fiber' && (
                       <span title="Fiber internet" className="bg-purple-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">📡</span>
                     )}
                   </div>
@@ -280,7 +300,7 @@ export default function ListingsGrid({
                   <div className="flex items-center justify-between mb-2">
                     <span className="bg-white/10 text-xs px-2 py-1 rounded-full text-gray-300">🇯🇵 {l.prefecture}</span>
                     <div className="flex items-center gap-1 text-gray-600 text-xs">
-                      {(l as any).stationWalkMin && <span>🚉 {(l as any).stationWalkMin}m</span>}
+                      {l.stationWalkMin && <span>🚉 {l.stationWalkMin}m</span>}
                       <span>{l.region}</span>
                     </div>
                   </div>

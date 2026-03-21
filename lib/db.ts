@@ -40,6 +40,7 @@ export type DbListing = {
   subsidy_available: boolean | null;
   subsidy_amount_jpy: number | null;
   subsidy_notes: string | null;
+  subsidy_url: string | null;
   flood_risk: string | null;
   earthquake_risk: string | null;
   disaster_risk_score: number | null;
@@ -83,6 +84,7 @@ export function dbToListing(db: DbListing & { id?: string }) {
     subsidyAvailable: db.subsidy_available ?? false,
     subsidyAmountJPY: db.subsidy_amount_jpy,
     subsidyNotes: db.subsidy_notes,
+    subsidyUrl: db.subsidy_url,
     floodRisk: db.flood_risk,
     earthquakeRisk: db.earthquake_risk,
     disasterScore: db.disaster_risk_score,

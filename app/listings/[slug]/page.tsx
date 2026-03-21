@@ -206,7 +206,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 mb-8">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">🏛️</span>
-                  <div>
+                  <div className="flex-1">
                     <div className="text-green-400 font-bold mb-1">Government Subsidy Available</div>
                     <p className="text-gray-300 text-sm">{listing.subsidyNotes}</p>
                     {listing.subsidyAmountJPY && (
@@ -214,6 +214,18 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                         Up to ¥{listing.subsidyAmountJPY.toLocaleString()} (≈${Math.round(listing.subsidyAmountJPY * 0.0067).toLocaleString()})
                       </p>
                     )}
+                    <div className="flex gap-3 mt-3 flex-wrap">
+                      {(listing as any).subsidyUrl && (
+                        <a href={(listing as any).subsidyUrl} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 bg-green-500/20 hover:bg-green-500/30 text-green-400 text-xs px-3 py-1.5 rounded-full transition">
+                          🔗 Prefecture subsidy info →
+                        </a>
+                      )}
+                      <a href="https://www.iju-join.jp/feature/akiya/" target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 bg-white/5 hover:bg-white/10 text-gray-400 text-xs px-3 py-1.5 rounded-full transition">
+                        📖 National akiya guide (English) →
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
