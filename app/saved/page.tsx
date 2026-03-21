@@ -1,3 +1,4 @@
+import Nav from "@/app/components/Nav";
 export const dynamic = "force-dynamic";
 import { getMember } from "@/lib/member";
 import { supabase, dbToListing } from "@/lib/db";
@@ -21,13 +22,7 @@ export default async function SavedPage() {
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <nav className="flex items-center justify-between px-6 py-5 max-w-6xl mx-auto border-b border-white/10">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-          <span className="text-2xl">🏯</span>
-          <span className="font-bold text-lg tracking-tight">CheapAkiya</span>
-        </Link>
-        <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">← All listings</Link>
-      </nav>
+      <Nav />
 
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-8">

@@ -1,3 +1,4 @@
+import Nav from "@/app/components/Nav";
 import Link from "next/link";
 import SubscribeForm from "@/app/components/SubscribeForm";
 import CheckoutButton from "@/app/components/CheckoutButton";
@@ -5,12 +6,7 @@ import CheckoutButton from "@/app/components/CheckoutButton";
 export default function JoinPage() {
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <nav className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto border-b border-white/10">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-          <span className="text-2xl">🏯</span>
-          <span className="font-bold text-lg tracking-tight">CheapAkiya</span>
-        </Link>
-      </nav>
+      <Nav />
 
       <div className="max-w-4xl mx-auto px-6 py-16">
         <div className="text-center mb-14">

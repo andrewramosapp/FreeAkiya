@@ -1,3 +1,4 @@
+import Nav from "@/app/components/Nav";
 import { getListing, getListings } from "@/lib/db";
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
@@ -37,20 +38,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <nav className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto border-b border-white/10">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-          <span className="text-2xl">🏯</span>
-          <span className="font-bold text-lg tracking-tight">CheapAkiya</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          {member && (
-            <Link href="/saved" className="text-gray-400 hover:text-white text-sm transition">
-              🤍 Saved
-            </Link>
-          )}
-          <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">← All listings</Link>
-        </div>
-      </nav>
+      <Nav />
 
       {/* Gate overlay — show for non-subscribers OR free members on premium listings */}
       {(!isSubscribed || (member?.tier === "free" && listing.isPremium)) && (

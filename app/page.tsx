@@ -14,10 +14,7 @@ export default async function Home() {
 
       {/* NAV */}
       <nav className="flex items-center justify-between px-6 py-5 max-w-6xl mx-auto">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🏯</span>
-          <span className="font-bold text-lg tracking-tight">CheapAkiya</span>
-        </div>
+        <span className="font-black text-xl tracking-tight text-white">CheapAkiya</span>
         <div className="flex items-center gap-4">
           <Link href="/listings" className="hidden sm:block text-gray-400 hover:text-white text-sm transition">Listings</Link>
           <Link href="/members" className="hidden sm:block text-gray-400 hover:text-white text-sm transition">Members</Link>

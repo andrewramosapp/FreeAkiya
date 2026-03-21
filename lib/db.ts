@@ -100,7 +100,7 @@ export function dbToListing(db: DbListing & { id?: string }) {
 export async function getListings() {
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select("id,slug,source,source_url,name_en,notes_en,city_en,prefecture_en,region,price_usd,price_jpy,price_text,beds,size_sqft,size_sqm,year_built,parking_spots,images,contact_email,contact_phone,agency_name,tags,is_premium,is_active,manually_added,condition,condition_score,station_name,station_walk_min,station_distance_km,subsidy_available,subsidy_amount_jpy,subsidy_notes,subsidy_url,flood_risk,earthquake_risk,disaster_risk_score,internet_type,internet_speed_mbps,convenience_store_km,hospital_km,lat,lng")
     .eq("is_active", true)
     .order("price_usd", { ascending: true });
 
