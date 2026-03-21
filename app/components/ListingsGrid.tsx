@@ -15,6 +15,7 @@ export default function ListingsGrid({
   listings: Listing[];
   isPremium: boolean;
 }) {
+  const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [minBeds, setMinBeds] = useState(0);
   const [region, setRegion] = useState("All");
@@ -23,6 +24,7 @@ export default function ListingsGrid({
 
   const filtered = useMemo(() => {
     return listings.filter((l) => {
+      if (l.priceNum < minPrice) return false;
       if (l.priceNum > maxPrice) return false;
       if (minBeds > 0 && l.beds < minBeds) return false;
       if (region !== "All" && l.region !== region) return false;
@@ -33,12 +35,14 @@ export default function ListingsGrid({
   }, [listings, maxPrice, minBeds, region, tier]);
 
   const activeFilters =
+    (minPrice > 0 ? 1 : 0) +
     (maxPrice < MAX_PRICE ? 1 : 0) +
     (minBeds > 0 ? 1 : 0) +
     (region !== "All" ? 1 : 0) +
     (tier !== "all" ? 1 : 0);
 
   const resetFilters = () => {
+    setMinPrice(0);
     setMaxPrice(MAX_PRICE);
     setMinBeds(0);
     setRegion("All");
@@ -91,23 +95,46 @@ export default function ListingsGrid({
         {/* Expanded filter panel */}
         {filtersOpen && (
           <div className="mt-4 bg-white/5 border border-white/10 rounded-2xl p-6 grid sm:grid-cols-3 gap-6">
-            {/* Price slider */}
+            {/* Price range */}
             <div>
               <label className="block text-xs font-bold text-gray-400 mb-3">
-                Max Price: <span className="text-white">${maxPrice.toLocaleString()}</span>
+                Price Range: <span className="text-white">${minPrice.toLocaleString()} — ${maxPrice.toLocaleString()}</span>
               </label>
-              <input
-                type="range"
-                min={0}
-                max={MAX_PRICE}
-                step={500}
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full accent-[#e85d2f]"
-              />
-              <div className="flex justify-between text-xs text-gray-600 mt-1">
-                <span>$0</span>
-                <span>${MAX_PRICE.toLocaleString()}</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <span>Min</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={MAX_PRICE}
+                    step={500}
+                    value={minPrice}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setMinPrice(v);
+                      if (v > maxPrice) setMaxPrice(v);
+                    }}
+                    className="flex-1 accent-[#e85d2f]"
+                  />
+                  <span className="w-16 text-right text-white">${minPrice.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <span>Max</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={MAX_PRICE}
+                    step={500}
+                    value={maxPrice}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setMaxPrice(v);
+                      if (v < minPrice) setMinPrice(v);
+                    }}
+                    className="flex-1 accent-[#e85d2f]"
+                  />
+                  <span className="w-16 text-right text-white">${maxPrice.toLocaleString()}</span>
+                </div>
               </div>
             </div>
 
