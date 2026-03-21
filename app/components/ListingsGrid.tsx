@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Listing } from "@/lib/listings";
+import PriceRangeSlider from "./PriceRangeSlider";
 
 const REGIONS = ["Hokkaido", "Tohoku", "Kanto", "Chubu", "Kansai", "Chugoku", "Shikoku", "Kyushu"];
 const MAX_PRICE = 70000;
@@ -95,47 +96,16 @@ export default function ListingsGrid({
         {/* Expanded filter panel */}
         {filtersOpen && (
           <div className="mt-4 bg-white/5 border border-white/10 rounded-2xl p-6 grid sm:grid-cols-3 gap-6">
-            {/* Price range */}
+            {/* Price range — single dual-handle slider */}
             <div>
-              <label className="block text-xs font-bold text-gray-400 mb-3">
-                Price Range: <span className="text-white">${minPrice.toLocaleString()} — ${maxPrice.toLocaleString()}</span>
-              </label>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <span>Min</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={MAX_PRICE}
-                    step={500}
-                    value={minPrice}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      setMinPrice(v);
-                      if (v > maxPrice) setMaxPrice(v);
-                    }}
-                    className="flex-1 accent-[#e85d2f]"
-                  />
-                  <span className="w-16 text-right text-white">${minPrice.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <span>Max</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={MAX_PRICE}
-                    step={500}
-                    value={maxPrice}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      setMaxPrice(v);
-                      if (v < minPrice) setMinPrice(v);
-                    }}
-                    className="flex-1 accent-[#e85d2f]"
-                  />
-                  <span className="w-16 text-right text-white">${maxPrice.toLocaleString()}</span>
-                </div>
-              </div>
+              <label className="block text-xs font-bold text-gray-400 mb-3">Price Range</label>
+              <PriceRangeSlider
+                min={0}
+                max={MAX_PRICE}
+                minVal={minPrice}
+                maxVal={maxPrice}
+                onChange={(lo, hi) => { setMinPrice(lo); setMaxPrice(hi); }}
+              />
             </div>
 
             {/* Bedrooms */}
