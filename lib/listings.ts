@@ -381,7 +381,7 @@ export const listings: Listing[] = [
     tags: ["coastal", "mountain", "niigata", "spacious"], images: ["https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615bd5680f649def05b5_76746847_0013%20(1).jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615bde2eaedb8b9704e8_76746847_0023.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615b08544f77a1099423_76746847_0016.jpg", "https://cdn.prod.website-files.com/6789dd1a798234106f5e33b7/6822615bf085069d3d16ed49_76746847_0017.jpg"],
   },
   {
-    slug: "https://www.cheapakiya.com/listings/imizu-toyama-3427", price: "$3427", priceNum: 3427, priceJPY: "¥4M",
+    slug: "imizu-toyama-3427", price: "$3427", priceNum: 3427, priceJPY: "¥4M",
     name: "7-Bedroom Village Escape in Imizu", city: "Imizu", prefecture: "Toyama", region: "Chubu",
     beds: 7, size: "1,275", built: "1971", parking: "0 spots",
     notes: "7 bedrooms for under $3,500. Toyama ranked #1 in Japan for quality of life. Traditional Japanese countryside layout.", isPremium: false, contact: "https://www.oldhousesjapan.com/properties-2/charming-7-bedroom-village-escape-in-imizu-honmachi-3-chome",
