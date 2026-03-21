@@ -61,7 +61,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                   This listing is for premium members only. Upgrade to get access to exclusive listings, direct contact info, and early access.
                 </p>
                 <div className="space-y-3">
-                  <a href="/join" className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg">
+                  <a href="/upgrade" className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg">
                     Upgrade to Premium — $12/mo →
                   </a>
                   <a href="/listings" className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-full transition">

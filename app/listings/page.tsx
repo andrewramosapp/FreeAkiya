@@ -38,7 +38,7 @@ export default async function ListingsPage() {
 
             return locked ? (
               // Blurred premium card — clicking goes to /join
-              <Link key={l.slug} href={isPremium ? `/listings/${l.slug}` : "/join"}
+              <Link key={l.slug} href={isPremium ? `/listings/${l.slug}` : "/upgrade"}
                 className="bg-white/5 rounded-2xl overflow-hidden border border-[#e85d2f]/30 hover:border-[#e85d2f] transition group block relative">
                 {/* Blurred image */}
                 <div className="relative h-44 w-full overflow-hidden">
