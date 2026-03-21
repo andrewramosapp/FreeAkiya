@@ -63,7 +63,7 @@ export default function ListingsGrid({
       if (stationMax > 0 && ( l.stationWalkMin ?? 999) > stationMax) return false;
       return true;
     });
-  }, [listings, maxPrice, minBeds, region, tier]);
+  }, [listings, minPrice, maxPrice, minBeds, region, tier, condition, subsidyOnly, safeOnly, fiberOnly, stationMax]);
 
   const activeFilters =
     (minPrice > 0 ? 1 : 0) +
