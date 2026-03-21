@@ -31,27 +31,24 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
       {/* Gate overlay for non-subscribers */}
       {!isSubscribed && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center pb-0" style={{top: '64px'}}>
-          {/* Blur backdrop */}
-          <div className="absolute inset-0 backdrop-blur-md bg-[#0a0a0a]/60" />
-          {/* Join card */}
-          <div className="relative w-full max-w-lg mx-auto mb-0 bg-[#0a0a0a] border-t border-x border-white/10 rounded-t-3xl p-8 text-center shadow-2xl">
-            <div className="text-4xl mb-3">🏯</div>
-            <h2 className="text-2xl font-black mb-2">Join free to view listings</h2>
-            <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-              Subscribe to our free weekly newsletter to unlock all listing details. Takes 30 seconds.
+        <div className="fixed inset-0 z-40 flex items-center justify-center px-6 bg-[#0a0a0a]/90 backdrop-blur-lg">
+          <div className="w-full max-w-md text-center">
+            <div className="text-5xl mb-4">🏯</div>
+            <h2 className="text-3xl font-black mb-3">Join free to view listings</h2>
+            <p className="text-gray-400 mb-8 leading-relaxed">
+              Subscribe to our free weekly newsletter to unlock all listing details — real homes, real prices, all in English.
             </p>
             <div className="space-y-3">
-              <a href="/members"
+              <a href="/join"
                 className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg">
-                Sign In / Subscribe Free →
+                Subscribe Free →
               </a>
               <a href="/join"
-                className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-full transition text-sm">
-                Get Premium — $12/mo (contact info + early access)
+                className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-full transition">
+                Get Premium — $12/mo
               </a>
             </div>
-            <p className="text-gray-600 text-xs mt-4">Already subscribed? <a href="/members" className="text-[#e85d2f] hover:underline">Sign in →</a></p>
+            <p className="text-gray-600 text-sm mt-6">Already subscribed? <a href="/members" className="text-[#e85d2f] hover:underline">Sign in →</a></p>
           </div>
         </div>
       )}
