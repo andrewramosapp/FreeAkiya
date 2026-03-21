@@ -28,7 +28,7 @@ export default async function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
+      <section className="max-w-4xl mx-auto px-6 pt-10 pb-16 text-center">
         <div className="inline-block bg-[#e85d2f]/10 text-[#e85d2f] text-sm font-medium px-4 py-1.5 rounded-full mb-6">
           🇯🇵 Japan's vacant homes, curated in English
         </div>
