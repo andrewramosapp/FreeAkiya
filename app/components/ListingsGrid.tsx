@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Listing } from "@/lib/listings";
+
+const PAGE_SIZE = 24;
 // Extended listing type that includes enriched fields from DB
 type EnrichedListing = Listing & {
   id?: string;
@@ -43,9 +45,11 @@ export default function ListingsGrid({
   const [tier, setTier] = useState<"all" | "free" | "premium">("all");
   const [condition, setCondition] = useState<"all" | "move_in_ready" | "renovation_needed">("all");
   const [subsidyOnly, setSubsidyOnly] = useState(false);
-  const [safeOnly, setSafeOnly] = useState(false);        // disaster_risk_score >= 4
-  const [fiberOnly, setFiberOnly] = useState(false);      // internet_type = fiber
-  const [stationMax, setStationMax] = useState(0);        // 0 = any, otherwise max walk min
+  const [safeOnly, setSafeOnly] = useState(false);
+  const [fiberOnly, setFiberOnly] = useState(false);
+  const [stationMax, setStationMax] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const loaderRef = useRef<HTMLDivElement>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
@@ -64,6 +68,30 @@ export default function ListingsGrid({
       return true;
     });
   }, [listings, minPrice, maxPrice, minBeds, region, tier, condition, subsidyOnly, safeOnly, fiberOnly, stationMax]);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [minPrice, maxPrice, minBeds, region, tier, condition, subsidyOnly, safeOnly, fiberOnly, stationMax]);
+
+  // Infinite scroll observer
+  const loadMore = useCallback(() => {
+    setVisibleCount(prev => Math.min(prev + PAGE_SIZE, filtered.length));
+  }, [filtered.length]);
+
+  useEffect(() => {
+    const el = loaderRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      entries => { if (entries[0].isIntersecting) loadMore(); },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   const activeFilters =
     (minPrice > 0 ? 1 : 0) +
@@ -222,7 +250,7 @@ export default function ListingsGrid({
       {/* Results count */}
       <div className="flex items-center justify-between mb-5">
         <span className="text-gray-500 text-sm">
-          {filtered.length} listing{filtered.length !== 1 ? "s" : ""}
+          Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} listing{filtered.length !== 1 ? "s" : ""}
           {activeFilters > 0 && " (filtered)"}
         </span>
       </div>
@@ -235,8 +263,9 @@ export default function ListingsGrid({
           <button onClick={resetFilters} className="mt-3 text-[#e85d2f] hover:underline text-sm">Reset filters</button>
         </div>
       ) : (
+        <>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((l) => {
+          {visible.map((l) => {
             const locked = l.isPremium && !isPremium;
             return locked ? (
               <Link key={l.slug} href="/upgrade"
@@ -312,6 +341,24 @@ export default function ListingsGrid({
             );
           })}
         </div>
+
+        {/* Infinite scroll loader */}
+        {hasMore && (
+          <div ref={loaderRef} className="flex justify-center py-10">
+            <div className="flex items-center gap-3 text-gray-600 text-sm">
+              <div className="w-4 h-4 border-2 border-gray-600 border-t-[#e85d2f] rounded-full animate-spin" />
+              Loading more...
+            </div>
+          </div>
+        )}
+
+        {/* End of results */}
+        {!hasMore && filtered.length > 0 && (
+          <p className="text-center text-gray-700 text-sm py-8">
+            All {filtered.length} listings shown
+          </p>
+        )}
+        </>
       )}
     </div>
   );
