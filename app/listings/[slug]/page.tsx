@@ -2,6 +2,7 @@ import { listings, getListing } from "@/lib/listings";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import ImageGallery from "./ImageGallery";
 
 export async function generateStaticParams() {
   return listings.map((l) => ({ slug: l.slug }));
@@ -33,18 +34,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         </div>
 
         {/* IMAGE GALLERY */}
-        <div className="grid grid-cols-3 gap-2 rounded-2xl overflow-hidden mb-8 h-72">
-          <div className="col-span-2 relative">
-            <Image src={listing.images[0]} alt={listing.name} fill className="object-cover" unoptimized />
-          </div>
-          <div className="grid grid-rows-2 gap-2">
-            {listing.images.slice(1, 3).map((img, i) => (
-              <div key={i} className="relative">
-                <Image src={img} alt={`${listing.name} ${i + 2}`} fill className="object-cover" unoptimized />
-              </div>
-            ))}
-          </div>
-        </div>
+        <ImageGallery images={listing.images} name={listing.name} />
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* MAIN */}
