@@ -9,6 +9,7 @@ const SUBSIDY_DATA: Record<string, {
   programs: { title: string; amount: string; description: string; eligibility: string; }[];
   notes: string;
   national: string;
+  contact: { label: string; detail: string; }[];
 }> = {
   "shimane": {
     name: "Shimane",
@@ -28,6 +29,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Shimane has one of Japan's highest akiya vacancy rates (~18%) and actively incentivizes migration. Some individual towns (Tsuwano, Oki Islands) offer additional local grants on top of prefectural programs.",
     national: "https://www.pref.shimane.lg.jp/life/sumai/jutaku/akiya/",
+    contact: [
+      { label: "Shimane Prefecture Migration Support", detail: "IJU Coordinator: 0852-22-5609 (ask for English support)" },
+      { label: "Email", detail: "chiiki@pref.shimane.lg.jp" },
+      { label: "English portal", detail: "Visit shimane.gr.jp/en for the prefectural English site" },
+    ],
   },
   "tottori": {
     name: "Tottori",
@@ -47,6 +53,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Tottori is Japan's least populous prefecture and actively recruits new residents. The Tottori akiya bank portal has English support.",
     national: "https://furusato.tottori.lg.jp/",
+    contact: [
+      { label: "Tottori Migration Support Center", detail: "0857-26-7861" },
+      { label: "Email", detail: "furusato@pref.tottori.lg.jp" },
+      { label: "Note", detail: "Tottori akiya bank has English support — mention you are a foreign national" },
+    ],
   },
   "wakayama": {
     name: "Wakayama",
@@ -66,6 +77,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Wakayama (~20% vacancy rate) borders Nara and Osaka — relatively accessible while still qualifying for rural migration grants.",
     national: "https://www.pref.wakayama.lg.jp/prefg/032000/akiya/",
+    contact: [
+      { label: "Wakayama Migration Support", detail: "073-441-2794" },
+      { label: "Email", detail: "chiiki@pref.wakayama.lg.jp" },
+      { label: "Note", detail: "Contact the specific municipality (town/city) directly for local grant details" },
+    ],
   },
   "nagasaki": {
     name: "Nagasaki",
@@ -79,6 +95,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Individual cities and islands in Nagasaki (Goto Islands, Tsushima, Iki) often have separate programs worth researching. Some offer free land alongside the home.",
     national: "https://www.pref.nagasaki.jp/bunrui/machidukuri-sumai/sumai-tochi/akiyabank/",
+    contact: [
+      { label: "Nagasaki Prefecture Housing Division", detail: "095-895-2367" },
+      { label: "Island migration inquiries", detail: "Contact the specific island town office directly — Goto Islands, Tsushima, Iki each have their own contacts" },
+      { label: "Note", detail: "For island properties, the individual town office (役場) is your first contact" },
+    ],
   },
   "nagano": {
     name: "Nagano",
@@ -92,6 +113,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Nagano is popular with remote workers due to excellent internet coverage, mountains, skiing, and proximity to Tokyo (1.5hrs by shinkansen). Individual towns like Karuizawa have their own programs.",
     national: "https://www.pref.nagano.lg.jp/kikaku/akiya/index.html",
+    contact: [
+      { label: "Nagano Prefecture Migration Support", detail: "026-235-7517" },
+      { label: "Email", detail: "chiikishinko@pref.nagano.lg.jp" },
+      { label: "Remote worker desk", detail: "Nagano specifically courts remote workers — mention this when calling" },
+    ],
   },
   "hokkaido": {
     name: "Hokkaido",
@@ -105,6 +131,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Individual Hokkaido towns (Kamishihoro, Shimokawa, etc.) offer their own generous programs — sometimes including free land. Research the specific town you're interested in.",
     national: "https://www.pref.hokkaido.lg.jp/kn/tks/akiyabank.html",
+    contact: [
+      { label: "Hokkaido Prefecture Akiya Desk", detail: "011-204-5268" },
+      { label: "Note", detail: "For rural town programs, contact the specific town hall (役場) directly. Towns like Kamishihoro and Shimokawa have dedicated English migration support." },
+      { label: "Kamishihoro English support", detail: "Visit town.kamishihoro.hokkaido.jp for their dedicated migration program" },
+    ],
   },
   "fukushima": {
     name: "Fukushima",
@@ -118,6 +149,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Radiation levels in most of Fukushima are now at normal background levels. The government offers substantial incentives. Worth researching specific towns carefully.",
     national: "https://www.pref.fukushima.lg.jp/sec/16045b/akiyabank.html",
+    contact: [
+      { label: "Fukushima Recovery Migration Desk", detail: "024-521-7917" },
+      { label: "Email", detail: "chiikishinkou@pref.fukushima.lg.jp" },
+      { label: "Note", detail: "Radiation levels are normal in most areas. Staff can provide area-specific safety data. Grants are highest in recovery zones." },
+    ],
   },
   "kochi": {
     name: "Kochi",
@@ -131,6 +167,11 @@ const SUBSIDY_DATA: Record<string, {
     ],
     notes: "Kochi has Japan's highest akiya vacancy rate (~21%) and some of the most aggressive migration incentives. Beautiful Pacific coast, excellent food culture.",
     national: "https://www.pref.kochi.lg.jp/soshiki/060501/akiyabank.html",
+    contact: [
+      { label: "Kochi Migration Support Center (Kochi-ken Ijyu Koryu Center)", detail: "03-5579-8349 (Tokyo office) or 088-855-5955 (local)" },
+      { label: "Email", detail: "info@kochi-iju.jp" },
+      { label: "English support", detail: "Kochi has active English migration support — website at kochi-iju.jp" },
+    ],
   },
 };
 
@@ -184,19 +225,36 @@ export default async function SubsidyPage({ params }: { params: Promise<{ prefec
           <p className="text-gray-300 text-sm leading-relaxed">{data.notes}</p>
         </div>
 
-        <div className="border-t border-white/10 pt-8">
-          <p className="text-gray-500 text-sm mb-4">For official information and to apply:</p>
+        {/* Contact section */}
+        <div className="border-t border-white/10 pt-8 mb-8">
+          <h2 className="text-xl font-bold mb-4">Who to contact</h2>
+          <div className="space-y-3 mb-6">
+            {data.contact.map((c, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <p className="text-gray-400 text-xs font-bold uppercase tracking-wide mb-1">{c.label}</p>
+                <p className="text-gray-200 text-sm">{c.detail}</p>
+              </div>
+            ))}
+          </div>
           <div className="flex flex-wrap gap-3">
             <a href={data.national} target="_blank" rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-sm px-4 py-2 rounded-full transition">
+              className="bg-[#e85d2f]/10 hover:bg-[#e85d2f]/20 border border-[#e85d2f]/30 text-[#e85d2f] text-sm px-4 py-2 rounded-full transition">
               🏛️ {data.name} Official Akiya Bank →
             </a>
-            <a href={`https://www.soumu.go.jp/main_sosiki/jichi_gyousei/c-gyousei/teiju/`} target="_blank" rel="noopener noreferrer"
+            <a href="https://www.iju-join.jp/en/" target="_blank" rel="noopener noreferrer"
               className="bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-sm px-4 py-2 rounded-full transition">
-              📋 National Migration Support Portal →
+              🇯🇵 National migration portal (English) →
             </a>
           </div>
-          <p className="text-gray-600 text-xs mt-4">Note: Grant amounts and eligibility change. Always verify with the prefecture office before purchasing.</p>
+          <p className="text-gray-600 text-xs mt-4">⚠️ Grant amounts and eligibility change year to year. Always confirm current details directly with the prefecture before purchasing.</p>
+        </div>
+
+        {/* CTA */}
+        <div className="bg-[#e85d2f]/5 border border-[#e85d2f]/20 rounded-2xl p-6 text-center">
+          <p className="text-gray-300 mb-4">Browse {data.name} listings on CheapAkiya</p>
+          <a href={`/listings`} className="inline-block bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold px-6 py-3 rounded-full transition">
+            View {data.name} Listings →
+          </a>
         </div>
       </div>
     </main>
