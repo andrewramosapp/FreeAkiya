@@ -154,6 +154,71 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               <p className="text-gray-300 leading-relaxed">{listing.notes}</p>
             </div>
 
+            {/* Enriched data cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+              {listing.condition && listing.condition !== "unknown" && (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-gray-500 text-xs mb-1">Condition</div>
+                  <div className={`font-semibold text-sm ${listing.condition === "move_in_ready" ? "text-green-400" : listing.condition === "tear_down" ? "text-red-400" : "text-amber-400"}`}>
+                    {listing.condition === "move_in_ready" ? "✓ Move-in ready" : listing.condition === "tear_down" ? "⚠ Tear down" : "🔧 Needs renovation"}
+                  </div>
+                </div>
+              )}
+              {listing.stationName && (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-gray-500 text-xs mb-1">Nearest Station</div>
+                  <div className="font-semibold text-sm">{listing.stationName}</div>
+                  {listing.stationWalkMin && <div className="text-gray-500 text-xs">{listing.stationWalkMin} min walk</div>}
+                </div>
+              )}
+              {listing.disasterScore && (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-gray-500 text-xs mb-1">Safety Score</div>
+                  <div className="font-semibold text-sm">
+                    {"⭐".repeat(listing.disasterScore)}{"☆".repeat(5 - listing.disasterScore)}
+                  </div>
+                  <div className="text-gray-500 text-xs">Flood: {listing.floodRisk || "?"} · EQ: {listing.earthquakeRisk || "?"}</div>
+                </div>
+              )}
+              {listing.internetType && (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-gray-500 text-xs mb-1">Internet</div>
+                  <div className="font-semibold text-sm capitalize">{listing.internetType}</div>
+                  {listing.internetSpeedMbps && <div className="text-gray-500 text-xs">~{listing.internetSpeedMbps} Mbps</div>}
+                </div>
+              )}
+              {listing.convenienceStoreKm && (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-gray-500 text-xs mb-1">Nearest Conbini</div>
+                  <div className="font-semibold text-sm">{listing.convenienceStoreKm} km</div>
+                </div>
+              )}
+              {listing.hospitalKm && (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-gray-500 text-xs mb-1">Nearest Hospital</div>
+                  <div className="font-semibold text-sm">{listing.hospitalKm} km</div>
+                </div>
+              )}
+            </div>
+
+            {/* Subsidy banner */}
+            {listing.subsidyAvailable && (
+              <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 mb-8">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">🏛️</span>
+                  <div>
+                    <div className="text-green-400 font-bold mb-1">Government Subsidy Available</div>
+                    <p className="text-gray-300 text-sm">{listing.subsidyNotes}</p>
+                    {listing.subsidyAmountJPY && (
+                      <p className="text-green-400 text-sm font-semibold mt-1">
+                        Up to ¥{listing.subsidyAmountJPY.toLocaleString()} (≈${Math.round(listing.subsidyAmountJPY * 0.0067).toLocaleString()})
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Tags */}
             <div className="flex flex-wrap gap-2 mb-8">
               {listing.tags.map((tag) => (
@@ -162,7 +227,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             </div>
 
             {/* Map */}
-            <MapEmbed city={listing.city} prefecture={listing.prefecture} />
+            <MapEmbed city={listing.city} prefecture={listing.prefecture} lat={listing.lat} lng={listing.lng} />
 
             <div className="text-sm text-gray-600 border-t border-white/10 pt-4">
               Listing curated by CheapAkiya.com

@@ -31,6 +31,24 @@ export type DbListing = {
   is_premium: boolean;
   is_active: boolean;
   manually_added: boolean;
+  // Enriched fields
+  condition: string | null;
+  condition_score: number | null;
+  station_name: string | null;
+  station_walk_min: number | null;
+  station_distance_km: number | null;
+  subsidy_available: boolean | null;
+  subsidy_amount_jpy: number | null;
+  subsidy_notes: string | null;
+  flood_risk: string | null;
+  earthquake_risk: string | null;
+  disaster_risk_score: number | null;
+  internet_type: string | null;
+  internet_speed_mbps: number | null;
+  convenience_store_km: number | null;
+  hospital_km: number | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 // Convert DB listing to the Listing type used by the app
@@ -57,6 +75,23 @@ export function dbToListing(db: DbListing & { id?: string }) {
     images: db.images?.length > 0 ? db.images : [
       "https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png"
     ],
+    // Enriched data
+    condition: db.condition,
+    conditionScore: db.condition_score,
+    stationName: db.station_name,
+    stationWalkMin: db.station_walk_min,
+    subsidyAvailable: db.subsidy_available ?? false,
+    subsidyAmountJPY: db.subsidy_amount_jpy,
+    subsidyNotes: db.subsidy_notes,
+    floodRisk: db.flood_risk,
+    earthquakeRisk: db.earthquake_risk,
+    disasterScore: db.disaster_risk_score,
+    internetType: db.internet_type,
+    internetSpeedMbps: db.internet_speed_mbps,
+    convenienceStoreKm: db.convenience_store_km,
+    hospitalKm: db.hospital_km,
+    lat: db.lat,
+    lng: db.lng,
   };
 }
 

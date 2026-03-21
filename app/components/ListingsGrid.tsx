@@ -21,6 +21,8 @@ export default function ListingsGrid({
   const [minBeds, setMinBeds] = useState(0);
   const [region, setRegion] = useState("All");
   const [tier, setTier] = useState<"all" | "free" | "premium">("all");
+  const [condition, setCondition] = useState<"all" | "move_in_ready" | "renovation_needed">("all");
+  const [subsidyOnly, setSubsidyOnly] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
@@ -31,6 +33,8 @@ export default function ListingsGrid({
       if (region !== "All" && l.region !== region) return false;
       if (tier === "free" && l.isPremium) return false;
       if (tier === "premium" && !l.isPremium) return false;
+      if (condition !== "all" && (l as any).condition !== condition) return false;
+      if (subsidyOnly && !(l as any).subsidyAvailable) return false;
       return true;
     });
   }, [listings, maxPrice, minBeds, region, tier]);
@@ -40,7 +44,9 @@ export default function ListingsGrid({
     (maxPrice < MAX_PRICE ? 1 : 0) +
     (minBeds > 0 ? 1 : 0) +
     (region !== "All" ? 1 : 0) +
-    (tier !== "all" ? 1 : 0);
+    (tier !== "all" ? 1 : 0) +
+    (condition !== "all" ? 1 : 0) +
+    (subsidyOnly ? 1 : 0);
 
   const resetFilters = () => {
     setMinPrice(0);
@@ -48,6 +54,8 @@ export default function ListingsGrid({
     setMinBeds(0);
     setRegion("All");
     setTier("all");
+    setCondition("all");
+    setSubsidyOnly(false);
   };
 
   return (
@@ -133,19 +141,34 @@ export default function ListingsGrid({
               <label className="block text-xs font-bold text-gray-400 mb-3">Access Tier</label>
               <div className="flex gap-2 flex-wrap">
                 {(["all", "free", "premium"] as const).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTier(t)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition capitalize ${
-                      tier === t
-                        ? "bg-[#e85d2f] text-white"
-                        : "bg-white/10 text-gray-400 hover:bg-white/20"
-                    }`}
-                  >
+                  <button key={t} onClick={() => setTier(t)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition capitalize ${tier === t ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
                     {t === "all" ? "All" : t === "free" ? "Free" : "🔒 Premium"}
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Condition */}
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-3">Condition</label>
+              <div className="flex gap-2 flex-wrap">
+                {[["all","Any"],["move_in_ready","✓ Move-in ready"],["renovation_needed","🔧 Needs work"]] .map(([v,l]) => (
+                  <button key={v} onClick={() => setCondition(v as any)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${condition === v ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Subsidy */}
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-3">Subsidies</label>
+              <button onClick={() => setSubsidyOnly(!subsidyOnly)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${subsidyOnly ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
+                🏛️ Subsidy available
+              </button>
             </div>
           </div>
         )}

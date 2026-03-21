@@ -1,8 +1,11 @@
 "use client";
 
-export default function MapEmbed({ city, prefecture }: { city: string; prefecture: string }) {
-  const query = encodeURIComponent(`${city}, ${prefecture}, Japan`);
-  const src = `https://maps.google.com/maps?q=${query}&output=embed&z=12`;
+export default function MapEmbed({ city, prefecture, lat, lng }: { city: string; prefecture: string; lat?: number | null; lng?: number | null }) {
+  const query = lat && lng
+    ? encodeURIComponent(`${lat},${lng}`)
+    : encodeURIComponent(`${city}, ${prefecture}, Japan`);
+  const zoom = lat && lng ? 14 : 12;
+  const src = `https://maps.google.com/maps?q=${query}&output=embed&z=${zoom}`;
 
   return (
     <div className="mb-8">
@@ -17,7 +20,7 @@ export default function MapEmbed({ city, prefecture }: { city: string; prefectur
           allowFullScreen
         />
       </div>
-      <p className="text-xs text-gray-600 mt-2">📍 {city}, {prefecture} Prefecture, Japan</p>
+      <p className="text-xs text-gray-600 mt-2">📍 {city}, {prefecture} Prefecture, Japan{lat && lng ? ` (${lat.toFixed(4)}, ${lng.toFixed(4)})` : ""}</p>
     </div>
   );
 }
