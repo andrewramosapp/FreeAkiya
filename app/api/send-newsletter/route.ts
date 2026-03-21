@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
 const ADMIN_SECRET = process.env.ADMIN_SECRET ?? "";
 const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY ?? "";
 const BEEHIIV_PUB_ID = "pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015";
-const FROM = "CheapAkiya <onboarding@resend.dev>";
+const FROM = "CheapAkiya <newsletter@cheapakiya.com>";
 
 async function getPremiumEmails(): Promise<string[]> {
   const emails: string[] = [];
