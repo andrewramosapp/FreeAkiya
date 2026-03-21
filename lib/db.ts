@@ -34,9 +34,10 @@ export type DbListing = {
 };
 
 // Convert DB listing to the Listing type used by the app
-export function dbToListing(db: DbListing) {
+export function dbToListing(db: DbListing & { id?: string }) {
   const price = db.price_usd ?? 0;
   return {
+    id: db.id,
     slug: db.slug,
     price: db.price_text ?? `$${price.toLocaleString()}`,
     priceNum: price,
@@ -76,7 +77,7 @@ export async function getListings() {
 export async function getListing(slug: string) {
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select("id, *")
     .eq("slug", slug)
     .eq("is_active", true)
     .single();

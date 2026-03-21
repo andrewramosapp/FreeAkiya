@@ -6,7 +6,9 @@ import Image from "next/image";
 import ImageGallery from "./ImageGallery";
 import MapEmbed from "./MapEmbed";
 import SubscribeForm from "@/app/components/SubscribeForm";
+import HeartButton from "@/app/components/HeartButton";
 import { getMember } from "@/lib/member";
+import { supabase } from "@/lib/db";
 
 export async function generateStaticParams() {
   const listings = await getListings();
@@ -19,7 +21,19 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   if (!listing) notFound();
   const member = await getMember();
   const isPremium = member?.tier === "premium";
-  const isSubscribed = !!member; // free or premium
+  const isSubscribed = !!member;
+
+  // Check if member has saved this listing
+  let isSaved = false;
+  if (member && listing.id) {
+    const { data } = await supabase
+      .from("saved_listings")
+      .select("id")
+      .eq("member_email", member.email)
+      .eq("listing_id", listing.id)
+      .single();
+    isSaved = !!data;
+  } // free or premium
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
@@ -28,7 +42,14 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
           <span className="text-2xl">🏯</span>
           <span className="font-bold text-lg tracking-tight">CheapAkiya</span>
         </Link>
-        <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">← All listings</Link>
+        <div className="flex items-center gap-4">
+          {member && (
+            <Link href="/saved" className="text-gray-400 hover:text-white text-sm transition">
+              🤍 Saved
+            </Link>
+          )}
+          <Link href="/listings" className="text-gray-400 hover:text-white text-sm transition">← All listings</Link>
+        </div>
       </nav>
 
       {/* Gate overlay — show for non-subscribers OR free members on premium listings */}
@@ -91,7 +112,19 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* MAIN */}
           <div className="lg:col-span-2">
-            <h1 className="text-3xl font-black leading-tight mb-2">{listing.name}</h1>
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h1 className="text-3xl font-black leading-tight">{listing.name}</h1>
+              {isSubscribed && listing.id && (
+                <HeartButton
+                  listingId={listing.id}
+                  initialSaved={isSaved}
+                  requiresLogin={false}
+                />
+              )}
+              {!isSubscribed && (
+                <HeartButton listingId={listing.id || ""} requiresLogin={true} />
+              )}
+            </div>
             <p className="text-gray-400 mb-6">🇯🇵 {listing.city}, {listing.prefecture} — {listing.region} region</p>
 
             {/* Price */}
