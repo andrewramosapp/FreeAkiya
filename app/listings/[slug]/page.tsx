@@ -5,6 +5,7 @@ import Image from "next/image";
 import ImageGallery from "./ImageGallery";
 import MapEmbed from "./MapEmbed";
 import SubscribeForm from "@/app/components/SubscribeForm";
+import { getMemberEmail } from "@/lib/member";
 
 export async function generateStaticParams() {
   return listings.map((l) => ({ slug: l.slug }));
@@ -14,6 +15,8 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const listing = getListing(slug);
   if (!listing) notFound();
+  const memberEmail = await getMemberEmail();
+  const isPremium = !!memberEmail;
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
@@ -90,16 +93,17 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
           <div className="lg:col-span-1">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-4 sticky top-6">
               <h3 className="font-bold text-lg mb-4">Interested?</h3>
-              {!listing.isPremium && listing.contact ? (
+              {isPremium || !listing.isPremium ? (
                 <>
                   <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 mb-4">
-                    <div className="text-green-400 text-sm font-medium mb-1">✓ Contact info included</div>
-                    <div className="text-gray-300 text-sm">{listing.contact}</div>
+                    <div className="text-green-400 text-sm font-medium mb-1">✓ Contact info</div>
+                    <div className="text-gray-300 text-sm break-all">{listing.contact}</div>
                   </div>
-                  <Link href="/join"
-                    className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold text-center py-3 rounded-full transition">
-                    Get Full Access →
-                  </Link>
+                  {isPremium && (
+                    <p className="text-xs text-gray-600 text-center mb-3">
+                      Signed in as {memberEmail}
+                    </p>
+                  )}
                 </>
               ) : (
                 <>
@@ -107,11 +111,14 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                     <div className="text-amber-400 text-sm font-medium mb-1">🔒 Contact info locked</div>
                     <div className="text-gray-400 text-sm">Premium members get direct contact info, move-in ready filter, and listings 48hrs early.</div>
                   </div>
-                  <Link href="/join"
-                    className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold text-center py-3 rounded-full transition mb-3">
-                    Unlock — Join Free or Premium
+                  <Link href="/members"
+                    className="block w-full bg-white/10 hover:bg-white/20 text-white font-bold text-center py-3 rounded-full transition mb-3">
+                    Sign In →
                   </Link>
-
+                  <Link href="/join"
+                    className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold text-center py-3 rounded-full transition">
+                    Unlock — $12/mo →
+                  </Link>
                 </>
               )}
 
