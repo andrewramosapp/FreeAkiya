@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ImageGallery from "./ImageGallery";
 import MapEmbed from "./MapEmbed";
+import SubscribeForm from "@/app/components/SubscribeForm";
 
 export async function generateStaticParams() {
   return listings.map((l) => ({ slug: l.slug }));
@@ -117,14 +118,11 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               {/* Newsletter */}
               <div className="mt-4 pt-4 border-t border-white/10">
                 <div className="text-sm font-bold mb-2">📩 Free weekly listings</div>
-                <form action="https://andrews-newsletter-5041fe.beehiiv.com/subscribe" method="POST">
-                  <input type="hidden" name="publication_id" value="pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015" />
-                  <input type="email" name="email" required placeholder="your@email.com"
-                    className="w-full px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#e85d2f] mb-3 transition" />
-                  <button type="submit" className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-2 rounded-full text-sm transition">
-                    Subscribe Free →
-                  </button>
-                </form>
+                <SubscribeForm
+                  placeholder="your@email.com"
+                  buttonText="Subscribe Free →"
+                  layout="column"
+                />
               </div>
             </div>
           </div>
