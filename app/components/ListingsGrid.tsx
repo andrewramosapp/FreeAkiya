@@ -260,11 +260,29 @@ export default function ListingsGrid({
                       🔒 Premium
                     </div>
                   )}
+                  {/* Enrichment badges */}
+                  <div className="absolute bottom-3 right-3 flex gap-1">
+                    {(l as any).subsidyAvailable && (
+                      <span title="Government subsidy available" className="bg-green-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">🏛️</span>
+                    )}
+                    {(l as any).condition === 'move_in_ready' && (
+                      <span title="Move-in ready" className="bg-blue-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">✓</span>
+                    )}
+                    {(l as any).disasterScore >= 4 && (
+                      <span title={`Safety score: ${(l as any).disasterScore}/5`} className="bg-amber-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">⭐</span>
+                    )}
+                    {(l as any).internetType === 'fiber' && (
+                      <span title="Fiber internet" className="bg-purple-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">📡</span>
+                    )}
+                  </div>
                 </div>
                 <div className="p-5">
                   <div className="flex items-center justify-between mb-2">
                     <span className="bg-white/10 text-xs px-2 py-1 rounded-full text-gray-300">🇯🇵 {l.prefecture}</span>
-                    <span className="text-gray-600 text-xs">{l.region}</span>
+                    <div className="flex items-center gap-1 text-gray-600 text-xs">
+                      {(l as any).stationWalkMin && <span>🚉 {(l as any).stationWalkMin}m</span>}
+                      <span>{l.region}</span>
+                    </div>
                   </div>
                   <h3 className="font-semibold text-sm mb-2 group-hover:text-[#e85d2f] transition leading-snug">{l.name}</h3>
                   <div className="text-xs text-gray-500 space-y-1">
