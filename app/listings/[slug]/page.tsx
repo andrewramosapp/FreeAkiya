@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import ImageGallery from "./ImageGallery";
+import MapEmbed from "./MapEmbed";
 
 export async function generateStaticParams() {
   return listings.map((l) => ({ slug: l.slug }));
@@ -75,6 +76,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                 <span key={tag} className="bg-white/5 border border-white/10 text-gray-400 text-xs px-3 py-1 rounded-full">#{tag}</span>
               ))}
             </div>
+
+            {/* Map */}
+            <MapEmbed city={listing.city} prefecture={listing.prefecture} />
 
             <div className="text-sm text-gray-600 border-t border-white/10 pt-4">
               Listing curated by CheapAkiya.com
