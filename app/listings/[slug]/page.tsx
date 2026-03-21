@@ -160,20 +160,12 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                 </div>
               )}
               {listing.disasterScore && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10 group relative cursor-help">
-                  <div className="text-gray-500 text-xs mb-1 flex items-center gap-1">
-                    Natural Disaster Risk
-                    <span className="text-gray-600">ⓘ</span>
-                  </div>
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-gray-500 text-xs mb-1">Natural Disaster Risk</div>
                   <div className="font-semibold text-sm">
                     {"⭐".repeat(listing.disasterScore)}{"☆".repeat(5 - listing.disasterScore)}
                   </div>
                   <div className="text-gray-500 text-xs">Flood: {listing.floodRisk || "?"} · Earthquake: {listing.earthquakeRisk || "?"}</div>
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-10 shadow-xl">
-                    <p className="font-bold text-white mb-1">⚠️ Natural disaster risk only</p>
-                    <p>This score reflects flood risk (from elevation data) and earthquake risk (by prefecture). It has nothing to do with crime or personal safety. Japan is one of the safest countries in the world by crime statistics.</p>
-                  </div>
                 </div>
               )}
               {listing.internetType && (
