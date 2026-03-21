@@ -1,11 +1,13 @@
 import Link from "next/link";
 import SubscribeForm from "@/app/components/SubscribeForm";
 import Image from "next/image";
-import { getFreeListing, listings } from "@/lib/listings";
+import { getListings } from "@/lib/db";
+export const dynamic = "force-dynamic";
 
 export default function Home() {
-  const featured = getFreeListing();
-  const total = listings.length;
+  const allListings = await getListings();
+  const featured = allListings.filter(l => !l.isPremium).slice(0, 6);
+  const total = allListings.length;
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">

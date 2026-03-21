@@ -1,11 +1,11 @@
-import { listings } from "@/lib/listings";
 export const dynamic = "force-dynamic";
+import { getListings } from "@/lib/db";
 import { getMember } from "@/lib/member";
 import Link from "next/link";
 import ListingsGrid from "@/app/components/ListingsGrid";
 
 export default async function ListingsPage() {
-  const sorted = [...listings].sort((a, b) => a.priceNum - b.priceNum);
+  const sorted = await getListings();
   const member = await getMember();
   const isPremium = member?.tier === "premium";
 

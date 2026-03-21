@@ -1,4 +1,4 @@
-import { listings, getListing } from "@/lib/listings";
+import { getListing, getListings } from "@/lib/db";
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import SubscribeForm from "@/app/components/SubscribeForm";
 import { getMember } from "@/lib/member";
 
 export async function generateStaticParams() {
+  const listings = await getListings();
   return listings.map((l) => ({ slug: l.slug }));
 }
 
