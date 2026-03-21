@@ -206,7 +206,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                       {(listing as any).subsidyUrl && (
                         <a href={(listing as any).subsidyUrl} target="_blank" rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 bg-green-500/20 hover:bg-green-500/30 text-green-400 text-xs px-3 py-1.5 rounded-full transition">
-                          🔗 Prefecture subsidy info →
+                          🔍 Search {listing.prefecture} subsidies →
                         </a>
                       )}
                       <a href="https://www.realestatejapan.com/japan-real-estate-guide/akiya-guide/" target="_blank" rel="noopener noreferrer"
