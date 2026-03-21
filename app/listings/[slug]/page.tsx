@@ -209,9 +209,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                           🔗 Prefecture subsidy info →
                         </a>
                       )}
-                      <a href="https://www.iju-join.jp/feature/akiya/" target="_blank" rel="noopener noreferrer"
+                      <a href="https://www.realestatejapan.com/japan-real-estate-guide/akiya-guide/" target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 bg-white/5 hover:bg-white/10 text-gray-400 text-xs px-3 py-1.5 rounded-full transition">
-                        📖 National akiya guide (English) →
+                        📖 Akiya buyer's guide (English) →
                       </a>
                     </div>
                   </div>
