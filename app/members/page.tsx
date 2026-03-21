@@ -29,11 +29,11 @@ export default function MembersPage() {
             <span>Buying guides & prefecture deep-dives</span>
           </div>
         </div>
-        <a href="https://cheapakiya.beehiiv.com/upgrade" target="_blank" rel="noopener noreferrer"
+        <a href="/join"
           className="block w-full bg-[#e85d2f] hover:bg-[#d44f23] text-white font-bold py-4 rounded-full transition text-lg mb-3">
-          Become a Member
+          Become a Member →
         </a>
-        <a href="/" className="text-gray-500 hover:text-white text-sm transition">← Back to listings</a>
+        <a href="/listings" className="text-gray-500 hover:text-white text-sm transition">← Back to listings</a>
       </div>
     </main>
   );
