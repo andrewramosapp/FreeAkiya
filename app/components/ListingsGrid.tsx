@@ -319,9 +319,16 @@ export default function ListingsGrid({
             ) : (
               <Link key={l.slug} href={`/listings/${l.slug}`}
                 className="bg-white/5 rounded-2xl overflow-hidden border border-white/10 hover:border-[#e85d2f]/50 transition group block">
-                <div className="relative h-44 w-full">
+                {/* Image — shows second image on hover */}
+                <div className="relative h-44 w-full overflow-hidden">
+                  {/* Primary image */}
                   <Image src={l.images[0]} alt={l.name} fill
-                    className="object-cover group-hover:scale-105 transition duration-500" unoptimized />
+                    className="object-cover transition-opacity duration-300 group-hover:opacity-0" unoptimized />
+                  {/* Secondary image — visible on hover */}
+                  {l.images[1] && (
+                    <Image src={l.images[1]} alt={l.name} fill
+                      className="object-cover transition-opacity duration-300 opacity-0 group-hover:opacity-100" unoptimized />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-2xl font-black text-white">{l.price}</div>
                   {l.isPremium && (
@@ -329,19 +336,35 @@ export default function ListingsGrid({
                       🔒 Premium
                     </div>
                   )}
-                  {/* Enrichment badges */}
+                  {/* Enrichment badges — each with hover tooltip */}
                   <div className="absolute bottom-3 right-3 flex gap-1">
                     {l.subsidyAvailable && (
-                      <span title="Government subsidy available" className="bg-green-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">🏛️</span>
+                      <span className="relative peer/sub bg-green-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">🏛️
+                        <span className="absolute bottom-full right-0 mb-1 w-48 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/sub:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
+                          Govt subsidy available — up to ¥{(l.subsidyAmountJPY || 0).toLocaleString() || '?'}. Click listing for details.
+                        </span>
+                      </span>
                     )}
                     {l.condition === 'move_in_ready' && (
-                      <span title="Move-in ready" className="bg-blue-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">✓</span>
+                      <span className="relative peer/con bg-blue-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">✓
+                        <span className="absolute bottom-full right-0 mb-1 w-40 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/con:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
+                          Move-in ready — habitable without major renovation work.
+                        </span>
+                      </span>
                     )}
                     {(l.disasterScore ?? 0) >= 4 && (
-                      <span title={`Low natural disaster risk (${l.disasterScore}/5) — flood & earthquake only, not crime`} className="bg-amber-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">🛡️</span>
+                      <span className="relative peer/dis bg-amber-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">🛡️
+                        <span className="absolute bottom-full right-0 mb-1 w-48 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/dis:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
+                          Low natural disaster risk ({l.disasterScore}/5). Flood + earthquake data only — not crime.
+                        </span>
+                      </span>
                     )}
                     {l.internetType === 'fiber' && (
-                      <span title="Fiber internet" className="bg-purple-600/90 text-white text-xs px-1.5 py-0.5 rounded-full">📡</span>
+                      <span className="relative peer/net bg-purple-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">📡
+                        <span className="absolute bottom-full right-0 mb-1 w-40 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/net:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
+                          Fiber broadband available — ideal for remote work.
+                        </span>
+                      </span>
                     )}
                   </div>
                 </div>
