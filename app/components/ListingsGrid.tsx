@@ -48,6 +48,7 @@ export default function ListingsGrid({
   const [safeOnly, setSafeOnly] = useState(false);
   const [fiberOnly, setFiberOnly] = useState(false);
   const [stationMax, setStationMax] = useState(0);
+  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "newest" | "beds_desc">("price_asc");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const loaderRef = useRef<HTMLDivElement>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -69,15 +70,26 @@ export default function ListingsGrid({
     });
   }, [listings, minPrice, maxPrice, minBeds, region, tier, condition, subsidyOnly, safeOnly, fiberOnly, stationMax]);
 
-  // Reset visible count when filters change
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    switch (sortBy) {
+      case "price_asc":  return arr.sort((a, b) => a.priceNum - b.priceNum);
+      case "price_desc": return arr.sort((a, b) => b.priceNum - a.priceNum);
+      case "beds_desc":  return arr.sort((a, b) => (b.beds || 0) - (a.beds || 0));
+      case "newest":     return arr; // already ordered by scraped_at desc from DB
+      default:           return arr;
+    }
+  }, [filtered, sortBy]);
+
+  // Reset visible count when filters or sort change
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [minPrice, maxPrice, minBeds, region, tier, condition, subsidyOnly, safeOnly, fiberOnly, stationMax]);
+  }, [minPrice, maxPrice, minBeds, region, tier, condition, subsidyOnly, safeOnly, fiberOnly, stationMax, sortBy]);
 
   // Infinite scroll observer
   const loadMore = useCallback(() => {
-    setVisibleCount(prev => Math.min(prev + PAGE_SIZE, filtered.length));
-  }, [filtered.length]);
+    setVisibleCount(prev => Math.min(prev + PAGE_SIZE, sorted.length));
+  }, [sorted.length]);
 
   useEffect(() => {
     const el = loaderRef.current;
@@ -90,8 +102,8 @@ export default function ListingsGrid({
     return () => observer.disconnect();
   }, [loadMore]);
 
-  const visible = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+  const visible = sorted.slice(0, visibleCount);
+  const hasMore = visibleCount < sorted.length;
 
   const activeFilters =
     (minPrice > 0 ? 1 : 0) +
@@ -248,12 +260,22 @@ export default function ListingsGrid({
         )}
       </div>
 
-      {/* Results count */}
-      <div className="flex items-center justify-between mb-5">
+      {/* Results count + sort */}
+      <div className="flex items-center justify-between mb-5 gap-3">
         <span className="text-gray-500 text-sm">
-          Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} listing{filtered.length !== 1 ? "s" : ""}
+          Showing {Math.min(visibleCount, sorted.length)} of {sorted.length} listing{sorted.length !== 1 ? "s" : ""}
           {activeFilters > 0 && " (filtered)"}
         </span>
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value as typeof sortBy)}
+          className="bg-white/5 border border-white/10 text-gray-300 text-xs px-3 py-1.5 rounded-full focus:outline-none focus:border-[#e85d2f] transition cursor-pointer"
+        >
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="newest">Newest First</option>
+          <option value="beds_desc">Most Bedrooms</option>
+        </select>
       </div>
 
       {/* Grid */}
@@ -354,9 +376,9 @@ export default function ListingsGrid({
         )}
 
         {/* End of results */}
-        {!hasMore && filtered.length > 0 && (
+        {!hasMore && sorted.length > 0 && (
           <p className="text-center text-gray-700 text-sm py-8">
-            All {filtered.length} listings shown
+            All {sorted.length} listings shown
           </p>
         )}
         </>
