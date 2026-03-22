@@ -259,9 +259,9 @@ export default function ListingsGrid({
                   🏛️ Govt subsidy available
                 </button>
                 <button onClick={() => setSafeOnly(!safeOnly)}
-                  title="Low natural disaster risk (flood + earthquake) — not related to crime"
+                  title="High disaster safety score (4+/5 stars) — low flood + earthquake risk. More stars = safer location."
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${safeOnly ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
-                  🛡️ Low disaster risk
+                  🛡️ High safety score
                 </button>
                 <button onClick={() => setFiberOnly(!fiberOnly)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${fiberOnly ? "bg-[#e85d2f] text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}>
@@ -367,7 +367,7 @@ export default function ListingsGrid({
                     )}
                     {(l.disasterScore ?? 0) >= 4 && (
                       <BadgeTip label="🛡️" color="bg-amber-600/90"
-                        tip={`Low disaster risk (${l.disasterScore}/5) — flood & earthquake data only, not crime.`} />
+                        tip={`High safety score (${l.disasterScore}/5 stars) — low flood & earthquake risk. More stars = safer.`} />
                     )}
                     {l.internetType === 'fiber' && (
                       <BadgeTip label="📡" color="bg-purple-600/90"

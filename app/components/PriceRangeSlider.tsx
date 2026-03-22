@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 
 export default function PriceRangeSlider({
   min,
@@ -20,11 +20,9 @@ export default function PriceRangeSlider({
   const minPercent = ((minVal - min) / (max - min)) * 100;
   const maxPercent = ((maxVal - min) / (max - min)) * 100;
 
-  // Which thumb is closer to a given value? That one gets higher z-index
-  const minIsOnTop = useCallback((val: number) => {
-    const midpoint = (minVal + maxVal) / 2;
-    return val < midpoint;
-  }, [minVal, maxVal]);
+  // Min thumb gets higher z-index when it's in the left half of the range
+  // (so the user can grab it from the left without the max thumb intercepting)
+  const minThumbOnTop = minVal <= (max - min) / 2 + min;
 
   return (
     <div>
@@ -43,7 +41,7 @@ export default function PriceRangeSlider({
           style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
         />
 
-        {/* MIN thumb input — sits on top when minVal is near the left */}
+        {/* MIN thumb input */}
         <input
           type="range"
           min={min}
@@ -55,7 +53,7 @@ export default function PriceRangeSlider({
             onChange(v, maxVal);
           }}
           className="absolute w-full h-full opacity-0 cursor-pointer"
-          style={{ zIndex: minVal > max * 0.9 ? 5 : 3 }}
+          style={{ zIndex: minThumbOnTop ? 5 : 3 }}
         />
 
         {/* MAX thumb input */}
@@ -70,7 +68,7 @@ export default function PriceRangeSlider({
             onChange(minVal, v);
           }}
           className="absolute w-full h-full opacity-0 cursor-pointer"
-          style={{ zIndex: minVal > max * 0.9 ? 4 : 4 }}
+          style={{ zIndex: minThumbOnTop ? 4 : 5 }}
         />
 
         {/* Visual thumb — MIN */}

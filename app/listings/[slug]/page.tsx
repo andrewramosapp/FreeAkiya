@@ -188,11 +188,12 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               )}
               {listing.disasterScore && (
                 <div className="group relative bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-help transition">
-                  <div className="text-gray-500 text-xs mb-1">Natural Disaster Risk</div>
+                  <div className="text-gray-500 text-xs mb-1">Disaster Safety Score</div>
                   <div className="font-semibold text-sm">{"⭐".repeat(listing.disasterScore)}{"☆".repeat(5 - listing.disasterScore)}</div>
-                  <div className="text-gray-500 text-xs">Flood: {listing.floodRisk || "?"} · EQ: {listing.earthquakeRisk || "?"}</div>
+                  <div className="text-gray-500 text-xs">{listing.disasterScore}/5 — {listing.disasterScore >= 4 ? "Low risk" : listing.disasterScore >= 3 ? "Moderate risk" : "Higher risk"}</div>
                   <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-20 shadow-xl">
-                    <strong className="text-white">Flood + earthquake risk only.</strong> Not related to crime (Japan is one of the world's safest countries). Based on elevation data and prefectural seismic zones. Always check the official municipal hazard map before purchasing.
+                    <strong className="text-white">⭐⭐⭐⭐⭐ = safest.</strong> More stars = lower natural disaster risk. Covers flood + earthquake risk only — not crime (Japan is one of the world&apos;s safest countries). Based on elevation data and prefectural seismic zones. Always verify with the official municipal hazard map before purchasing.
+                    <br /><br />Flood: {listing.floodRisk || "?"} · EQ: {listing.earthquakeRisk || "?"}
                   </div>
                 </div>
               )}
