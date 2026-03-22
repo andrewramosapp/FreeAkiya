@@ -261,20 +261,20 @@ export default function ListingsGrid({
       </div>
 
       {/* Results count + sort */}
-      <div className="flex items-center justify-between mb-5 gap-3">
-        <span className="text-gray-500 text-sm">
-          Showing {Math.min(visibleCount, sorted.length)} of {sorted.length} listing{sorted.length !== 1 ? "s" : ""}
-          {activeFilters > 0 && " (filtered)"}
+      <div className="flex flex-wrap items-center justify-between mb-5 gap-2">
+        <span className="text-gray-500 text-sm whitespace-nowrap">
+          {sorted.length} listing{sorted.length !== 1 ? "s" : ""}
+          {activeFilters > 0 && ` · ${activeFilters} filter${activeFilters !== 1 ? "s" : ""} active`}
         </span>
         <select
           value={sortBy}
           onChange={e => setSortBy(e.target.value as typeof sortBy)}
           className="bg-white/5 border border-white/10 text-gray-300 text-xs px-3 py-1.5 rounded-full focus:outline-none focus:border-[#e85d2f] transition cursor-pointer"
         >
-          <option value="price_asc">Price: Low to High</option>
-          <option value="price_desc">Price: High to Low</option>
-          <option value="newest">Newest First</option>
-          <option value="beds_desc">Most Bedrooms</option>
+          <option value="price_asc">Price ↑</option>
+          <option value="price_desc">Price ↓</option>
+          <option value="newest">Newest</option>
+          <option value="beds_desc">Most beds</option>
         </select>
       </div>
 

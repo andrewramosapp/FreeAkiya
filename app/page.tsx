@@ -8,6 +8,8 @@ export default async function Home() {
   const allListings = await getListings();
   const featured = allListings.filter(l => !l.isPremium).slice(0, 6);
   const total = allListings.length;
+  const lowestPrice = allListings.reduce((min, l) => l.priceNum > 0 && l.priceNum < min ? l.priceNum : min, 999999);
+  const lowestDisplay = lowestPrice < 999999 ? `$${lowestPrice.toLocaleString()}` : "$7";
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
@@ -46,8 +48,8 @@ export default async function Home() {
       <section className="border-t border-white/10 py-12">
         <div className="max-w-4xl mx-auto px-6 grid grid-cols-3 gap-6 text-center">
           <div><div className="text-3xl font-black text-[#e85d2f]">9M+</div><div className="text-gray-400 text-sm mt-1">Vacant homes in Japan</div></div>
-          <div><div className="text-3xl font-black text-[#e85d2f]">$7</div><div className="text-gray-400 text-sm mt-1">Lowest listing this week</div></div>
-          <div><div className="text-3xl font-black text-[#e85d2f]">{total}</div><div className="text-gray-400 text-sm mt-1">Active listings under $10k</div></div>
+          <div><div className="text-3xl font-black text-[#e85d2f]">{lowestDisplay}</div><div className="text-gray-400 text-sm mt-1">Cheapest listing right now</div></div>
+          <div><div className="text-3xl font-black text-[#e85d2f]">{total}</div><div className="text-gray-400 text-sm mt-1">Active listings</div></div>
         </div>
       </section>
 
