@@ -163,49 +163,65 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               <p className="text-gray-300 leading-relaxed">{listing.notes}</p>
             </div>
 
-            {/* Enriched data cards */}
+            {/* Enriched data cards — with hover tooltips */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
               {listing.condition && listing.condition !== "unknown" && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="group relative bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-help transition">
                   <div className="text-gray-500 text-xs mb-1">Condition</div>
                   <div className={`font-semibold text-sm ${listing.condition === "move_in_ready" ? "text-green-400" : listing.condition === "tear_down" ? "text-red-400" : "text-amber-400"}`}>
                     {listing.condition === "move_in_ready" ? "✓ Move-in ready" : listing.condition === "tear_down" ? "⚠ Tear down" : "🔧 Needs renovation"}
                   </div>
+                  <div className="absolute bottom-full left-0 mb-2 w-56 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-20 shadow-xl">
+                    {listing.condition === "move_in_ready" ? "This property is habitable without major work. May still benefit from cosmetic updates." : listing.condition === "tear_down" ? "Structural issues make this a land-value purchase. Plan for full demolition and rebuild." : "This property needs significant renovation before it's livable. Factor in ¥2M–10M+ renovation costs."}
+                  </div>
                 </div>
               )}
               {listing.stationName && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="group relative bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-help transition">
                   <div className="text-gray-500 text-xs mb-1">Nearest Station</div>
                   <div className="font-semibold text-sm">{listing.stationName}</div>
                   {listing.stationWalkMin && <div className="text-gray-500 text-xs">{listing.stationWalkMin} min walk</div>}
+                  <div className="absolute bottom-full left-0 mb-2 w-56 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-20 shadow-xl">
+                    Walking distance to nearest train station. In rural Japan, a car is often still necessary even with train access. {(listing.stationWalkMin || 0) > 30 ? "This is a long walk — budget for a car or bicycle." : "Reasonable walking distance."}
+                  </div>
                 </div>
               )}
               {listing.disasterScore && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="group relative bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-help transition">
                   <div className="text-gray-500 text-xs mb-1">Natural Disaster Risk</div>
-                  <div className="font-semibold text-sm">
-                    {"⭐".repeat(listing.disasterScore)}{"☆".repeat(5 - listing.disasterScore)}
+                  <div className="font-semibold text-sm">{"⭐".repeat(listing.disasterScore)}{"☆".repeat(5 - listing.disasterScore)}</div>
+                  <div className="text-gray-500 text-xs">Flood: {listing.floodRisk || "?"} · EQ: {listing.earthquakeRisk || "?"}</div>
+                  <div className="absolute bottom-full left-0 mb-2 w-64 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-20 shadow-xl">
+                    <strong className="text-white">Flood + earthquake risk only.</strong> Not related to crime (Japan is one of the world's safest countries). Based on elevation data and prefectural seismic zones. Always check the official municipal hazard map before purchasing.
                   </div>
-                  <div className="text-gray-500 text-xs">Flood: {listing.floodRisk || "?"} · Earthquake: {listing.earthquakeRisk || "?"}</div>
                 </div>
               )}
               {listing.internetType && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="group relative bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-help transition">
                   <div className="text-gray-500 text-xs mb-1">Internet</div>
                   <div className="font-semibold text-sm capitalize">{listing.internetType}</div>
-                  {listing.internetSpeedMbps && <div className="text-gray-500 text-xs">~{listing.internetSpeedMbps} Mbps</div>}
+                  {listing.internetSpeedMbps && <div className="text-gray-500 text-xs">~{listing.internetSpeedMbps} Mbps typical</div>}
+                  <div className="absolute bottom-full left-0 mb-2 w-56 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-20 shadow-xl">
+                    {listing.internetType === "fiber" ? "Fiber broadband is available in this area — ideal for remote work. Japan's fiber networks are fast and reliable." : "DSL or limited coverage. May be sufficient for basic use but not ideal for video calls or heavy remote work."}
+                  </div>
                 </div>
               )}
               {listing.convenienceStoreKm && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="group relative bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-help transition">
                   <div className="text-gray-500 text-xs mb-1">Nearest Conbini</div>
                   <div className="font-semibold text-sm">{listing.convenienceStoreKm} km</div>
+                  <div className="absolute bottom-full left-0 mb-2 w-56 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-20 shadow-xl">
+                    Distance to the nearest convenience store (コンビニ). In Japan, conbinis are essential — ATM, food, medicine, bill payment all in one. {(listing.convenienceStoreKm || 0) > 5 ? "This is remote — a car is a must." : "Accessible distance."}
+                  </div>
                 </div>
               )}
               {listing.hospitalKm && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="group relative bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-help transition">
                   <div className="text-gray-500 text-xs mb-1">Nearest Hospital</div>
                   <div className="font-semibold text-sm">{listing.hospitalKm} km</div>
+                  <div className="absolute bottom-full left-0 mb-2 w-56 bg-gray-900 border border-white/10 rounded-xl p-3 text-xs text-gray-300 leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-20 shadow-xl">
+                    Distance to nearest hospital. Important for families, elderly residents, or anyone with health considerations. Rural Japan medical access can vary significantly.
+                  </div>
                 </div>
               )}
             </div>

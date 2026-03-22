@@ -5,7 +5,9 @@ import Image from "next/image";
 
 export default function ImageGallery({ images, name }: { images: string[]; name: string }) {
   const [active, setActive] = useState(0);
+  const [hovered, setHovered] = useState(false);
   const [lightbox, setLightbox] = useState(false);
+  const heroImg = hovered && images.length > 1 ? images[1] : (images[active] ?? images[0]);
 
   const prev = useCallback(() => setActive((i) => (i - 1 + images.length) % images.length), [images.length]);
   const next = useCallback(() => setActive((i) => (i + 1) % images.length), [images.length]);
@@ -27,14 +29,21 @@ export default function ImageGallery({ images, name }: { images: string[]; name:
       <div
         className="relative w-full h-72 rounded-2xl overflow-hidden mb-3 cursor-pointer group"
         onClick={() => setLightbox(true)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
         <Image
-          src={images[active] ?? images[0]}
+          src={heroImg}
           alt={name}
           fill
-          className="object-cover group-hover:scale-[1.02] transition duration-500"
+          className="object-cover transition-all duration-500 group-hover:scale-[1.02]"
           unoptimized
         />
+        {images.length > 1 && hovered && (
+          <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+            Preview →
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition" />
         <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">
           🔍 View all {images.length} photos
