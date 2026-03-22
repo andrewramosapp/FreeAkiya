@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const listing = await getListing(slug);
   if (!listing) return {};
   const title = `${listing.name} — ${listing.price} in ${listing.prefecture}, Japan`;
-  const desc = `${listing.beds} bed · ${listing.size} · Built ${listing.built}. ${listing.notes?.slice(0, 120)}`;
+  const desc = `${listing.beds} bed · ${listing.size} · Built ${listing.built}. ${listing.notes?.slice(0, 200)}`;
   const img = listing.images?.[0];
   return {
     title,
