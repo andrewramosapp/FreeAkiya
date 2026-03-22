@@ -1,6 +1,27 @@
 import Nav from "@/app/components/Nav";
 import { getListing, getListings } from "@/lib/db";
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const listing = await getListing(slug);
+  if (!listing) return {};
+  const title = `${listing.name} — ${listing.price} in ${listing.prefecture}, Japan`;
+  const desc = `${listing.beds} bed · ${listing.size} · Built ${listing.built}. ${listing.notes?.slice(0, 120)}`;
+  const img = listing.images?.[0];
+  return {
+    title,
+    description: desc,
+    openGraph: {
+      title,
+      description: desc,
+      images: img ? [{ url: img, width: 800, height: 600 }] : [],
+      url: `https://cheapakiya.com/listings/${slug}`,
+      type: "article",
+    },
+    twitter: { card: "summary_large_image", title, description: desc, images: img ? [img] : [] },
+  };
+}
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";

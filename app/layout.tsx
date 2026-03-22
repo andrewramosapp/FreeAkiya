@@ -5,20 +5,56 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CheapAkiya — Affordable Vacant Homes in Japan",
+  title: {
+    default: "CheapAkiya — Buy a House in Japan for Under $10,000",
+    template: "%s | CheapAkiya",
+  },
   description:
-    "Japan has 9 million vacant homes called akiya. Many sell for under $10,000. We find the best ones and deliver them to your inbox in English.",
+    "Japan has 9 million vacant homes called akiya. Many sell for under $10,000. CheapAkiya finds and translates the best Japanese vacant home listings — with station distances, disaster risk scores, government subsidies, and fiber internet data — delivered in English.",
+  keywords: [
+    "akiya", "akiya for sale", "buy house japan", "cheap house japan",
+    "vacant homes japan", "japan real estate", "akiya bank", "japanese property",
+    "move to japan", "rural japan", "japan migration subsidy", "akiya under 10000",
+  ],
+  authors: [{ name: "CheapAkiya" }],
+  creator: "CheapAkiya",
+  metadataBase: new URL("https://cheapakiya.com"),
+  alternates: { canonical: "https://cheapakiya.com" },
   openGraph: {
-    title: "CheapAkiya — Affordable Vacant Homes in Japan",
-    description: "Own a home in Japan for under $10,000. Weekly listings in English.",
+    title: "CheapAkiya — Buy a House in Japan for Under $10,000",
+    description: "Japan's 9 million vacant homes, curated in English. Prices from $7. Station distances, disaster risk, government subsidies — all on one platform.",
     url: "https://cheapakiya.com",
     siteName: "CheapAkiya",
     type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "https://cheapakiya.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "CheapAkiya — Buy a House in Japan for Under $10,000",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CheapAkiya — Affordable Vacant Homes in Japan",
-    description: "Own a home in Japan for under $10,000. Weekly listings in English.",
+    title: "CheapAkiya — Buy a House in Japan for Under $10,000",
+    description: "Japan's 9M vacant homes, curated in English. Prices from $7.",
+    site: "@cheapakiya",
+    images: ["https://cheapakiya.com/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "add-your-google-search-console-token-here",
   },
 };
 
