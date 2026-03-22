@@ -6,6 +6,25 @@ import Image from "next/image";
 import type { Listing } from "@/lib/listings";
 
 const PAGE_SIZE = 24;
+
+// Badge with hover tooltip — uses state so tooltip actually works
+function BadgeTip({ label, color, tip }: { label: string; color: string; tip: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      className={`relative ${color} text-white text-xs px-1.5 py-0.5 rounded-full cursor-pointer select-none`}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      {label}
+      {show && (
+        <span className="absolute bottom-full right-0 mb-2 w-48 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2.5 rounded-xl pointer-events-none z-50 shadow-xl leading-relaxed whitespace-normal">
+          {tip}
+        </span>
+      )}
+    </span>
+  );
+}
 // Extended listing type that includes enriched fields from DB
 type EnrichedListing = Listing & {
   id?: string;
@@ -336,35 +355,23 @@ export default function ListingsGrid({
                       🔒 Premium
                     </div>
                   )}
-                  {/* Enrichment badges — each with hover tooltip */}
-                  <div className="absolute bottom-3 right-3 flex gap-1">
+                  {/* Enrichment badges — hover reveals tooltip */}
+                  <div className="absolute bottom-3 right-3 flex gap-1" onClick={e => e.preventDefault()}>
                     {l.subsidyAvailable && (
-                      <span className="relative peer/sub bg-green-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">🏛️
-                        <span className="absolute bottom-full right-0 mb-1 w-48 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/sub:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
-                          Govt subsidy available — up to ¥{(l.subsidyAmountJPY || 0).toLocaleString() || '?'}. Click listing for details.
-                        </span>
-                      </span>
+                      <BadgeTip label="🏛️" color="bg-green-600/90"
+                        tip={`Govt subsidy available${l.subsidyAmountJPY ? ' — up to ¥' + l.subsidyAmountJPY.toLocaleString() : ''}. See listing for details.`} />
                     )}
                     {l.condition === 'move_in_ready' && (
-                      <span className="relative peer/con bg-blue-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">✓
-                        <span className="absolute bottom-full right-0 mb-1 w-40 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/con:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
-                          Move-in ready — habitable without major renovation work.
-                        </span>
-                      </span>
+                      <BadgeTip label="✓" color="bg-blue-600/90"
+                        tip="Move-in ready — habitable without major renovation." />
                     )}
                     {(l.disasterScore ?? 0) >= 4 && (
-                      <span className="relative peer/dis bg-amber-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">🛡️
-                        <span className="absolute bottom-full right-0 mb-1 w-48 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/dis:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
-                          Low natural disaster risk ({l.disasterScore}/5). Flood + earthquake data only — not crime.
-                        </span>
-                      </span>
+                      <BadgeTip label="🛡️" color="bg-amber-600/90"
+                        tip={`Low disaster risk (${l.disasterScore}/5) — flood & earthquake data only, not crime.`} />
                     )}
                     {l.internetType === 'fiber' && (
-                      <span className="relative peer/net bg-purple-600/90 text-white text-xs px-1.5 py-0.5 rounded-full cursor-help">📡
-                        <span className="absolute bottom-full right-0 mb-1 w-40 bg-gray-900 border border-white/10 text-gray-200 text-xs p-2 rounded-xl opacity-0 peer-hover/net:opacity-100 transition pointer-events-none z-30 shadow-xl leading-relaxed">
-                          Fiber broadband available — ideal for remote work.
-                        </span>
-                      </span>
+                      <BadgeTip label="📡" color="bg-purple-600/90"
+                        tip="Fiber broadband available — great for remote work." />
                     )}
                   </div>
                 </div>
