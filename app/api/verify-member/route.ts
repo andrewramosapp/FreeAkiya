@@ -26,8 +26,20 @@ export async function POST(req: NextRequest) {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // Check premium first (Stripe or gifted)
-    const isPremium = isGiftedPremium(cleanEmail) || await checkStripeSubscription(cleanEmail);
+    // Check gifted premium (DB table + env var)
+    const gifted = await isGiftedPremium(cleanEmail);
+    if (gifted) {
+      const token = await signMemberCookie(cleanEmail, "premium");
+      const res = NextResponse.json({ success: true, tier: "premium" });
+      res.cookies.set(COOKIE_NAME, token, {
+        httpOnly: true, secure: true, sameSite: "lax",
+        maxAge: COOKIE_MAX_AGE, path: "/",
+      });
+      return res;
+    }
+
+    // Check Stripe premium
+    const isPremium = await checkStripeSubscription(cleanEmail);
     if (isPremium) {
       const token = await signMemberCookie(cleanEmail, "premium");
       const res = NextResponse.json({ success: true, tier: "premium" });

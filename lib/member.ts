@@ -5,6 +5,9 @@ import Stripe from "stripe";
 export const COOKIE_NAME = "ca_member";
 export const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
+const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+
 function getSecret() {
   const s = process.env.MEMBER_COOKIE_SECRET ?? "fallback-dev-secret-32chars!!";
   return new TextEncoder().encode(s);
@@ -35,15 +38,26 @@ export async function getMember(): Promise<{ email: string; tier: MemberTier } |
   }
 }
 
-// Backwards compat
 export async function getMemberEmail(): Promise<string | null> {
   const m = await getMember();
   return m?.email ?? null;
 }
 
-export function isGiftedPremium(email: string): boolean {
-  const gifted = (process.env.GIFTED_PREMIUM_EMAILS ?? "").split(",").map(e => e.trim().toLowerCase()).filter(Boolean);
-  return gifted.includes(email.toLowerCase().trim());
+export async function isGiftedPremium(email: string): Promise<boolean> {
+  // Check env var list first (fast, no DB call)
+  const envList = (process.env.GIFTED_PREMIUM_EMAILS ?? "").split(",").map(e => e.trim().toLowerCase()).filter(Boolean);
+  if (envList.includes(email.toLowerCase().trim())) return true;
+  // Check gifted_members table in Supabase
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/gifted_members?email=eq.${encodeURIComponent(email.toLowerCase())}&is_active=eq.true&select=id&limit=1`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const data = await res.json();
+    return Array.isArray(data) && data.length > 0;
+  } catch {
+    return false;
+  }
 }
 
 export async function checkStripeSubscription(email: string): Promise<boolean> {
