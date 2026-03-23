@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkStripeSubscription, signMemberCookie, COOKIE_NAME, COOKIE_MAX_AGE } from "@/lib/member";
+import { checkStripeSubscription, isGiftedPremium, signMemberCookie, COOKIE_NAME, COOKIE_MAX_AGE } from "@/lib/member";
 
 const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY ?? "";
 const BEEHIIV_PUB_ID = "pub_fd0b577c-8137-4c4d-a6ee-37b6c623a015";
@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // Check premium first (Stripe)
-    const isPremium = await checkStripeSubscription(cleanEmail);
+    // Check premium first (Stripe or gifted)
+    const isPremium = isGiftedPremium(cleanEmail) || await checkStripeSubscription(cleanEmail);
     if (isPremium) {
       const token = await signMemberCookie(cleanEmail, "premium");
       const res = NextResponse.json({ success: true, tier: "premium" });

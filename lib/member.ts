@@ -41,6 +41,11 @@ export async function getMemberEmail(): Promise<string | null> {
   return m?.email ?? null;
 }
 
+export function isGiftedPremium(email: string): boolean {
+  const gifted = (process.env.GIFTED_PREMIUM_EMAILS ?? "").split(",").map(e => e.trim().toLowerCase()).filter(Boolean);
+  return gifted.includes(email.toLowerCase().trim());
+}
+
 export async function checkStripeSubscription(email: string): Promise<boolean> {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
