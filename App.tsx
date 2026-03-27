@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,10 +17,12 @@ type Member = { email: string; tier: 'free' | 'premium' } | null;
 type AuthContextValue = {
   member: Member;
   setMember: (member: Member) => void;
+  authReady: boolean;
 };
 
-const AuthContext = createContext<AuthContextValue>({ member: null, setMember: () => {} });
+const AuthContext = createContext<AuthContextValue>({ member: null, setMember: () => {}, authReady: false });
 export const useAuth = () => useContext(AuthContext);
+const MEMBER_STORAGE_KEY = 'cheapakiya.member';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -62,8 +65,36 @@ function MainTabs() {
 
 export default function App() {
   const [screen, setScreen] = useState<'welcome' | 'signup' | 'signin' | 'premium' | 'app'>('welcome');
-  const [member, setMember] = useState<Member>(null);
-  const authValue = useMemo(() => ({ member, setMember }), [member]);
+  const [member, setMemberState] = useState<Member>(null);
+  const [authReady, setAuthReady] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(MEMBER_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed?.email && parsed?.tier) {
+            setMemberState(parsed);
+            setScreen('app');
+          }
+        }
+      } catch {}
+      setAuthReady(true);
+    })();
+  }, []);
+
+  async function setMember(member: Member) {
+    setMemberState(member);
+    try {
+      if (member) await AsyncStorage.setItem(MEMBER_STORAGE_KEY, JSON.stringify(member));
+      else await AsyncStorage.removeItem(MEMBER_STORAGE_KEY);
+    } catch {}
+  }
+
+  const authValue = useMemo(() => ({ member, setMember, authReady }), [member, authReady]);
+
+  if (!authReady) return null;
 
   return (
     <AuthContext.Provider value={authValue}>
@@ -80,8 +111,8 @@ export default function App() {
           <AuthEmailScreen
             mode="signup"
             onBack={() => setScreen('welcome')}
-            onAuthed={(nextMember) => {
-              setMember(nextMember);
+            onAuthed={async (nextMember) => {
+              await setMember(nextMember);
               setScreen('app');
             }}
           />
@@ -90,8 +121,8 @@ export default function App() {
           <AuthEmailScreen
             mode="signin"
             onBack={() => setScreen('welcome')}
-            onAuthed={(nextMember) => {
-              setMember(nextMember);
+            onAuthed={async (nextMember) => {
+              await setMember(nextMember);
               setScreen('app');
             }}
           />
@@ -100,8 +131,8 @@ export default function App() {
           <AuthEmailScreen
             mode="premium"
             onBack={() => setScreen('welcome')}
-            onAuthed={(nextMember) => {
-              setMember(nextMember);
+            onAuthed={async (nextMember) => {
+              await setMember(nextMember);
               setScreen('app');
             }}
           />
