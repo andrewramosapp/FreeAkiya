@@ -76,7 +76,7 @@ export default function MapScreen() {
         renderCluster={(cluster: any) => {
           const pointCount = cluster.pointCount;
           return (
-            <Marker coordinate={cluster.coordinate}>
+            <Marker key={`cluster-${cluster.clusterId ?? cluster.id ?? `${cluster.coordinate.latitude}-${cluster.coordinate.longitude}`}`} coordinate={cluster.coordinate}>
               <View style={[
                 styles.clusterBubble,
                 pointCount >= 10 && styles.clusterBubbleLarge,
