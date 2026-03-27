@@ -28,7 +28,7 @@ function clamp(n: number, min: number, max: number) {
 
 function getCellSize(region: Region) {
   const zoominess = Math.max(region.latitudeDelta, region.longitudeDelta);
-  return clamp(zoominess / 8, 0.03, 1.8);
+  return clamp(zoominess / 12, 0.0025, 1.5);
 }
 
 function buildClusters(items: Listing[], region: Region) {
@@ -67,15 +67,25 @@ function getClusterRegion(cluster: Cluster, currentRegion: Region): Region {
   const minLng = Math.min(...lngs);
   const maxLng = Math.max(...lngs);
 
-  const latDelta = Math.max((maxLat - minLat) * 1.8, currentRegion.latitudeDelta / 2.4, 0.08);
-  const lngDelta = Math.max((maxLng - minLng) * 1.8, currentRegion.longitudeDelta / 2.4, 0.08);
+  const spanLat = Math.max(maxLat - minLat, 0.0015);
+  const spanLng = Math.max(maxLng - minLng, 0.0015);
+
+  const latDelta = Math.min(currentRegion.latitudeDelta * 0.38, Math.max(spanLat * 2.4, 0.01));
+  const lngDelta = Math.min(currentRegion.longitudeDelta * 0.38, Math.max(spanLng * 2.4, 0.01));
 
   return {
     latitude: cluster.latitude,
     longitude: cluster.longitude,
-    latitudeDelta: clamp(latDelta, 0.04, 22),
-    longitudeDelta: clamp(lngDelta, 0.04, 22),
+    latitudeDelta: clamp(latDelta, 0.006, 22),
+    longitudeDelta: clamp(lngDelta, 0.006, 22),
   };
+}
+
+function clusterColor(count: number) {
+  if (count >= 50) return '#b91c1c';
+  if (count >= 20) return '#ea580c';
+  if (count >= 8) return '#f59e0b';
+  return '#e85d2f';
 }
 
 export default function MapScreen() {
@@ -114,6 +124,12 @@ export default function MapScreen() {
   const zoomOutToJapan = useCallback(() => {
     mapRef.current?.animateToRegion(INITIAL_REGION, 350);
   }, []);
+
+  const handleClusterPress = useCallback((cluster: Cluster) => {
+    const nextRegion = getClusterRegion(cluster, region);
+    mapRef.current?.animateToRegion(nextRegion, 260);
+    setRegion(nextRegion);
+  }, [region]);
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator color="#e85d2f" /><Text style={styles.sub}>Loading map…</Text></View>;
@@ -164,9 +180,14 @@ export default function MapScreen() {
             <Marker
               key={cluster.key}
               coordinate={{ latitude: cluster.latitude, longitude: cluster.longitude }}
-              onPress={() => mapRef.current?.animateToRegion(getClusterRegion(cluster, region), 280)}
+              onPress={() => handleClusterPress(cluster)}
             >
-              <View style={[styles.clusterBubble, cluster.count >= 10 && styles.clusterBubbleLarge]}>
+              <View style={[
+                styles.clusterBubble,
+                { backgroundColor: clusterColor(cluster.count) },
+                cluster.count >= 10 && styles.clusterBubbleLarge,
+                cluster.count >= 40 && styles.clusterBubbleXL,
+              ]}>
                 <Text style={styles.clusterCount}>{cluster.count}</Text>
               </View>
             </Marker>
@@ -207,7 +228,6 @@ const styles = StyleSheet.create({
     minWidth: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#e85d2f',
     borderWidth: 3,
     borderColor: 'rgba(255,255,255,0.92)',
     justifyContent: 'center',
@@ -222,6 +242,11 @@ const styles = StyleSheet.create({
     minWidth: 48,
     height: 48,
     borderRadius: 24,
+  },
+  clusterBubbleXL: {
+    minWidth: 56,
+    height: 56,
+    borderRadius: 28,
   },
   clusterCount: { color: '#fff', fontSize: 14, fontWeight: '900' },
   callout: { width: 220, backgroundColor: '#111827', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },

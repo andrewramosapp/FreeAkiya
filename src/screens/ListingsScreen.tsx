@@ -40,7 +40,7 @@ export default function ListingsScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [region, setRegion] = useState('All');
-  const [photosOnly, setPhotosOnly] = useState(false);
+  const [photosOnly, setPhotosOnly] = useState(true);
   const [premiumOnly, setPremiumOnly] = useState(false);
   const [condition, setCondition] = useState('all');
   const [sort, setSort] = useState<'price_asc' | 'price_desc' | 'newest'>('newest');
@@ -189,17 +189,17 @@ export default function ListingsScreen() {
       </View>
 
       {filtersOpen && (
-        <ScrollView style={s.filtersPanel} contentContainerStyle={{ paddingBottom: 12 }}>
+        <View style={s.filtersPanel}>
           <Text style={s.panelLabel}>Price</Text>
           <PriceRangeSlider min={0} max={MAX_PRICE} minVal={minPrice} maxVal={maxPrice} onChange={(lo, hi) => { setMinPrice(lo); setMaxPrice(hi); }} />
 
           <Text style={s.panelLabel}>Region</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.controlsRowTight}>
+          <View style={s.flexWrapRow}>
             {REGIONS.map(r => {
               const active = region === r;
               return <TouchableOpacity key={r} onPress={() => setRegion(r)} style={[s.filterPill, active && s.filterPillActive]}><Text style={[s.filterPillText, active && s.filterPillTextActive]}>{r}</Text></TouchableOpacity>;
             })}
-          </ScrollView>
+          </View>
 
           <Text style={s.panelLabel}>Condition</Text>
           <View style={s.flexWrapRow}>
@@ -216,14 +216,14 @@ export default function ListingsScreen() {
           </View>
 
           <View style={s.actionsRow}>
-            <TouchableOpacity style={s.secondaryBtn} onPress={() => { setRegion('All'); setPhotosOnly(false); setPremiumOnly(false); setMinPrice(0); setMaxPrice(MAX_PRICE); setCondition('all'); }}>
+            <TouchableOpacity style={s.secondaryBtn} onPress={() => { setRegion('All'); setPhotosOnly(true); setPremiumOnly(false); setMinPrice(0); setMaxPrice(MAX_PRICE); setCondition('all'); }}>
               <Text style={s.secondaryBtnText}>Reset</Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.primaryBtn} onPress={() => setFiltersOpen(false)}>
               <Text style={s.primaryBtnText}>Apply</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </View>
       )}
 
       {loading ? (
@@ -238,7 +238,7 @@ export default function ListingsScreen() {
         <View style={s.stateWrap}>
           <Text style={s.stateTitle}>No listings showing</Text>
           <Text style={s.stateText}>Your current filters returned zero results.</Text>
-          <TouchableOpacity style={s.retryBtn} onPress={() => { setRegion('All'); setPhotosOnly(false); setPremiumOnly(false); setMinPrice(0); setMaxPrice(MAX_PRICE); setCondition('all'); }}><Text style={s.retryBtnText}>Clear filters</Text></TouchableOpacity>
+          <TouchableOpacity style={s.retryBtn} onPress={() => { setRegion('All'); setPhotosOnly(true); setPremiumOnly(false); setMinPrice(0); setMaxPrice(MAX_PRICE); setCondition('all'); }}><Text style={s.retryBtnText}>Clear filters</Text></TouchableOpacity>
         </View>
       ) : (
         <FlatList
@@ -272,9 +272,8 @@ const s = StyleSheet.create({
   subhead: { color: '#6b7280', fontSize: 11, marginTop: 3 },
   filterToggle: { alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 18, paddingHorizontal: 14, paddingVertical: 9 },
   filterToggleText: { color: '#fff', fontSize: 12, fontWeight: '700' },
-  filtersPanel: { maxHeight: 360, marginHorizontal: 12, marginBottom: 8, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', padding: 12 },
+  filtersPanel: { marginHorizontal: 12, marginBottom: 8, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', padding: 12 },
   panelLabel: { color: '#9ca3af', fontSize: 12, fontWeight: '700', marginTop: 8, marginBottom: 6, textTransform: 'uppercase' },
-  controlsRowTight: { gap: 8, paddingVertical: 4 },
   flexWrapRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   sortPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.06)' },
   sortPillActive: { backgroundColor: '#e85d2f' },
