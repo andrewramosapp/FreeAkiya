@@ -5,10 +5,12 @@ export default function WelcomeScreen({
   onBrowse,
   onSignUp,
   onSignIn,
+  onPremium,
 }: {
   onBrowse: () => void;
   onSignUp: () => void;
   onSignIn: () => void;
+  onPremium: () => void;
 }) {
   return (
     <SafeAreaView style={s.wrap}>
@@ -25,6 +27,10 @@ export default function WelcomeScreen({
 
         <TouchableOpacity style={s.secondaryBtn} onPress={onSignIn}>
           <Text style={s.secondaryBtnText}>Sign in with email</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={s.premiumBtn} onPress={onPremium}>
+          <Text style={s.premiumBtnText}>Get premium — $12/mo</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={s.ghostBtn} onPress={onBrowse}>
@@ -49,6 +55,8 @@ const s = StyleSheet.create({
   primaryBtnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
   secondaryBtn: { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 14, paddingVertical: 15, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', marginBottom: 12 },
   secondaryBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  premiumBtn: { backgroundColor: '#111827', borderRadius: 14, paddingVertical: 15, alignItems: 'center', borderWidth: 1, borderColor: '#e85d2f', marginBottom: 12 },
+  premiumBtnText: { color: '#fff', fontWeight: '800', fontSize: 15 },
   ghostBtn: { alignItems: 'center', paddingVertical: 12 },
   ghostBtnText: { color: '#9ca3af', fontWeight: '700', fontSize: 14 },
   googleStub: { marginTop: 20, alignItems: 'center' },

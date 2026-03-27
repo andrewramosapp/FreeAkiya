@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { subscribeEmail, verifyMember } from '../lib/api';
+import { SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
+import { createPremiumCheckout, subscribeEmail, verifyMember } from '../lib/api';
 
 export default function AuthEmailScreen({
   mode,
   onBack,
   onAuthed,
 }: {
-  mode: 'signup' | 'signin';
+  mode: 'signup' | 'signin' | 'premium';
   onBack: () => void;
   onAuthed: (member: { email: string; tier: 'free' | 'premium' }) => void;
 }) {
@@ -33,6 +33,16 @@ export default function AuthEmailScreen({
         setMessage('Subscribed. Verifying membership…');
       }
 
+      if (mode === 'premium') {
+        const checkout = await createPremiumCheckout(clean);
+        if (checkout?.url) {
+          await Linking.openURL(checkout.url);
+          setMessage('Premium checkout opened. Come back after payment and sign in with the same email.');
+          return;
+        }
+        throw new Error('Could not open premium checkout');
+      }
+
       const result = await verifyMember(clean);
       if (!result?.tier) throw new Error('Could not verify membership');
       onAuthed({ email: clean, tier: result.tier });
@@ -47,11 +57,15 @@ export default function AuthEmailScreen({
     <SafeAreaView style={s.wrap}>
       <View style={s.inner}>
         <TouchableOpacity onPress={onBack}><Text style={s.back}>← Back</Text></TouchableOpacity>
-        <Text style={s.title}>{mode === 'signup' ? 'Join free with email' : 'Sign in with email'}</Text>
+        <Text style={s.title}>
+          {mode === 'signup' ? 'Join free with email' : mode === 'premium' ? 'Start premium' : 'Sign in with email'}
+        </Text>
         <Text style={s.subtitle}>
           {mode === 'signup'
             ? 'Use your email to join CheapAkiya. We’ll add you to the free member list and verify you in-app.'
-            : 'Enter the email you used with CheapAkiya and we’ll verify your member access.'}
+            : mode === 'premium'
+              ? 'Enter your email to start premium checkout. For now this opens the existing payment flow; App Store billing is the next implementation step.'
+              : 'Enter the email you used with CheapAkiya and we’ll verify your member access.'}
         </Text>
 
         <TextInput
@@ -65,7 +79,7 @@ export default function AuthEmailScreen({
         />
 
         <TouchableOpacity style={s.primaryBtn} onPress={onSubmit} disabled={loading}>
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryBtnText}>{mode === 'signup' ? 'Join free' : 'Sign in'}</Text>}
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryBtnText}>{mode === 'signup' ? 'Join free' : mode === 'premium' ? 'Continue to premium' : 'Sign in'}</Text>}
         </TouchableOpacity>
 
         {message ? <Text style={s.success}>{message}</Text> : null}

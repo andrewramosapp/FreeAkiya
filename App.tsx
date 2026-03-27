@@ -51,8 +51,7 @@ function MainTabs() {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<'welcome' | 'signup' | 'signin' | 'app'>('welcome');
-  const [member, setMember] = useState<{ email: string; tier: 'free' | 'premium' } | null>(null);
+  const [screen, setScreen] = useState<'welcome' | 'signup' | 'signin' | 'premium' | 'app'>('welcome');
 
   return (
     <NavigationContainer>
@@ -61,26 +60,28 @@ export default function App() {
           onBrowse={() => setScreen('app')}
           onSignUp={() => setScreen('signup')}
           onSignIn={() => setScreen('signin')}
+          onPremium={() => setScreen('premium')}
         />
       )}
       {screen === 'signup' && (
         <AuthEmailScreen
           mode="signup"
           onBack={() => setScreen('welcome')}
-          onAuthed={(nextMember) => {
-            setMember(nextMember);
-            setScreen('app');
-          }}
+          onAuthed={() => setScreen('app')}
         />
       )}
       {screen === 'signin' && (
         <AuthEmailScreen
           mode="signin"
           onBack={() => setScreen('welcome')}
-          onAuthed={(nextMember) => {
-            setMember(nextMember);
-            setScreen('app');
-          }}
+          onAuthed={() => setScreen('app')}
+        />
+      )}
+      {screen === 'premium' && (
+        <AuthEmailScreen
+          mode="premium"
+          onBack={() => setScreen('welcome')}
+          onAuthed={() => setScreen('app')}
         />
       )}
       {screen === 'app' && <MainTabs />}

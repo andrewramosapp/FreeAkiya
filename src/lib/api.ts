@@ -50,6 +50,7 @@ export type MemberStatus = {
 export type VerifyMemberResult = {
   success: boolean;
   tier?: 'free' | 'premium';
+  email?: string;
   error?: string;
 };
 
@@ -110,7 +111,7 @@ export async function subscribeEmail(email: string) {
 }
 
 export async function verifyMember(email: string): Promise<VerifyMemberResult> {
-  return getJson('/api/verify-member', {
+  return getJson('/api/mobile/auth', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
@@ -153,6 +154,14 @@ export async function logoutMemberSession() {
     headers: { Accept: 'application/json,text/html' },
   });
   return res;
+}
+
+export async function createPremiumCheckout(email?: string) {
+  return getJson('/api/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
 }
 
 export async function submitInquiry(input: {
