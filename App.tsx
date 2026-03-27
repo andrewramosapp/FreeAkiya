@@ -1,20 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import ListingsScreen from './src/screens/ListingsScreen';
+import ListingDetailScreen from './src/screens/ListingDetailScreen';
+import MapScreen from './src/screens/MapScreen';
+import SavedScreen from './src/screens/SavedScreen';
+import AccountScreen from './src/screens/AccountScreen';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function ListingsStack() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="ListingsList" component={ListingsScreen} />
+      <Stack.Screen name="Listing" component={ListingDetailScreen} />
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarStyle: { backgroundColor: '#111', borderTopColor: 'rgba(255,255,255,0.08)' },
+          tabBarActiveTintColor: '#e85d2f',
+          tabBarInactiveTintColor: '#4b5563',
+          tabBarIcon: ({ color, size }) => {
+            const icons: Record<string, any> = {
+              Listings: 'home-outline',
+              Map: 'map-outline',
+              Saved: 'heart-outline',
+              Account: 'person-outline'
+            };
+            return <Ionicons name={icons[route.name]} size={size} color={color} />;
+          },
+        })}
+      >
+        <Tab.Screen name="Listings" component={ListingsStack} />
+        <Tab.Screen name="Map" component={MapScreen} />
+        <Tab.Screen name="Saved" component={SavedScreen} />
+        <Tab.Screen name="Account" component={AccountScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
