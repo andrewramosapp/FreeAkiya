@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Slider from '@react-native-community/slider';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 export default function PriceRangeSlider({
   min,
@@ -21,28 +21,23 @@ export default function PriceRangeSlider({
         <Text style={s.value}>${minVal.toLocaleString()}</Text>
         <Text style={s.value}>${maxVal >= max ? `${max.toLocaleString()}+` : maxVal.toLocaleString()}</Text>
       </View>
-      <Text style={s.label}>Minimum price</Text>
-      <Slider
-        minimumValue={min}
-        maximumValue={max}
-        step={1000}
-        value={minVal}
-        minimumTrackTintColor="#e85d2f"
-        maximumTrackTintColor="#374151"
-        thumbTintColor="#e85d2f"
-        onValueChange={(v) => onChange(Math.min(v, maxVal - 1000), maxVal)}
-      />
-      <Text style={[s.label, { marginTop: 8 }]}>Maximum price</Text>
-      <Slider
-        minimumValue={min}
-        maximumValue={max}
-        step={1000}
-        value={maxVal}
-        minimumTrackTintColor="#e85d2f"
-        maximumTrackTintColor="#374151"
-        thumbTintColor="#e85d2f"
-        onValueChange={(v) => onChange(minVal, Math.max(v, minVal + 1000))}
-      />
+
+      <View style={s.sliderWrap}>
+        <MultiSlider
+          values={[minVal, maxVal]}
+          min={min}
+          max={max}
+          step={1000}
+          sliderLength={280}
+          onValuesChange={([nextMin, nextMax]) => onChange(nextMin, nextMax)}
+          selectedStyle={{ backgroundColor: '#e85d2f' }}
+          unselectedStyle={{ backgroundColor: '#374151' }}
+          containerStyle={s.sliderContainer}
+          trackStyle={s.track}
+          markerStyle={s.marker}
+        />
+      </View>
+
       <View style={s.rowMuted}>
         <Text style={s.muted}>${min.toLocaleString()}</Text>
         <Text style={s.muted}>${max.toLocaleString()}+</Text>
@@ -54,8 +49,11 @@ export default function PriceRangeSlider({
 const s = StyleSheet.create({
   wrap: { marginTop: 6 },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-  rowMuted: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
+  rowMuted: { flexDirection: 'row', justifyContent: 'space-between', marginTop: -2 },
   value: { color: '#fff', fontWeight: '700', fontSize: 13 },
   muted: { color: '#6b7280', fontSize: 11 },
-  label: { color: '#9ca3af', fontSize: 11, marginTop: 4 },
+  sliderWrap: { alignItems: 'center', justifyContent: 'center' },
+  sliderContainer: { height: 34 },
+  track: { height: 4, borderRadius: 999 },
+  marker: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#e85d2f', borderWidth: 2, borderColor: '#fff' },
 });

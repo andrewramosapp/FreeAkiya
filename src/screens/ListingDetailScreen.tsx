@@ -33,8 +33,8 @@ export default function ListingDetailScreen() {
   const [leadError, setLeadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [memberEmail, setMemberEmail] = useState<string | null>(null);
-  const [premium, setPremium] = useState(false);
+  const [memberEmail, setMemberEmail] = useState<string | null>(params?.memberEmail || null);
+  const [premium, setPremium] = useState(!!params?.memberEmail);
 
   useEffect(() => {
     let active = true;
@@ -43,18 +43,21 @@ export default function ListingDetailScreen() {
       try {
         const [status, savedIds] = await Promise.all([getMemberStatus(), getSavedListingIds()]);
         if (!active) return;
-        setMemberEmail(status?.email || null);
-        setPremium(!!status?.premium);
+        const effectiveEmail = status?.email || params?.memberEmail || null;
+        setMemberEmail(effectiveEmail);
+        setPremium(!!status?.premium || !!params?.memberEmail);
         setSaved(savedIds.includes(l.id));
-        if (status?.email) setLeadEmail(status.email);
+        if (effectiveEmail) setLeadEmail(effectiveEmail);
       } catch {
         if (!active) return;
+        setMemberEmail(params?.memberEmail || null);
+        setPremium(!!params?.memberEmail);
         setSaved(false);
       }
     }
     loadMemberContext();
     return () => { active = false; };
-  }, [l?.id]);
+  }, [l?.id, params?.memberEmail]);
 
   if (!l) return <View style={s.center}><Text style={{ color: '#fff' }}>No listing data</Text></View>;
 
@@ -130,21 +133,23 @@ export default function ListingDetailScreen() {
             renderItem={({ item }) => <Image source={{ uri: item || '' }} style={{ width: W, height: 300 }} resizeMode="cover" />}
           />
           <TouchableOpacity style={s.back} onPress={() => nav.goBack()}><Text style={{ color: '#fff', fontSize: 20 }}>←</Text></TouchableOpacity>
-          {l.isPremium && <View style={s.topPremium}><Text style={s.topPremiumText}>PREMIUM</Text></View>}
+          {listing.isPremium && <View style={s.topPremium}><Text style={s.topPremiumText}>PREMIUM</Text></View>}
         </View>
 
         <View style={s.content}>
-          <Text style={[s.price, l.priceNum === 0 && { color: '#4ade80' }]}>{l.price}</Text>
-          <Text style={s.name}>{l.name}</Text>
-          <Text style={s.loc}>🇯🇵 {locationLabel || l.region || 'Japan'}{l.region ? ` · ${l.region}` : ''}</Text>
+          <Text style={[s.price, listing.priceNum === 0 && { color: '#4ade80' }]}>{listing.price}</Text>
+          <Text style={s.name}>{listing.name}</Text>
+          <Text style={s.loc}>🇯🇵 {locationLabel || listing.region || 'Japan'}{listing.region ? ` · ${listing.region}` : ''}</Text>
 
           <View style={s.actionRow}>
             <TouchableOpacity style={[s.btnPrimary, s.actionBtn]} onPress={onToggleSave} disabled={saving}>
               <Text style={s.btnPrimaryText}>{saving ? 'Saving…' : saved ? '♥ Saved' : '♡ Save listing'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[s.btn, s.actionBtn]} onPress={() => Linking.openURL(`https://cheapakiya.com/listings/${l.slug}`)}>
-              <Text style={s.btnT}>Open web listing</Text>
-            </TouchableOpacity>
+            {!!(listing.lat && listing.lng) && (
+              <TouchableOpacity style={[s.btn, s.actionBtn]} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${listing.lat},${listing.lng}`)}>
+                <Text style={s.btnT}>Open Google Maps</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {!memberEmail && (
@@ -154,7 +159,7 @@ export default function ListingDetailScreen() {
             </View>
           )}
 
-          {l.isPremium && (
+          {listing.isPremium && !memberEmail && (
             <View style={s.upgradeBox}>
               <Text style={s.upgradeTitle}>Premium listing</Text>
               <Text style={s.upgradeText}>Some properties and contact paths are intended for members. Upgrade on CheapAkiya to unlock the full premium experience.</Text>
@@ -165,24 +170,24 @@ export default function ListingDetailScreen() {
           )}
 
           <View style={s.grid}>
-            <Stat label="Bedrooms" value={l.beds ? `${l.beds} bed` : '—'} />
-            <Stat label="Size" value={l.size || '—'} />
-            <Stat label="Year Built" value={l.built || '—'} />
-            <Stat label="Condition" value={l.condition === 'move_in_ready' ? 'Move-in ready' : l.condition === 'renovation_needed' ? 'Needs work' : (l.condition || '—')} />
-            <Stat label="Nearest Station" value={l.stationName || '—'} />
-            <Stat label="Walk Time" value={l.stationWalkMin ? `${l.stationWalkMin} min` : '—'} />
-            <Stat label="Internet" value={l.internetType ? `${l.internetType}${l.internetSpeedMbps ? ` · ${l.internetSpeedMbps} Mbps` : ''}` : '—'} />
-            <Stat label="Risk Score" value={l.disasterScore ? `${l.disasterScore}/5` : '—'} />
+            <Stat label="Bedrooms" value={listing.beds ? `${listing.beds} bed` : '—'} />
+            <Stat label="Size" value={listing.size || '—'} />
+            <Stat label="Year Built" value={listing.built || '—'} />
+            <Stat label="Condition" value={listing.condition === 'move_in_ready' ? 'Move-in ready' : listing.condition === 'renovation_needed' ? 'Needs work' : (listing.condition || '—')} />
+            <Stat label="Nearest Station" value={listing.stationName || '—'} />
+            <Stat label="Walk Time" value={listing.stationWalkMin ? `${listing.stationWalkMin} min` : '—'} />
+            <Stat label="Internet" value={listing.internetType ? `${listing.internetType}${listing.internetSpeedMbps ? ` · ${listing.internetSpeedMbps} Mbps` : ''}` : '—'} />
+            <Stat label="Risk Score" value={listing.disasterScore ? `${listing.disasterScore}/5` : '—'} />
           </View>
 
           <View style={s.badges}>
-            {l.subsidyAvailable ? <Pill text="🏛 Government subsidy" tone="green" /> : null}
-            {l.internetType === 'fiber' ? <Pill text="📡 Fiber internet" tone="purple" /> : null}
-            {(l.disasterScore || 0) >= 4 ? <Pill text="🛡 Lower risk" tone="orange" /> : null}
-            {l.condition === 'move_in_ready' ? <Pill text="✓ Move-in ready" tone="blue" /> : null}
+            {listing.subsidyAvailable ? <Pill text="🏛 Government subsidy" tone="green" /> : null}
+            {listing.internetType === 'fiber' ? <Pill text="📡 Fiber internet" tone="purple" /> : null}
+            {(listing.disasterScore || 0) >= 4 ? <Pill text="🛡 Lower risk" tone="orange" /> : null}
+            {listing.condition === 'move_in_ready' ? <Pill text="✓ Move-in ready" tone="blue" /> : null}
           </View>
 
-          {!!l.notes && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>{l.notes}</Text></View>}
+          {!!listing.notes && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>{listing.notes}</Text></View>}
 
           <View style={s.leadBox}>
             <Text style={s.secT}>Ask about this property</Text>
@@ -197,27 +202,27 @@ export default function ListingDetailScreen() {
             {leadStatus === 'error' && <Text style={s.error}>{leadError || 'Failed to send inquiry.'}</Text>}
           </View>
 
-          {(l.subsidyNotes || l.subsidyAmountJPY) && (
+          {(listing.subsidyNotes || listing.subsidyAmountJPY) && (
             <View style={s.secBox}>
               <Text style={s.secT}>Subsidy / relocation support</Text>
-              {!!l.subsidyAmountJPY && <Text style={s.boxBig}>Up to ¥{l.subsidyAmountJPY.toLocaleString()}</Text>}
-              {!!l.subsidyNotes && <Text style={s.boxText}>{l.subsidyNotes}</Text>}
-              {!!l.subsidyUrl && <TouchableOpacity style={[s.btn, { marginTop: 10 }]} onPress={() => Linking.openURL(l.subsidyUrl!)}><Text style={s.btnT}>Open subsidy source →</Text></TouchableOpacity>}
+              {!!listing.subsidyAmountJPY && <Text style={s.boxBig}>Up to ¥{listing.subsidyAmountJPY.toLocaleString()}</Text>}
+              {!!listing.subsidyNotes && <Text style={s.boxText}>{listing.subsidyNotes}</Text>}
+              {!!listing.subsidyUrl && <TouchableOpacity style={[s.btn, { marginTop: 10 }]} onPress={() => Linking.openURL(listing.subsidyUrl!)}><Text style={s.btnT}>Open subsidy source →</Text></TouchableOpacity>}
             </View>
           )}
 
           <View style={s.secBox}>
             <Text style={s.secT}>Area & logistics</Text>
-            <Text style={s.boxText}>Station: {l.stationName || 'Unknown'}{l.stationWalkMin ? ` · about ${l.stationWalkMin} min away` : ''}</Text>
-            <Text style={s.boxText}>Hospital: {l.hospitalKm ? `${l.hospitalKm} km` : 'Unknown'}</Text>
-            <Text style={s.boxText}>Convenience store: {l.convenienceStoreKm ? `${l.convenienceStoreKm} km` : 'Unknown'}</Text>
-            <Text style={s.boxText}>Flood risk: {l.floodRisk || 'Unknown'} · Earthquake risk: {l.earthquakeRisk || 'Unknown'}</Text>
+            <Text style={s.boxText}>Station: {listing.stationName || 'Unknown'}{listing.stationWalkMin ? ` · about ${listing.stationWalkMin} min away` : ''}</Text>
+            <Text style={s.boxText}>Hospital: {listing.hospitalKm ? `${listing.hospitalKm} km` : 'Unknown'}</Text>
+            <Text style={s.boxText}>Convenience store: {listing.convenienceStoreKm ? `${listing.convenienceStoreKm} km` : 'Unknown'}</Text>
+            <Text style={s.boxText}>Flood risk: {listing.floodRisk || 'Unknown'} · Earthquake risk: {listing.earthquakeRisk || 'Unknown'}</Text>
           </View>
 
           <View style={s.cBox}>
             <Text style={s.cTitle}>Quick actions</Text>
-            {!!(l.lat && l.lng) && <TouchableOpacity style={s.btn} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${l.lat},${l.lng}`)}><Text style={s.btnT}>🗺 Open in Google Maps</Text></TouchableOpacity>}
-            <TouchableOpacity style={[s.btn, { marginTop: 8 }]} onPress={() => Linking.openURL(`https://cheapakiya.com/listings/${l.slug}`)}><Text style={s.btnT}>View full listing →</Text></TouchableOpacity>
+            {!!(listing.lat && listing.lng) && <TouchableOpacity style={s.btn} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${listing.lat},${listing.lng}`)}><Text style={s.btnT}>🗺 Open in Google Maps</Text></TouchableOpacity>}
+            <TouchableOpacity style={[s.btn, { marginTop: 8 }]} onPress={() => Linking.openURL(`https://cheapakiya.com/listings/${listing.slug}`)}><Text style={s.btnT}>View full listing →</Text></TouchableOpacity>
           </View>
         </View>
       </ScrollView>

@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Linking, Image } from 'react-native';
+import {
+  View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Linking,
+  Image, Modal, FlatList
+} from 'react-native';
 import MapView, { Marker, Callout, Region } from 'react-native-maps';
 import { getAllListings, Listing } from '../lib/api';
 import { useNavigation } from '@react-navigation/native';
@@ -95,6 +98,7 @@ export default function MapScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [region, setRegion] = useState<Region>(INITIAL_REGION);
+  const [selectedCluster, setSelectedCluster] = useState<Cluster | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -127,8 +131,14 @@ export default function MapScreen() {
 
   const handleClusterPress = useCallback((cluster: Cluster) => {
     const nextRegion = getClusterRegion(cluster, region);
+    const nextClusters = buildClusters(cluster.items, nextRegion);
     mapRef.current?.animateToRegion(nextRegion, 260);
     setRegion(nextRegion);
+
+    const stillCollapsed = nextClusters.length === 1 && nextClusters[0].count === cluster.count;
+    if (stillCollapsed || nextRegion.latitudeDelta <= 0.02 || nextRegion.longitudeDelta <= 0.02) {
+      setSelectedCluster(cluster);
+    }
   }, [region]);
 
   if (loading) {
@@ -204,6 +214,38 @@ export default function MapScreen() {
           <Text style={styles.resetBtnText}>Reset</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal visible={!!selectedCluster} transparent animationType="slide" onRequestClose={() => setSelectedCluster(null)}>
+        <View style={styles.sheetBackdrop}>
+          <View style={styles.sheet}>
+            <View style={styles.sheetHeader}>
+              <Text style={styles.sheetTitle}>{selectedCluster?.count || 0} homes in this cluster</Text>
+              <TouchableOpacity onPress={() => setSelectedCluster(null)}><Text style={styles.sheetClose}>Close</Text></TouchableOpacity>
+            </View>
+            <FlatList
+              data={selectedCluster?.items || []}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{ paddingBottom: 18 }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.sheetRow}
+                  onPress={() => {
+                    setSelectedCluster(null);
+                    nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } });
+                  }}
+                >
+                  <Image source={{ uri: item.images?.[0] || PH }} style={styles.sheetImg} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.sheetPrice}>{item.price}</Text>
+                    <Text style={styles.sheetName} numberOfLines={2}>{item.name}</Text>
+                    <Text style={styles.sheetMeta}>{[item.prefecture, item.city].filter(Boolean).join(' · ')}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -238,16 +280,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
   },
-  clusterBubbleLarge: {
-    minWidth: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  clusterBubbleXL: {
-    minWidth: 56,
-    height: 56,
-    borderRadius: 28,
-  },
+  clusterBubbleLarge: { minWidth: 48, height: 48, borderRadius: 24 },
+  clusterBubbleXL: { minWidth: 56, height: 56, borderRadius: 28 },
   clusterCount: { color: '#fff', fontSize: 14, fontWeight: '900' },
   callout: { width: 220, backgroundColor: '#111827', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
   calloutImg: { width: '100%', height: 110, backgroundColor: '#1f2937' },
@@ -258,4 +292,14 @@ const styles = StyleSheet.create({
   smallBtn: { flex: 1, backgroundColor: '#e85d2f', borderRadius: 10, paddingVertical: 9, alignItems: 'center' },
   mapBtn: { backgroundColor: '#374151' },
   smallBtnText: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  sheetBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
+  sheet: { backgroundColor: '#111827', borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '62%', paddingHorizontal: 16, paddingTop: 14 },
+  sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  sheetTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  sheetClose: { color: '#e5e7eb', fontWeight: '700' },
+  sheetRow: { flexDirection: 'row', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.06)' },
+  sheetImg: { width: 74, height: 74, borderRadius: 12, backgroundColor: '#1f2937' },
+  sheetPrice: { color: '#e85d2f', fontSize: 16, fontWeight: '900', marginBottom: 4 },
+  sheetName: { color: '#fff', fontSize: 13, fontWeight: '700', marginBottom: 4 },
+  sheetMeta: { color: '#9ca3af', fontSize: 12 },
 });
