@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -127,6 +128,15 @@ export default function App() {
     await refreshPurchases();
   }
 
+  async function handleGoogleSignIn() {
+    try {
+      await WebBrowser.openBrowserAsync('https://cheapakiya.com/api/auth/google/start');
+      Alert.alert('Google sign-in started', 'Finish Google sign-in in the browser, then return to the app and verify the same email in Account if needed.');
+    } catch (e: any) {
+      Alert.alert('Google sign-in failed', e?.message || 'Could not open Google sign-in');
+    }
+  }
+
   async function handlePurchase(pkg: PurchasesPackage) {
     try {
       setPurchaseLoading(true);
@@ -175,7 +185,7 @@ export default function App() {
             onSignUp={() => setScreen('signup')}
             onSignIn={() => setScreen('signin')}
             onPremium={() => setShowPaywall(true)}
-            onGoogle={() => Alert.alert('Google sign-in next', 'Google sign-in still needs backend OAuth support. Email auth is live now.')}
+            onGoogle={handleGoogleSignIn}
           />
         )}
         {screen === 'signup' && (
