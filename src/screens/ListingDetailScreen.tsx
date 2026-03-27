@@ -5,7 +5,8 @@ import {
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Listing, getSavedListingIds, getMemberStatus, setSavedListing, submitInquiry } from '../lib/api';
+import { Listing, getSavedListingIds, setSavedListing, submitInquiry } from '../lib/api';
+import { useAuth } from '../../App';
 
 const W = Dimensions.get('window').width;
 
@@ -26,39 +27,36 @@ function Pill({ text, tone = 'default' }: { text: string; tone?: 'default' | 'gr
 export default function ListingDetailScreen() {
   const { params } = useRoute<any>();
   const nav = useNavigation<any>();
+  const { member } = useAuth();
   const l: Listing | undefined = params?.listing;
   const [leadName, setLeadName] = useState('');
-  const [leadEmail, setLeadEmail] = useState('');
+  const [leadEmail, setLeadEmail] = useState(member?.email || '');
   const [leadMessage, setLeadMessage] = useState('I’m interested in this property. Please send me more details.');
   const [leadStatus, setLeadStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
   const [leadError, setLeadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [memberEmail, setMemberEmail] = useState<string | null>(params?.memberEmail || null);
-  const [premium, setPremium] = useState(!!params?.memberEmail);
 
   useEffect(() => {
     let active = true;
-    async function loadMemberContext() {
-      if (!l?.id) return;
+    async function loadSavedState() {
+      if (!l?.id || !member?.email) return;
       try {
-        const [status, savedIds] = await Promise.all([getMemberStatus(), getSavedListingIds()]);
+        const savedIds = await getSavedListingIds();
         if (!active) return;
-        const effectiveEmail = status?.email || params?.memberEmail || null;
-        setMemberEmail(effectiveEmail);
-        setPremium(!!status?.premium || !!params?.memberEmail);
         setSaved(savedIds.includes(l.id));
-        if (effectiveEmail) setLeadEmail(effectiveEmail);
       } catch {
         if (!active) return;
-        setMemberEmail(params?.memberEmail || null);
-        setPremium(!!params?.memberEmail);
         setSaved(false);
       }
     }
-    loadMemberContext();
+    loadSavedState();
     return () => { active = false; };
-  }, [l?.id, params?.memberEmail]);
+  }, [l?.id, member?.email]);
+
+  useEffect(() => {
+    if (member?.email) setLeadEmail(member.email);
+  }, [member?.email]);
 
   if (!l) return <View style={s.center}><Text style={{ color: '#fff' }}>No listing data</Text></View>;
 
@@ -66,10 +64,15 @@ export default function ListingDetailScreen() {
   const imgs = listing.images?.length > 0 ? listing.images : [''];
   const locationLabel = [listing.city, listing.prefecture].filter(Boolean).join(', ');
   const hasCoords = !!(listing.lat && listing.lng);
+  const isPremiumMember = member?.tier === 'premium';
+  const isFreeMember = member?.tier === 'free';
+  const isGuest = !member;
+  const isLockedPremium = !!listing.isPremium && !isPremiumMember;
+  const canSeeMemberActions = !!member;
 
   async function onToggleSave() {
-    if (!memberEmail) {
-      Alert.alert('Verify first', 'Open the Account tab and verify your CheapAkiya email before saving listings.');
+    if (!member?.email) {
+      Alert.alert('Members only', 'Join free or sign in to save listings.');
       return;
     }
 
@@ -85,6 +88,14 @@ export default function ListingDetailScreen() {
   }
 
   async function onSubmitInquiry() {
+    if (!member?.email) {
+      Alert.alert('Members only', 'Join free or sign in to contact CheapAkiya from the app.');
+      return;
+    }
+    if (listing.isPremium && !isPremiumMember) {
+      Alert.alert('Premium required', 'Upgrade to premium to inquire about premium listings.');
+      return;
+    }
     if (!leadName.trim()) {
       setLeadStatus('error');
       setLeadError('Please enter your name.');
@@ -112,7 +123,7 @@ export default function ListingDetailScreen() {
         listing_name: listing.name,
         listing_price: listing.price,
         listing_url: `https://cheapakiya.com/listings/${listing.slug}`,
-        member_tier: premium ? 'premium' : 'free',
+        member_tier: isPremiumMember ? 'premium' : 'free',
       });
       setLeadStatus('done');
       setLeadMessage('I’m interested in this property. Please send me more details.');
@@ -154,19 +165,19 @@ export default function ListingDetailScreen() {
             )}
           </View>
 
-          {!memberEmail && (
+          {isGuest && (
             <View style={s.noticeBox}>
-              <Text style={s.noticeTitle}>Guest mode</Text>
-              <Text style={s.noticeText}>Verify your email in the Account tab to save listings and use member-aware features in the app.</Text>
+              <Text style={s.noticeTitle}>Join free to unlock member features</Text>
+              <Text style={s.noticeText}>Sign up or sign in to save listings and contact CheapAkiya from the app.</Text>
             </View>
           )}
 
-          {listing.isPremium && !memberEmail && (
+          {isFreeMember && listing.isPremium && (
             <View style={s.upgradeBox}>
               <Text style={s.upgradeTitle}>Premium listing</Text>
-              <Text style={s.upgradeText}>Some properties and contact paths are intended for members. Upgrade on CheapAkiya to unlock the full premium experience.</Text>
+              <Text style={s.upgradeText}>This listing is reserved for premium members. Upgrade to unlock full access, member-only listings, and direct contact details.</Text>
               <TouchableOpacity style={s.btnPrimary} onPress={() => Linking.openURL('https://cheapakiya.com/upgrade')}>
-                <Text style={s.btnPrimaryText}>Upgrade on CheapAkiya →</Text>
+                <Text style={s.btnPrimaryText}>Upgrade to premium →</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -175,21 +186,22 @@ export default function ListingDetailScreen() {
             <Stat label="Bedrooms" value={listing.beds ? `${listing.beds} bed` : '—'} />
             <Stat label="Size" value={listing.size || '—'} />
             <Stat label="Year Built" value={listing.built || '—'} />
-            <Stat label="Condition" value={listing.condition === 'move_in_ready' ? 'Move-in ready' : listing.condition === 'renovation_needed' ? 'Needs work' : (listing.condition || '—')} />
-            <Stat label="Nearest Station" value={listing.stationName || '—'} />
-            <Stat label="Walk Time" value={listing.stationWalkMin ? `${listing.stationWalkMin} min` : '—'} />
-            <Stat label="Internet" value={listing.internetType ? `${listing.internetType}${listing.internetSpeedMbps ? ` · ${listing.internetSpeedMbps} Mbps` : ''}` : '—'} />
-            <Stat label="Risk Score" value={listing.disasterScore ? `${listing.disasterScore}/5` : '—'} />
+            <Stat label="Condition" value={isLockedPremium ? 'Premium only' : (listing.condition === 'move_in_ready' ? 'Move-in ready' : listing.condition === 'renovation_needed' ? 'Needs work' : (listing.condition || '—'))} />
+            <Stat label="Nearest Station" value={isLockedPremium ? 'Premium only' : (listing.stationName || '—')} />
+            <Stat label="Walk Time" value={isLockedPremium ? 'Premium only' : (listing.stationWalkMin ? `${listing.stationWalkMin} min` : '—')} />
+            <Stat label="Internet" value={isLockedPremium ? 'Premium only' : (listing.internetType ? `${listing.internetType}${listing.internetSpeedMbps ? ` · ${listing.internetSpeedMbps} Mbps` : ''}` : '—')} />
+            <Stat label="Risk Score" value={isLockedPremium ? 'Premium only' : (listing.disasterScore ? `${listing.disasterScore}/5` : '—')} />
           </View>
 
           <View style={s.badges}>
-            {listing.subsidyAvailable ? <Pill text="🏛 Government subsidy" tone="green" /> : null}
-            {listing.internetType === 'fiber' ? <Pill text="📡 Fiber internet" tone="purple" /> : null}
-            {(listing.disasterScore || 0) >= 4 ? <Pill text="🛡 Lower risk" tone="orange" /> : null}
-            {listing.condition === 'move_in_ready' ? <Pill text="✓ Move-in ready" tone="blue" /> : null}
+            {!isLockedPremium && listing.subsidyAvailable ? <Pill text="🏛 Government subsidy" tone="green" /> : null}
+            {!isLockedPremium && listing.internetType === 'fiber' ? <Pill text="📡 Fiber internet" tone="purple" /> : null}
+            {!isLockedPremium && (listing.disasterScore || 0) >= 4 ? <Pill text="🛡 Lower risk" tone="orange" /> : null}
+            {!isLockedPremium && listing.condition === 'move_in_ready' ? <Pill text="✓ Move-in ready" tone="blue" /> : null}
           </View>
 
-          {!!listing.notes && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>{listing.notes}</Text></View>}
+          {!isLockedPremium && !!listing.notes && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>{listing.notes}</Text></View>}
+          {isLockedPremium && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>Upgrade to premium to view the full property notes, logistics, and enriched details.</Text></View>}
 
           <View style={s.mapSection}>
             <Text style={s.secT}>Location</Text>
@@ -218,20 +230,22 @@ export default function ListingDetailScreen() {
             <Text style={s.mapCaption}>📍 {listing.city}, {listing.prefecture} Prefecture, Japan</Text>
           </View>
 
-          <View style={s.leadBox}>
-            <Text style={s.secT}>Ask about this property</Text>
-            <Text style={s.boxText}>Send an inquiry to CheapAkiya directly from the app.</Text>
-            <TextInput value={leadName} onChangeText={setLeadName} placeholder="Your name" placeholderTextColor="#6b7280" style={s.input} />
-            <TextInput value={leadEmail} onChangeText={setLeadEmail} placeholder="Your email" placeholderTextColor="#6b7280" autoCapitalize="none" keyboardType="email-address" style={s.input} />
-            <TextInput value={leadMessage} onChangeText={setLeadMessage} placeholder="Your message" placeholderTextColor="#6b7280" multiline style={[s.input, s.textarea]} />
-            <TouchableOpacity style={s.btnPrimary} onPress={onSubmitInquiry} disabled={leadStatus === 'sending'}>
-              <Text style={s.btnPrimaryText}>{leadStatus === 'sending' ? 'Sending…' : 'Send inquiry →'}</Text>
-            </TouchableOpacity>
-            {leadStatus === 'done' && <Text style={s.success}>Inquiry sent.</Text>}
-            {leadStatus === 'error' && <Text style={s.error}>{leadError || 'Failed to send inquiry.'}</Text>}
-          </View>
+          {canSeeMemberActions ? (
+            <View style={s.leadBox}>
+              <Text style={s.secT}>Ask about this property</Text>
+              <Text style={s.boxText}>Send an inquiry to CheapAkiya directly from the app.</Text>
+              <TextInput value={leadName} onChangeText={setLeadName} placeholder="Your name" placeholderTextColor="#6b7280" style={s.input} />
+              <TextInput value={leadEmail} onChangeText={setLeadEmail} placeholder="Your email" placeholderTextColor="#6b7280" autoCapitalize="none" keyboardType="email-address" style={s.input} />
+              <TextInput value={leadMessage} onChangeText={setLeadMessage} placeholder="Your message" placeholderTextColor="#6b7280" multiline style={[s.input, s.textarea]} />
+              <TouchableOpacity style={s.btnPrimary} onPress={onSubmitInquiry} disabled={leadStatus === 'sending'}>
+                <Text style={s.btnPrimaryText}>{leadStatus === 'sending' ? 'Sending…' : 'Send inquiry →'}</Text>
+              </TouchableOpacity>
+              {leadStatus === 'done' && <Text style={s.success}>Inquiry sent.</Text>}
+              {leadStatus === 'error' && <Text style={s.error}>{leadError || 'Failed to send inquiry.'}</Text>}
+            </View>
+          ) : null}
 
-          {(listing.subsidyNotes || listing.subsidyAmountJPY) && (
+          {!isLockedPremium && (listing.subsidyNotes || listing.subsidyAmountJPY) && (
             <View style={s.secBox}>
               <Text style={s.secT}>Subsidy / relocation support</Text>
               {!!listing.subsidyAmountJPY && <Text style={s.boxBig}>Up to ¥{listing.subsidyAmountJPY.toLocaleString()}</Text>}
@@ -240,13 +254,15 @@ export default function ListingDetailScreen() {
             </View>
           )}
 
-          <View style={s.secBox}>
-            <Text style={s.secT}>Area & logistics</Text>
-            <Text style={s.boxText}>Station: {listing.stationName || 'Unknown'}{listing.stationWalkMin ? ` · about ${listing.stationWalkMin} min away` : ''}</Text>
-            <Text style={s.boxText}>Hospital: {listing.hospitalKm ? `${listing.hospitalKm} km` : 'Unknown'}</Text>
-            <Text style={s.boxText}>Convenience store: {listing.convenienceStoreKm ? `${listing.convenienceStoreKm} km` : 'Unknown'}</Text>
-            <Text style={s.boxText}>Flood risk: {listing.floodRisk || 'Unknown'} · Earthquake risk: {listing.earthquakeRisk || 'Unknown'}</Text>
-          </View>
+          {!isLockedPremium && (
+            <View style={s.secBox}>
+              <Text style={s.secT}>Area & logistics</Text>
+              <Text style={s.boxText}>Station: {listing.stationName || 'Unknown'}{listing.stationWalkMin ? ` · about ${listing.stationWalkMin} min away` : ''}</Text>
+              <Text style={s.boxText}>Hospital: {listing.hospitalKm ? `${listing.hospitalKm} km` : 'Unknown'}</Text>
+              <Text style={s.boxText}>Convenience store: {listing.convenienceStoreKm ? `${listing.convenienceStoreKm} km` : 'Unknown'}</Text>
+              <Text style={s.boxText}>Flood risk: {listing.floodRisk || 'Unknown'} · Earthquake risk: {listing.earthquakeRisk || 'Unknown'}</Text>
+            </View>
+          )}
 
           <View style={s.cBox}>
             <Text style={s.cTitle}>Quick actions</Text>

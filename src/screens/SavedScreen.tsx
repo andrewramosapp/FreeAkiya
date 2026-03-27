@@ -6,17 +6,25 @@ import {
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getSavedListings, Listing } from '../lib/api';
 import { EmptyState } from './PlaceholderScreen';
+import { useAuth } from '../../App';
 
 const PH = 'https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png';
 
 export default function SavedScreen() {
   const nav = useNavigation<any>();
+  const { member } = useAuth();
   const [items, setItems] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async (mode: 'load' | 'refresh' = 'load') => {
+    if (!member?.email) {
+      setItems([]);
+      setLoading(false);
+      setRefreshing(false);
+      return;
+    }
     if (mode === 'load') setLoading(true);
     if (mode === 'refresh') setRefreshing(true);
     setError(null);
@@ -30,10 +38,18 @@ export default function SavedScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [member?.email]);
 
   useEffect(() => { load(); }, [load]);
   useFocusEffect(useCallback(() => { load('refresh'); }, [load]));
+
+  if (!member?.email) {
+    return (
+      <SafeAreaView style={s.wrap}>
+        <EmptyState title="Members only" subtitle="Sign in or join free to save homes and see them here." />
+      </SafeAreaView>
+    );
+  }
 
   if (loading) {
     return <View style={s.center}><ActivityIndicator color="#e85d2f" /><Text style={s.sub}>Loading saved listings…</Text></View>;
@@ -55,7 +71,7 @@ export default function SavedScreen() {
       <SafeAreaView style={s.wrap}>
         <EmptyState
           title="No saved listings yet"
-          subtitle="Once you verify your member email and save homes from the listing or detail screen, they’ll show up here."
+          subtitle="Save homes from the listing or detail screen and they’ll show up here."
         />
       </SafeAreaView>
     );
@@ -73,7 +89,7 @@ export default function SavedScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load('refresh')} tintColor="#e85d2f" />}
         contentContainerStyle={{ padding: 16, paddingBottom: 110 }}
         renderItem={({ item }) => (
-          <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } })}>
+          <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item, memberEmail: member.email } })}>
             <Image source={{ uri: item.images?.[0] || PH }} style={s.image} />
             <View style={s.body}>
               <Text style={s.price}>{item.price}</Text>

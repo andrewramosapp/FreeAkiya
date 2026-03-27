@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,6 +10,16 @@ import SavedScreen from './src/screens/SavedScreen';
 import AccountScreen from './src/screens/AccountScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import AuthEmailScreen from './src/screens/AuthEmailScreen';
+
+type Member = { email: string; tier: 'free' | 'premium' } | null;
+
+type AuthContextValue = {
+  member: Member;
+  setMember: (member: Member) => void;
+};
+
+const AuthContext = createContext<AuthContextValue>({ member: null, setMember: () => {} });
+export const useAuth = () => useContext(AuthContext);
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -52,39 +62,52 @@ function MainTabs() {
 
 export default function App() {
   const [screen, setScreen] = useState<'welcome' | 'signup' | 'signin' | 'premium' | 'app'>('welcome');
+  const [member, setMember] = useState<Member>(null);
+  const authValue = useMemo(() => ({ member, setMember }), [member]);
 
   return (
-    <NavigationContainer>
-      {screen === 'welcome' && (
-        <WelcomeScreen
-          onBrowse={() => setScreen('app')}
-          onSignUp={() => setScreen('signup')}
-          onSignIn={() => setScreen('signin')}
-          onPremium={() => setScreen('premium')}
-        />
-      )}
-      {screen === 'signup' && (
-        <AuthEmailScreen
-          mode="signup"
-          onBack={() => setScreen('welcome')}
-          onAuthed={() => setScreen('app')}
-        />
-      )}
-      {screen === 'signin' && (
-        <AuthEmailScreen
-          mode="signin"
-          onBack={() => setScreen('welcome')}
-          onAuthed={() => setScreen('app')}
-        />
-      )}
-      {screen === 'premium' && (
-        <AuthEmailScreen
-          mode="premium"
-          onBack={() => setScreen('welcome')}
-          onAuthed={() => setScreen('app')}
-        />
-      )}
-      {screen === 'app' && <MainTabs />}
-    </NavigationContainer>
+    <AuthContext.Provider value={authValue}>
+      <NavigationContainer>
+        {screen === 'welcome' && (
+          <WelcomeScreen
+            onBrowse={() => setScreen('app')}
+            onSignUp={() => setScreen('signup')}
+            onSignIn={() => setScreen('signin')}
+            onPremium={() => setScreen('premium')}
+          />
+        )}
+        {screen === 'signup' && (
+          <AuthEmailScreen
+            mode="signup"
+            onBack={() => setScreen('welcome')}
+            onAuthed={(nextMember) => {
+              setMember(nextMember);
+              setScreen('app');
+            }}
+          />
+        )}
+        {screen === 'signin' && (
+          <AuthEmailScreen
+            mode="signin"
+            onBack={() => setScreen('welcome')}
+            onAuthed={(nextMember) => {
+              setMember(nextMember);
+              setScreen('app');
+            }}
+          />
+        )}
+        {screen === 'premium' && (
+          <AuthEmailScreen
+            mode="premium"
+            onBack={() => setScreen('welcome')}
+            onAuthed={(nextMember) => {
+              setMember(nextMember);
+              setScreen('app');
+            }}
+          />
+        )}
+        {screen === 'app' && <MainTabs />}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
