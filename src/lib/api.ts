@@ -76,7 +76,7 @@ export async function getListingsPage(page = 0, sort: 'price_asc' | 'price_desc'
   return getJson(`/api/listings-page?page=${page}&sort=${sort}`);
 }
 
-export async function getAllListings(sort: 'price_asc' | 'price_desc' | 'newest' = 'price_asc', maxPages = 30): Promise<Listing[]> {
+export async function getAllListings(sort: 'price_asc' | 'price_desc' | 'newest' = 'price_asc', maxPages = 8): Promise<Listing[]> {
   const seen = new Map<string, Listing>();
 
   for (let page = 0; page < maxPages; page += 1) {

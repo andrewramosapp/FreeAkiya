@@ -135,7 +135,7 @@ export default function ListingsScreen() {
     const isSaved = savedIds.includes(item.id);
     const isSaving = savingId === item.id;
     return (
-      <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listing', { slug: item.slug, listing: item })}>
+      <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listing', { slug: item.slug, listing: item, memberEmail })}>
         <View style={s.imgBox}>
           <Image source={{ uri: img }} style={s.img} resizeMode="cover" />
           <View style={s.priceTag}><Text style={s.priceTagText}>{item.price}</Text></View>
