@@ -3,11 +3,12 @@ import {
   View, Text, StyleSheet, SafeAreaView, TextInput,
   TouchableOpacity, ActivityIndicator, Linking, ScrollView
 } from 'react-native';
+import RevenueCatUI from 'react-native-purchases-ui';
 import { logoutMemberSession, verifyMember } from '../lib/api';
 import { useAuth } from '../../App';
 
 export default function AccountScreen() {
-  const { member, setMember } = useAuth();
+  const { member, setMember, refreshPurchases, setShowPaywall } = useAuth();
   const [email, setEmail] = useState(member?.email || '');
   const [submitting, setSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
@@ -26,6 +27,7 @@ export default function AccountScreen() {
       const result = await verifyMember(email.trim());
       if (!result?.tier) throw new Error('Verification failed');
       await setMember({ email: email.trim().toLowerCase(), tier: result.tier });
+      await refreshPurchases();
       setStatusMsg(result.tier === 'premium' ? 'Premium member verified.' : 'Free member verified.');
     } catch (e: any) {
       setError(e?.message || 'Verification failed');
@@ -50,6 +52,14 @@ export default function AccountScreen() {
     }
   }
 
+  async function openCustomerCenter() {
+    try {
+      await RevenueCatUI.presentCustomerCenter();
+    } catch (e: any) {
+      setError(e?.message || 'Could not open Customer Center');
+    }
+  }
+
   return (
     <SafeAreaView style={s.wrap}>
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
@@ -64,6 +74,25 @@ export default function AccountScreen() {
           <View style={[s.badge, member?.tier === 'premium' ? s.badgePremium : s.badgeFree]}>
             <Text style={s.badgeText}>{member?.tier === 'premium' ? 'Premium' : member ? 'Free member' : 'Guest'}</Text>
           </View>
+        </View>
+
+        <View style={s.card}>
+          <Text style={s.label}>Membership</Text>
+          {!member?.email ? (
+            <TouchableOpacity style={s.primaryBtn} onPress={() => setShowPaywall(true)}>
+              <Text style={s.primaryBtnText}>See Pro options</Text>
+            </TouchableOpacity>
+          ) : null}
+          {member?.email && member.tier !== 'premium' ? (
+            <TouchableOpacity style={s.primaryBtn} onPress={() => setShowPaywall(true)}>
+              <Text style={s.primaryBtnText}>Upgrade to Cheap Akiya Pro</Text>
+            </TouchableOpacity>
+          ) : null}
+          {member?.email ? (
+            <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={openCustomerCenter}>
+              <Text style={s.secondaryBtnText}>Open Customer Center</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         <View style={s.card}>
