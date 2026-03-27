@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, Image, StyleSheet,
-  ActivityIndicator, SafeAreaView, StatusBar, ScrollView, Dimensions
+  ActivityIndicator, SafeAreaView, StatusBar, ScrollView, Dimensions, Alert
 } from 'react-native';
-import { getListingsPage, Listing } from '../lib/api';
+import { getListingsPage, Listing, getMemberStatus, getSavedListingIds, setSavedListing } from '../lib/api';
 import { useNavigation } from '@react-navigation/native';
 import PriceRangeSlider from '../components/PriceRangeSlider';
 
@@ -49,6 +49,20 @@ export default function ListingsScreen() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [memberEmail, setMemberEmail] = useState<string | null>(null);
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  async function loadMemberContext() {
+    try {
+      const [status, ids] = await Promise.all([getMemberStatus(), getSavedListingIds()]);
+      setMemberEmail(status?.email || null);
+      setSavedIds(ids);
+    } catch {
+      setMemberEmail(null);
+      setSavedIds([]);
+    }
+  }
 
   async function loadFirstPage() {
     setLoading(true);
@@ -59,6 +73,7 @@ export default function ListingsScreen() {
       setListings(items);
       setPage(1);
       setHasMore(!!data?.hasMore);
+      await loadMemberContext();
     } catch (e: any) {
       setListings([]);
       setError(e?.message || 'Unknown load error');
@@ -95,15 +110,38 @@ export default function ListingsScreen() {
     return true;
   }), [listings, region, photosOnly, premiumOnly, minPrice, maxPrice, condition]);
 
+  async function toggleSave(item: Listing) {
+    if (!memberEmail) {
+      Alert.alert('Verify first', 'Open the Account tab and verify your CheapAkiya email before saving listings.');
+      return;
+    }
+
+    try {
+      setSavingId(item.id);
+      const isSaved = savedIds.includes(item.id);
+      await setSavedListing(item.id, !isSaved);
+      setSavedIds((prev) => isSaved ? prev.filter((id) => id !== item.id) : [...prev, item.id]);
+    } catch (e: any) {
+      Alert.alert('Could not update saved listings', e?.message || 'Try again in a moment.');
+    } finally {
+      setSavingId(null);
+    }
+  }
+
   const renderItem = ({ item }: { item: Listing }) => {
     const img = item.images?.[0] || PH;
     const sizeText = cleanValue(item.size);
     const stationText = item.stationWalkMin ? `${item.stationWalkMin} min to station` : null;
+    const isSaved = savedIds.includes(item.id);
+    const isSaving = savingId === item.id;
     return (
       <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listing', { slug: item.slug, listing: item })}>
         <View style={s.imgBox}>
           <Image source={{ uri: img }} style={s.img} resizeMode="cover" />
           <View style={s.priceTag}><Text style={s.priceTagText}>{item.price}</Text></View>
+          <TouchableOpacity style={s.savePill} onPress={(e) => { e.stopPropagation?.(); toggleSave(item); }}>
+            <Text style={s.savePillText}>{isSaving ? '…' : isSaved ? '♥' : '♡'}</Text>
+          </TouchableOpacity>
           {item.isPremium && <View style={s.lockTag}><Text style={s.lockTagText}>PREMIUM</Text></View>}
           {item.isFeatured && <View style={s.featureTag}><Text style={s.featureTagText}>⭐</Text></View>}
         </View>
@@ -130,7 +168,7 @@ export default function ListingsScreen() {
       <View style={s.header}>
         <View>
           <Text style={s.logo}>CheapAkiya</Text>
-          <Text style={s.subhead}>{loading ? 'Loading…' : `${filtered.length} results`}</Text>
+          <Text style={s.subhead}>{loading ? 'Loading…' : `${filtered.length} results`}{memberEmail ? ' · save enabled' : ''}</Text>
         </View>
         <View style={s.headerRight}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
@@ -257,9 +295,11 @@ const s = StyleSheet.create({
   img: { width: '100%', height: '100%' },
   priceTag: { position: 'absolute', bottom: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.82)', borderRadius: 7, paddingHorizontal: 8, paddingVertical: 3 },
   priceTagText: { color: '#fff', fontWeight: '900', fontSize: 12 },
-  lockTag: { position: 'absolute', top: 8, right: 8, backgroundColor: '#e85d2f', borderRadius: 7, paddingHorizontal: 6, paddingVertical: 2 },
+  savePill: { position: 'absolute', top: 8, right: 8, backgroundColor: 'rgba(0,0,0,0.78)', borderRadius: 999, width: 30, height: 30, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)' },
+  savePillText: { color: '#fff', fontSize: 16, fontWeight: '800' },
+  lockTag: { position: 'absolute', top: 8, left: 8, backgroundColor: '#e85d2f', borderRadius: 7, paddingHorizontal: 6, paddingVertical: 2 },
   lockTagText: { color: '#fff', fontSize: 9, fontWeight: '800' },
-  featureTag: { position: 'absolute', top: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.72)', borderRadius: 7, paddingHorizontal: 6, paddingVertical: 2 },
+  featureTag: { position: 'absolute', top: 42, left: 8, backgroundColor: 'rgba(0,0,0,0.72)', borderRadius: 7, paddingHorizontal: 6, paddingVertical: 2 },
   featureTagText: { color: '#fbbf24', fontSize: 10, fontWeight: '800' },
   body: { padding: 10 },
   pref: { color: '#6b7280', fontSize: 10, marginBottom: 4 },
