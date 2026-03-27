@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Linking,
   Image, Modal, FlatList
 } from 'react-native';
 import MapView, { Marker, Callout, Region } from 'react-native-maps';
-import ClusteredMapView from 'react-native-map-clustering';
 import { getAllListings, Listing } from '../lib/api';
 import { useNavigation } from '@react-navigation/native';
 
@@ -17,7 +16,80 @@ const INITIAL_REGION: Region = {
 
 const PH = 'https://cdn.prod.website-files.com/6789dd1a798234106f5e335b/67b79a9861e5eb11ee3fe0ac_OLD%20HOUSES%20JAPAN%20(4).png';
 
-type MarkerLookup = Record<string, Listing>;
+type Cluster = {
+  key: string;
+  latitude: number;
+  longitude: number;
+  count: number;
+  items: Listing[];
+  representative: Listing;
+};
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function getCellSize(region: Region) {
+  const zoominess = Math.max(region.latitudeDelta, region.longitudeDelta);
+  return clamp(zoominess / 12, 0.0025, 1.5);
+}
+
+function buildClusters(items: Listing[], region: Region) {
+  const cellSize = getCellSize(region);
+  const buckets = new Map<string, Listing[]>();
+
+  for (const item of items) {
+    if (typeof item.lat !== 'number' || typeof item.lng !== 'number') continue;
+    const latBucket = Math.floor(item.lat / cellSize);
+    const lngBucket = Math.floor(item.lng / cellSize);
+    const key = `${latBucket}:${lngBucket}`;
+    const arr = buckets.get(key) || [];
+    arr.push(item);
+    buckets.set(key, arr);
+  }
+
+  return Array.from(buckets.entries()).map(([key, group]) => {
+    const latitude = group.reduce((sum, item) => sum + (item.lat || 0), 0) / group.length;
+    const longitude = group.reduce((sum, item) => sum + (item.lng || 0), 0) / group.length;
+    return {
+      key,
+      latitude,
+      longitude,
+      count: group.length,
+      items: group,
+      representative: group[0],
+    } satisfies Cluster;
+  });
+}
+
+function getClusterRegion(cluster: Cluster, currentRegion: Region): Region {
+  const lats = cluster.items.map((item) => item.lat || cluster.latitude);
+  const lngs = cluster.items.map((item) => item.lng || cluster.longitude);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+
+  const spanLat = Math.max(maxLat - minLat, 0.0015);
+  const spanLng = Math.max(maxLng - minLng, 0.0015);
+
+  const latDelta = Math.min(currentRegion.latitudeDelta * 0.38, Math.max(spanLat * 2.4, 0.01));
+  const lngDelta = Math.min(currentRegion.longitudeDelta * 0.38, Math.max(spanLng * 2.4, 0.01));
+
+  return {
+    latitude: cluster.latitude,
+    longitude: cluster.longitude,
+    latitudeDelta: clamp(latDelta, 0.006, 22),
+    longitudeDelta: clamp(lngDelta, 0.006, 22),
+  };
+}
+
+function clusterColor(count: number) {
+  if (count >= 50) return '#b91c1c';
+  if (count >= 20) return '#ea580c';
+  if (count >= 8) return '#f59e0b';
+  return '#e85d2f';
+}
 
 export default function MapScreen() {
   const nav = useNavigation<any>();
@@ -25,7 +97,8 @@ export default function MapScreen() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedClusterItems, setSelectedClusterItems] = useState<Listing[] | null>(null);
+  const [region, setRegion] = useState<Region>(INITIAL_REGION);
+  const [selectedCluster, setSelectedCluster] = useState<Cluster | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -49,7 +122,24 @@ export default function MapScreen() {
   }, []);
 
   const pins = useMemo(() => listings.filter(l => typeof l.lat === 'number' && typeof l.lng === 'number'), [listings]);
-  const markerLookup = useMemo<MarkerLookup>(() => Object.fromEntries(pins.map((item) => [item.id, item])), [pins]);
+  const clusters = useMemo(() => buildClusters(pins, region), [pins, region]);
+  const clusterCount = useMemo(() => clusters.filter((c) => c.count > 1).length, [clusters]);
+
+  const zoomOutToJapan = useCallback(() => {
+    mapRef.current?.animateToRegion(INITIAL_REGION, 350);
+  }, []);
+
+  const handleClusterPress = useCallback((cluster: Cluster) => {
+    const nextRegion = getClusterRegion(cluster, region);
+    const nextClusters = buildClusters(cluster.items, nextRegion);
+    mapRef.current?.animateToRegion(nextRegion, 260);
+    setRegion(nextRegion);
+
+    const stillCollapsed = nextClusters.length === 1 && nextClusters[0].count === cluster.count;
+    if (stillCollapsed || nextRegion.latitudeDelta <= 0.02 || nextRegion.longitudeDelta <= 0.02) {
+      setSelectedCluster(cluster);
+    }
+  }, [region]);
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator color="#e85d2f" /><Text style={styles.sub}>Loading map…</Text></View>;
@@ -61,96 +151,86 @@ export default function MapScreen() {
 
   return (
     <View style={styles.wrap}>
-      <ClusteredMapView
-        ref={mapRef as any}
+      <MapView
+        ref={mapRef}
         style={styles.map}
         initialRegion={INITIAL_REGION}
-        animationEnabled
-        preserveClusterPressBehavior
-        spiralEnabled
-        clusterColor="#e85d2f"
-        clusterTextColor="#ffffff"
-        radius={46}
-        extent={512}
-        minPoints={2}
-        renderCluster={(cluster: any) => {
-          const pointCount = cluster.pointCount;
+        onRegionChangeComplete={setRegion}
+      >
+        {clusters.map((cluster) => {
+          if (cluster.count === 1) {
+            const item = cluster.representative;
+            return (
+              <Marker
+                key={item.id}
+                coordinate={{ latitude: item.lat!, longitude: item.lng! }}
+                pinColor={item.priceNum === 0 ? '#10b981' : item.isPremium ? '#e85d2f' : '#f59e0b'}
+              >
+                <Callout tooltip onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } })}>
+                  <View style={styles.callout}>
+                    <Image source={{ uri: item.images?.[0] || PH }} style={styles.calloutImg} />
+                    <Text style={styles.calloutPrice}>{item.price}</Text>
+                    <Text style={styles.calloutTitle} numberOfLines={2}>{item.name}</Text>
+                    <Text style={styles.calloutMeta}>{item.prefecture}{item.city ? ` · ${item.city}` : ''}</Text>
+                    <View style={styles.calloutBtns}>
+                      <TouchableOpacity style={styles.smallBtn} onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } })}>
+                        <Text style={styles.smallBtnText}>View</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={[styles.smallBtn, styles.mapBtn]} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${item.lat},${item.lng}`)}>
+                        <Text style={styles.smallBtnText}>Maps</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Callout>
+              </Marker>
+            );
+          }
+
           return (
-            <Marker key={`cluster-${cluster.clusterId ?? cluster.id ?? `${cluster.coordinate.latitude}-${cluster.coordinate.longitude}`}`} coordinate={cluster.coordinate}>
+            <Marker
+              key={cluster.key}
+              coordinate={{ latitude: cluster.latitude, longitude: cluster.longitude }}
+              onPress={() => handleClusterPress(cluster)}
+            >
               <View style={[
                 styles.clusterBubble,
-                pointCount >= 10 && styles.clusterBubbleLarge,
-                pointCount >= 40 && styles.clusterBubbleXL,
+                { backgroundColor: clusterColor(cluster.count) },
+                cluster.count >= 10 && styles.clusterBubbleLarge,
+                cluster.count >= 40 && styles.clusterBubbleXL,
               ]}>
-                <Text style={styles.clusterCount}>{pointCount}</Text>
+                <Text style={styles.clusterCount}>{cluster.count}</Text>
               </View>
             </Marker>
           );
-        }}
-        onClusterPress={(_cluster: any, markers?: any[]) => {
-          const items = (markers || [])
-            .map((marker: any) => marker?.id && markerLookup[String(marker.id)])
-            .filter((item): item is Listing => !!item);
-
-          if (items.length > 1) {
-            setSelectedClusterItems(items);
-          }
-        }}
-      >
-        {pins.map((item) => (
-          <Marker
-            key={item.id}
-            identifier={item.id}
-            coordinate={{ latitude: item.lat!, longitude: item.lng! }}
-            pinColor={item.priceNum === 0 ? '#10b981' : item.isPremium ? '#e85d2f' : '#f59e0b'}
-            tracksViewChanges={false}
-          >
-            <Callout tooltip onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } })}>
-              <View style={styles.callout}>
-                <Image source={{ uri: item.images?.[0] || PH }} style={styles.calloutImg} />
-                <Text style={styles.calloutPrice}>{item.price}</Text>
-                <Text style={styles.calloutTitle} numberOfLines={2}>{item.name}</Text>
-                <Text style={styles.calloutMeta}>{item.prefecture}{item.city ? ` · ${item.city}` : ''}</Text>
-                <View style={styles.calloutBtns}>
-                  <TouchableOpacity style={styles.smallBtn} onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } })}>
-                    <Text style={styles.smallBtnText}>View</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.smallBtn, styles.mapBtn]} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${item.lat},${item.lng}`)}>
-                    <Text style={styles.smallBtnText}>Maps</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
-      </ClusteredMapView>
+        })}
+      </MapView>
 
       <View style={styles.topBar}>
         <View>
           <Text style={styles.title}>Map</Text>
-          <Text style={styles.badge}>{pins.length} homes</Text>
+          <Text style={styles.badge}>{pins.length} homes · {clusterCount} active clusters</Text>
         </View>
-        <TouchableOpacity style={styles.resetBtn} onPress={() => mapRef.current?.animateToRegion(INITIAL_REGION, 350)}>
+        <TouchableOpacity style={styles.resetBtn} onPress={zoomOutToJapan}>
           <Text style={styles.resetBtnText}>Reset</Text>
         </TouchableOpacity>
       </View>
 
-      <Modal visible={!!selectedClusterItems?.length} transparent animationType="slide" onRequestClose={() => setSelectedClusterItems(null)}>
+      <Modal visible={!!selectedCluster} transparent animationType="slide" onRequestClose={() => setSelectedCluster(null)}>
         <View style={styles.sheetBackdrop}>
           <View style={styles.sheet}>
             <View style={styles.sheetHeader}>
-              <Text style={styles.sheetTitle}>{selectedClusterItems?.length || 0} homes in this cluster</Text>
-              <TouchableOpacity onPress={() => setSelectedClusterItems(null)}><Text style={styles.sheetClose}>Close</Text></TouchableOpacity>
+              <Text style={styles.sheetTitle}>{selectedCluster?.count || 0} homes in this cluster</Text>
+              <TouchableOpacity onPress={() => setSelectedCluster(null)}><Text style={styles.sheetClose}>Close</Text></TouchableOpacity>
             </View>
             <FlatList
-              data={selectedClusterItems || []}
+              data={selectedCluster?.items || []}
               keyExtractor={(item) => item.id}
               contentContainerStyle={{ paddingBottom: 18 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.sheetRow}
                   onPress={() => {
-                    setSelectedClusterItems(null);
+                    setSelectedCluster(null);
                     nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } });
                   }}
                 >
@@ -190,7 +270,6 @@ const styles = StyleSheet.create({
     minWidth: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#e85d2f',
     borderWidth: 3,
     borderColor: 'rgba(255,255,255,0.92)',
     justifyContent: 'center',

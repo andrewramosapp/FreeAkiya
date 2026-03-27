@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, Image, TouchableOpacity, StyleSheet,
   Dimensions, FlatList, Linking, SafeAreaView, TextInput, Alert
 } from 'react-native';
-import { WebView } from 'react-native-webview';
+import MapView, { Marker } from 'react-native-maps';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Listing, getSavedListingIds, getMemberStatus, setSavedListing, submitInquiry } from '../lib/api';
 
@@ -36,7 +36,6 @@ export default function ListingDetailScreen() {
   const [saved, setSaved] = useState(false);
   const [memberEmail, setMemberEmail] = useState<string | null>(params?.memberEmail || null);
   const [premium, setPremium] = useState(!!params?.memberEmail);
-  const [mapView, setMapView] = useState<'map' | 'street'>('map');
 
   useEffect(() => {
     let active = true;
@@ -67,14 +66,6 @@ export default function ListingDetailScreen() {
   const imgs = listing.images?.length > 0 ? listing.images : [''];
   const locationLabel = [listing.city, listing.prefecture].filter(Boolean).join(', ');
   const hasCoords = !!(listing.lat && listing.lng);
-  const mapQuery = hasCoords
-    ? encodeURIComponent(`${listing.lat},${listing.lng}`)
-    : encodeURIComponent(`${listing.city}, ${listing.prefecture}, Japan`);
-  const mapSrc = `https://maps.google.com/maps?q=${mapQuery}&output=embed&z=${hasCoords ? 15 : 12}`;
-  const streetSrc = hasCoords
-    ? `https://www.google.com/maps/embed/v1/streetview?key=AIzaSyB3zglJ6wGnX5cpMdFnK0cisFfr0y0zlZ4&location=${listing.lat},${listing.lng}&heading=0&pitch=0&fov=80`
-    : null;
-  const currentMapSrc = useMemo(() => (mapView === 'street' && streetSrc ? streetSrc : mapSrc), [mapSrc, mapView, streetSrc]);
 
   async function onToggleSave() {
     if (!memberEmail) {
@@ -201,22 +192,29 @@ export default function ListingDetailScreen() {
           {!!listing.notes && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>{listing.notes}</Text></View>}
 
           <View style={s.mapSection}>
-            <View style={s.mapHeader}>
-              <Text style={s.secT}>Location</Text>
-              {hasCoords && (
-                <View style={s.mapTabs}>
-                  <TouchableOpacity style={[s.mapTab, mapView === 'map' && s.mapTabActive]} onPress={() => setMapView('map')}>
-                    <Text style={[s.mapTabText, mapView === 'map' && s.mapTabTextActive]}>Map</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[s.mapTab, mapView === 'street' && s.mapTabActive]} onPress={() => setMapView('street')}>
-                    <Text style={[s.mapTabText, mapView === 'street' && s.mapTabTextActive]}>Street</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-            <View style={s.mapFrame}>
-              <WebView source={{ uri: currentMapSrc }} style={s.webview} scrollEnabled={false} />
-            </View>
+            <Text style={s.secT}>Location</Text>
+            {hasCoords ? (
+              <View style={s.mapFrame}>
+                <MapView
+                  style={s.map}
+                  initialRegion={{
+                    latitude: listing.lat!,
+                    longitude: listing.lng!,
+                    latitudeDelta: 0.02,
+                    longitudeDelta: 0.02,
+                  }}
+                  scrollEnabled={false}
+                  zoomEnabled={false}
+                  rotateEnabled={false}
+                  pitchEnabled={false}
+                  toolbarEnabled={false}
+                >
+                  <Marker coordinate={{ latitude: listing.lat!, longitude: listing.lng! }} />
+                </MapView>
+              </View>
+            ) : (
+              <View style={s.mapFallback}><Text style={s.mapFallbackText}>Location available for {listing.city}, {listing.prefecture}</Text></View>
+            )}
             <Text style={s.mapCaption}>📍 {listing.city}, {listing.prefecture} Prefecture, Japan</Text>
           </View>
 
@@ -290,14 +288,10 @@ const s = StyleSheet.create({
   secT: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 8 },
   notes: { color: '#9ca3af', fontSize: 13, lineHeight: 21 },
   mapSection: { marginBottom: 18 },
-  mapHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  mapTabs: { flexDirection: 'row', borderRadius: 999, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  mapTab: { backgroundColor: 'rgba(255,255,255,0.06)', paddingHorizontal: 12, paddingVertical: 8 },
-  mapTabActive: { backgroundColor: '#e85d2f' },
-  mapTabText: { color: '#9ca3af', fontSize: 12, fontWeight: '700' },
-  mapTabTextActive: { color: '#fff' },
-  mapFrame: { height: 260, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', backgroundColor: '#111827' },
-  webview: { flex: 1, backgroundColor: '#111827' },
+  mapFrame: { height: 260, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', backgroundColor: '#111827', marginTop: 8 },
+  map: { flex: 1 },
+  mapFallback: { height: 160, borderRadius: 16, backgroundColor: '#111827', justifyContent: 'center', alignItems: 'center', marginTop: 8 },
+  mapFallbackText: { color: '#9ca3af', fontSize: 14 },
   mapCaption: { color: '#6b7280', fontSize: 12, marginTop: 8 },
   secBox: { backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginBottom: 16 },
   leadBox: { backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginBottom: 16 },

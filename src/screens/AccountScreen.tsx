@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TextInput,
-  TouchableOpacity, ActivityIndicator, Linking
+  TouchableOpacity, ActivityIndicator, Linking, ScrollView
 } from 'react-native';
 import { getMemberStatus, logoutMemberSession, verifyMember } from '../lib/api';
 
@@ -58,9 +58,9 @@ export default function AccountScreen() {
       await logoutMemberSession();
       setMemberEmail(null);
       setPremium(false);
-      setStatusMsg('Local app session cleared. If the site still shows you signed in, use the web logout too.');
+      setStatusMsg('Logged out on this device.');
     } catch (e: any) {
-      setError(e?.message || 'Sign out failed');
+      setError(e?.message || 'Log out failed');
     } finally {
       setSubmitting(false);
     }
@@ -68,68 +68,71 @@ export default function AccountScreen() {
 
   return (
     <SafeAreaView style={s.wrap}>
-      <View style={s.header}>
-        <Text style={s.title}>Account</Text>
-        <Text style={s.subtitle}>Verify your CheapAkiya membership to unlock saved listings and member-aware flows in the app.</Text>
-      </View>
+      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+        <View style={s.header}>
+          <Text style={s.title}>Account</Text>
+          <Text style={s.subtitle}>Verify your CheapAkiya membership to unlock saved listings and member-aware flows in the app.</Text>
+        </View>
 
-      <View style={s.card}>
-        {loading ? (
-          <View style={s.centerRow}><ActivityIndicator color="#e85d2f" /><Text style={s.muted}>Checking member status…</Text></View>
-        ) : (
-          <>
-            <Text style={s.label}>Current status</Text>
-            <Text style={s.value}>{memberEmail ? memberEmail : 'Not verified on this device'}</Text>
-            <View style={[s.badge, premium ? s.badgePremium : s.badgeFree]}>
-              <Text style={s.badgeText}>{premium ? 'Premium' : memberEmail ? 'Free member' : 'Guest'}</Text>
-            </View>
-          </>
-        )}
-      </View>
+        <View style={s.card}>
+          {loading ? (
+            <View style={s.centerRow}><ActivityIndicator color="#e85d2f" /><Text style={s.muted}>Checking member status…</Text></View>
+          ) : (
+            <>
+              <Text style={s.label}>Current status</Text>
+              <Text style={s.value}>{memberEmail ? memberEmail : 'Not verified on this device'}</Text>
+              <View style={[s.badge, premium ? s.badgePremium : s.badgeFree]}>
+                <Text style={s.badgeText}>{premium ? 'Premium' : memberEmail ? 'Free member' : 'Guest'}</Text>
+              </View>
+            </>
+          )}
+        </View>
 
-      <View style={s.card}>
-        <Text style={s.label}>Verify membership</Text>
-        <Text style={s.help}>Use the same email you use on CheapAkiya. If the site recognizes it, the app will start using your member session for saved listings and related flows.</Text>
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="you@example.com"
-          placeholderTextColor="#6b7280"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={s.input}
-        />
-        <TouchableOpacity style={s.primaryBtn} onPress={onVerify} disabled={submitting}>
-          <Text style={s.primaryBtnText}>{submitting ? 'Working…' : 'Verify member email'}</Text>
-        </TouchableOpacity>
-        {memberEmail ? (
-          <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={onSignOut} disabled={submitting}>
-            <Text style={s.secondaryBtnText}>Clear app session</Text>
+        <View style={s.card}>
+          <Text style={s.label}>Verify membership</Text>
+          <Text style={s.help}>Use the same email you use on CheapAkiya. If the site recognizes it, the app will start using your member session for saved listings and related flows.</Text>
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            placeholder="you@example.com"
+            placeholderTextColor="#6b7280"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            style={s.input}
+          />
+          <TouchableOpacity style={s.primaryBtn} onPress={onVerify} disabled={submitting}>
+            <Text style={s.primaryBtnText}>{submitting ? 'Working…' : 'Verify member email'}</Text>
           </TouchableOpacity>
-        ) : null}
-        {statusMsg ? <Text style={s.success}>{statusMsg}</Text> : null}
-        {error ? <Text style={s.error}>{error}</Text> : null}
-      </View>
+          {memberEmail ? (
+            <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={onSignOut} disabled={submitting}>
+              <Text style={s.secondaryBtnText}>Log out</Text>
+            </TouchableOpacity>
+          ) : null}
+          {statusMsg ? <Text style={s.success}>{statusMsg}</Text> : null}
+          {error ? <Text style={s.error}>{error}</Text> : null}
+        </View>
 
-      <View style={s.card}>
-        <Text style={s.label}>Web handoff</Text>
-        <Text style={s.help}>If cookies are fussy in native mode, open the site directly. This is the escape hatch while we harden the mobile auth story.</Text>
-        <TouchableOpacity style={s.secondaryBtn} onPress={() => Linking.openURL('https://cheapakiya.com/members')}>
-          <Text style={s.secondaryBtnText}>Open member page on CheapAkiya</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={() => Linking.openURL('https://cheapakiya.com/join')}>
-          <Text style={s.secondaryBtnText}>Join / upgrade on CheapAkiya</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={() => Linking.openURL('https://cheapakiya.com/api/logout')}>
-          <Text style={s.secondaryBtnText}>Open web logout</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={s.card}>
+          <Text style={s.label}>Web handoff</Text>
+          <Text style={s.help}>If cookies are fussy in native mode, open the site directly.</Text>
+          <TouchableOpacity style={s.secondaryBtn} onPress={() => Linking.openURL('https://cheapakiya.com/members')}>
+            <Text style={s.secondaryBtnText}>Open member page on CheapAkiya</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={() => Linking.openURL('https://cheapakiya.com/join')}>
+            <Text style={s.secondaryBtnText}>Join / upgrade on CheapAkiya</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={() => Linking.openURL('https://cheapakiya.com/api/logout')}>
+            <Text style={s.secondaryBtnText}>Open web logout</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  wrap: { flex: 1, backgroundColor: '#0b0b0b', padding: 16 },
+  wrap: { flex: 1, backgroundColor: '#0b0b0b' },
+  scroll: { padding: 16, paddingBottom: 120 },
   header: { paddingTop: 12, paddingBottom: 8 },
   title: { color: '#fff', fontSize: 28, fontWeight: '800' },
   subtitle: { color: '#9ca3af', fontSize: 14, lineHeight: 21, marginTop: 8 },
