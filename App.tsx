@@ -9,6 +9,7 @@ import MapScreen from './src/screens/MapScreen';
 import SavedScreen from './src/screens/SavedScreen';
 import AccountScreen from './src/screens/AccountScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
+import AuthEmailScreen from './src/screens/AuthEmailScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -50,11 +51,39 @@ function MainTabs() {
 }
 
 export default function App() {
-  const [started, setStarted] = useState(false);
+  const [screen, setScreen] = useState<'welcome' | 'signup' | 'signin' | 'app'>('welcome');
+  const [member, setMember] = useState<{ email: string; tier: 'free' | 'premium' } | null>(null);
 
   return (
     <NavigationContainer>
-      {started ? <MainTabs /> : <WelcomeScreen onContinue={() => setStarted(true)} />}
+      {screen === 'welcome' && (
+        <WelcomeScreen
+          onBrowse={() => setScreen('app')}
+          onSignUp={() => setScreen('signup')}
+          onSignIn={() => setScreen('signin')}
+        />
+      )}
+      {screen === 'signup' && (
+        <AuthEmailScreen
+          mode="signup"
+          onBack={() => setScreen('welcome')}
+          onAuthed={(nextMember) => {
+            setMember(nextMember);
+            setScreen('app');
+          }}
+        />
+      )}
+      {screen === 'signin' && (
+        <AuthEmailScreen
+          mode="signin"
+          onBack={() => setScreen('welcome')}
+          onAuthed={(nextMember) => {
+            setMember(nextMember);
+            setScreen('app');
+          }}
+        />
+      )}
+      {screen === 'app' && <MainTabs />}
     </NavigationContainer>
   );
 }

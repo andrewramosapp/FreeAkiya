@@ -101,6 +101,14 @@ export async function getMemberStatus(): Promise<MemberStatus> {
   }
 }
 
+export async function subscribeEmail(email: string) {
+  return getJson('/api/subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+}
+
 export async function verifyMember(email: string): Promise<VerifyMemberResult> {
   return getJson('/api/verify-member', {
     method: 'POST',
