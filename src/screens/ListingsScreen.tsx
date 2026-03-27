@@ -3,9 +3,10 @@ import {
   View, Text, FlatList, TouchableOpacity, Image, StyleSheet,
   ActivityIndicator, SafeAreaView, StatusBar, ScrollView, Dimensions, Alert
 } from 'react-native';
-import { getListingsPage, Listing, getMemberStatus, getSavedListingIds, setSavedListing } from '../lib/api';
+import { getListingsPage, Listing, getSavedListingIds, setSavedListing } from '../lib/api';
 import { useNavigation } from '@react-navigation/native';
 import PriceRangeSlider from '../components/PriceRangeSlider';
+import { useAuth } from '../../App';
 
 const REGIONS = ['All', 'Hokkaido', 'Tohoku', 'Kanto', 'Chubu', 'Kansai', 'Chugoku', 'Shikoku', 'Kyushu'];
 const CONDITIONS = [
@@ -35,6 +36,7 @@ function Badge({ text, tone = 'default' }: { text: string; tone?: 'default' | 'g
 
 export default function ListingsScreen() {
   const nav = useNavigation<any>();
+  const { member } = useAuth();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -49,17 +51,18 @@ export default function ListingsScreen() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [memberEmail, setMemberEmail] = useState<string | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [savingId, setSavingId] = useState<string | null>(null);
 
   async function loadMemberContext() {
+    if (!member?.email) {
+      setSavedIds([]);
+      return;
+    }
     try {
-      const [status, ids] = await Promise.all([getMemberStatus(), getSavedListingIds()]);
-      setMemberEmail(status?.email || null);
+      const ids = await getSavedListingIds();
       setSavedIds(ids);
     } catch {
-      setMemberEmail(null);
       setSavedIds([]);
     }
   }
@@ -98,7 +101,7 @@ export default function ListingsScreen() {
     }
   }
 
-  useEffect(() => { loadFirstPage(); }, [sort]);
+  useEffect(() => { loadFirstPage(); }, [sort, member?.email]);
 
   const filtered = useMemo(() => listings.filter((l) => {
     if (region !== 'All' && l.region !== region) return false;
@@ -111,8 +114,8 @@ export default function ListingsScreen() {
   }), [listings, region, photosOnly, premiumOnly, minPrice, maxPrice, condition]);
 
   async function toggleSave(item: Listing) {
-    if (!memberEmail) {
-      Alert.alert('Verify first', 'Open the Account tab and verify your CheapAkiya email before saving listings.');
+    if (!member?.email) {
+      Alert.alert('Members only', 'Join free or sign in to save listings.');
       return;
     }
 
@@ -134,28 +137,30 @@ export default function ListingsScreen() {
     const stationText = item.stationWalkMin ? `${item.stationWalkMin} min to station` : null;
     const isSaved = savedIds.includes(item.id);
     const isSaving = savingId === item.id;
+    const lockedPremium = item.isPremium && member?.tier !== 'premium';
     return (
-      <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listing', { slug: item.slug, listing: item, memberEmail })}>
+      <TouchableOpacity style={[s.card, lockedPremium && s.cardLocked]} onPress={() => nav.navigate('Listing', { slug: item.slug, listing: item, memberEmail: member?.email || null })}>
         <View style={s.imgBox}>
-          <Image source={{ uri: img }} style={s.img} resizeMode="cover" />
+          <Image source={{ uri: img }} style={[s.img, lockedPremium && s.imgLocked]} resizeMode="cover" />
           <View style={s.priceTag}><Text style={s.priceTagText}>{item.price}</Text></View>
           <TouchableOpacity style={s.savePill} onPress={(e) => { e.stopPropagation?.(); toggleSave(item); }}>
             <Text style={s.savePillText}>{isSaving ? '…' : isSaved ? '♥' : '♡'}</Text>
           </TouchableOpacity>
-          {item.isPremium && <View style={s.lockTag}><Text style={s.lockTagText}>PREMIUM</Text></View>}
+          {item.isPremium && <View style={s.lockTag}><Text style={s.lockTagText}>{member?.tier === 'premium' ? 'PREMIUM' : 'LOCKED'}</Text></View>}
           {item.isFeatured && <View style={s.featureTag}><Text style={s.featureTagText}>⭐</Text></View>}
+          {lockedPremium && <View style={s.lockOverlay}><Text style={s.lockOverlayText}>Premium</Text></View>}
         </View>
         <View style={s.body}>
           <Text style={s.pref}>{item.prefecture}{item.city ? ` · ${item.city}` : ''}</Text>
           <Text style={s.name} numberOfLines={2}>{item.name}</Text>
           <Text style={s.spec} numberOfLines={2}>
-            {[item.beds ? `${item.beds} bed` : null, sizeText, stationText].filter(Boolean).join(' · ')}
+            {lockedPremium ? 'Upgrade to unlock full details' : [item.beds ? `${item.beds} bed` : null, sizeText, stationText].filter(Boolean).join(' · ')}
           </Text>
           <View style={s.badgesRow}>
-            {item.subsidyAvailable ? <Badge text="Subsidy" tone="green" /> : null}
-            {item.condition === 'move_in_ready' ? <Badge text="Move-in" tone="blue" /> : null}
-            {item.internetType === 'fiber' ? <Badge text="Fiber" tone="purple" /> : null}
-            {(item.disasterScore || 0) >= 4 ? <Badge text="Low risk" tone="orange" /> : null}
+            {!lockedPremium && item.subsidyAvailable ? <Badge text="Subsidy" tone="green" /> : null}
+            {!lockedPremium && item.condition === 'move_in_ready' ? <Badge text="Move-in" tone="blue" /> : null}
+            {!lockedPremium && item.internetType === 'fiber' ? <Badge text="Fiber" tone="purple" /> : null}
+            {!lockedPremium && (item.disasterScore || 0) >= 4 ? <Badge text="Low risk" tone="orange" /> : null}
           </View>
         </View>
       </TouchableOpacity>
@@ -168,7 +173,7 @@ export default function ListingsScreen() {
       <View style={s.header}>
         <View>
           <Text style={s.logo}>CheapAkiya</Text>
-          <Text style={s.subhead}>{loading ? 'Loading…' : `${filtered.length} results`}{memberEmail ? ' · save enabled' : ''}</Text>
+          <Text style={s.subhead}>{loading ? 'Loading…' : `${filtered.length} results`}{member ? ` · ${member.tier}` : ' · guest'}</Text>
         </View>
         <View style={s.headerRight}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
@@ -187,6 +192,13 @@ export default function ListingsScreen() {
           </TouchableOpacity>
         </View>
       </View>
+
+      {!member?.email && (
+        <View style={s.gateBanner}>
+          <Text style={s.gateBannerTitle}>Join free to save listings and contact CheapAkiya.</Text>
+          <Text style={s.gateBannerText}>Premium listings are visible here, but locked until you upgrade.</Text>
+        </View>
+      )}
 
       {filtersOpen && (
         <View style={s.filtersPanel}>
@@ -270,6 +282,9 @@ const s = StyleSheet.create({
   headerRight: { gap: 10 },
   logo: { color: '#e85d2f', fontSize: 22, fontWeight: '900' },
   subhead: { color: '#6b7280', fontSize: 11, marginTop: 3 },
+  gateBanner: { marginHorizontal: 16, marginBottom: 10, backgroundColor: 'rgba(232,93,47,0.10)', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: 'rgba(232,93,47,0.2)' },
+  gateBannerTitle: { color: '#fff', fontWeight: '800', fontSize: 14, marginBottom: 4 },
+  gateBannerText: { color: '#d1d5db', fontSize: 12, lineHeight: 18 },
   filterToggle: { alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 18, paddingHorizontal: 14, paddingVertical: 9 },
   filterToggleText: { color: '#fff', fontSize: 12, fontWeight: '700' },
   filtersPanel: { marginHorizontal: 12, marginBottom: 8, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', padding: 12 },
@@ -290,8 +305,12 @@ const s = StyleSheet.create({
   primaryBtnText: { color: '#fff', fontWeight: '700' },
   row: { justifyContent: 'space-between' },
   card: { width: CARD_W, marginBottom: 8, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  cardLocked: { borderColor: 'rgba(232,93,47,0.28)' },
   imgBox: { position: 'relative', height: 142 },
   img: { width: '100%', height: '100%' },
+  imgLocked: { opacity: 0.65 },
+  lockOverlay: { position: 'absolute', inset: 0, justifyContent: 'center', alignItems: 'center' },
+  lockOverlayText: { color: '#fff', fontWeight: '900', fontSize: 16, backgroundColor: 'rgba(0,0,0,0.55)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
   priceTag: { position: 'absolute', bottom: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.82)', borderRadius: 7, paddingHorizontal: 8, paddingVertical: 3 },
   priceTagText: { color: '#fff', fontWeight: '900', fontSize: 12 },
   savePill: { position: 'absolute', top: 8, right: 8, backgroundColor: 'rgba(0,0,0,0.78)', borderRadius: 999, width: 30, height: 30, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)' },

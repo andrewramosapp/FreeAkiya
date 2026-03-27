@@ -6,6 +6,7 @@ import {
 import MapView, { Marker, Callout, Region } from 'react-native-maps';
 import { getAllListings, Listing } from '../lib/api';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../App';
 
 const INITIAL_REGION: Region = {
   latitude: 36.2048,
@@ -93,6 +94,7 @@ function clusterColor(count: number) {
 
 export default function MapScreen() {
   const nav = useNavigation<any>();
+  const { member } = useAuth();
   const mapRef = useRef<MapView | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,7 @@ export default function MapScreen() {
       setLoading(true);
       setError(null);
       try {
-        const all = await getAllListings('price_asc', 40);
+        const all = await getAllListings('price_asc', 8);
         const withCoords = all.filter((l) => typeof l.lat === 'number' && typeof l.lng === 'number');
         if (!mounted) return;
         setListings(withCoords);
@@ -151,6 +153,13 @@ export default function MapScreen() {
 
   return (
     <View style={styles.wrap}>
+      {!member?.email && (
+        <View style={styles.gateBanner}>
+          <Text style={styles.gateBannerTitle}>Premium homes are visible on the map but locked until you upgrade.</Text>
+          <Text style={styles.gateBannerText}>Join free to save listings. Upgrade for full premium access.</Text>
+        </View>
+      )}
+
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -160,20 +169,22 @@ export default function MapScreen() {
         {clusters.map((cluster) => {
           if (cluster.count === 1) {
             const item = cluster.representative;
+            const lockedPremium = item.isPremium && member?.tier !== 'premium';
             return (
               <Marker
                 key={item.id}
                 coordinate={{ latitude: item.lat!, longitude: item.lng! }}
-                pinColor={item.priceNum === 0 ? '#10b981' : item.isPremium ? '#e85d2f' : '#f59e0b'}
+                pinColor={lockedPremium ? '#6b7280' : item.priceNum === 0 ? '#10b981' : item.isPremium ? '#e85d2f' : '#f59e0b'}
               >
-                <Callout tooltip onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } })}>
+                <Callout tooltip onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item, memberEmail: member?.email || null } })}>
                   <View style={styles.callout}>
-                    <Image source={{ uri: item.images?.[0] || PH }} style={styles.calloutImg} />
+                    <Image source={{ uri: item.images?.[0] || PH }} style={[styles.calloutImg, lockedPremium && { opacity: 0.65 }]} />
                     <Text style={styles.calloutPrice}>{item.price}</Text>
                     <Text style={styles.calloutTitle} numberOfLines={2}>{item.name}</Text>
                     <Text style={styles.calloutMeta}>{item.prefecture}{item.city ? ` · ${item.city}` : ''}</Text>
+                    {lockedPremium ? <Text style={styles.lockedText}>Premium listing — upgrade to unlock</Text> : null}
                     <View style={styles.calloutBtns}>
-                      <TouchableOpacity style={styles.smallBtn} onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } })}>
+                      <TouchableOpacity style={styles.smallBtn} onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item, memberEmail: member?.email || null } })}>
                         <Text style={styles.smallBtnText}>View</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={[styles.smallBtn, styles.mapBtn]} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${item.lat},${item.lng}`)}>
@@ -226,22 +237,26 @@ export default function MapScreen() {
               data={selectedCluster?.items || []}
               keyExtractor={(item) => item.id}
               contentContainerStyle={{ paddingBottom: 18 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.sheetRow}
-                  onPress={() => {
-                    setSelectedCluster(null);
-                    nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item } });
-                  }}
-                >
-                  <Image source={{ uri: item.images?.[0] || PH }} style={styles.sheetImg} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.sheetPrice}>{item.price}</Text>
-                    <Text style={styles.sheetName} numberOfLines={2}>{item.name}</Text>
-                    <Text style={styles.sheetMeta}>{[item.prefecture, item.city].filter(Boolean).join(' · ')}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+              renderItem={({ item }) => {
+                const lockedPremium = item.isPremium && member?.tier !== 'premium';
+                return (
+                  <TouchableOpacity
+                    style={styles.sheetRow}
+                    onPress={() => {
+                      setSelectedCluster(null);
+                      nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item, memberEmail: member?.email || null } });
+                    }}
+                  >
+                    <Image source={{ uri: item.images?.[0] || PH }} style={[styles.sheetImg, lockedPremium && { opacity: 0.65 }]} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.sheetPrice}>{item.price}</Text>
+                      <Text style={styles.sheetName} numberOfLines={2}>{item.name}</Text>
+                      <Text style={styles.sheetMeta}>{[item.prefecture, item.city].filter(Boolean).join(' · ')}</Text>
+                      {lockedPremium ? <Text style={styles.lockedText}>Premium listing — locked</Text> : null}
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
             />
           </View>
         </View>
@@ -253,8 +268,11 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   wrap: { flex: 1, backgroundColor: '#0b0b0b' },
   map: { flex: 1 },
+  gateBanner: { position: 'absolute', top: 56, left: 16, right: 16, zIndex: 30, backgroundColor: 'rgba(232,93,47,0.10)', borderRadius: 14, padding: 12, borderWidth: 1, borderColor: 'rgba(232,93,47,0.2)' },
+  gateBannerTitle: { color: '#fff', fontWeight: '800', fontSize: 13, marginBottom: 4 },
+  gateBannerText: { color: '#d1d5db', fontSize: 12 },
   topBar: {
-    position: 'absolute', top: 56, left: 16, right: 16,
+    position: 'absolute', top: 130, left: 16, right: 16,
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     backgroundColor: 'rgba(10,10,10,0.85)', borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)'
@@ -266,20 +284,7 @@ const styles = StyleSheet.create({
   err: { color: '#f87171', fontSize: 13, marginTop: 8, paddingHorizontal: 20, textAlign: 'center' },
   resetBtn: { backgroundColor: 'rgba(255,255,255,0.09)', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   resetBtnText: { color: '#fff', fontSize: 12, fontWeight: '800' },
-  clusterBubble: {
-    minWidth: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.92)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-  },
+  clusterBubble: { minWidth: 40, height: 40, borderRadius: 20, borderWidth: 3, borderColor: 'rgba(255,255,255,0.92)', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 },
   clusterBubbleLarge: { minWidth: 48, height: 48, borderRadius: 24 },
   clusterBubbleXL: { minWidth: 56, height: 56, borderRadius: 28 },
   clusterCount: { color: '#fff', fontSize: 14, fontWeight: '900' },
@@ -287,7 +292,8 @@ const styles = StyleSheet.create({
   calloutImg: { width: '100%', height: 110, backgroundColor: '#1f2937' },
   calloutPrice: { color: '#e85d2f', fontSize: 18, fontWeight: '900', paddingHorizontal: 12, paddingTop: 10 },
   calloutTitle: { color: '#fff', fontSize: 13, fontWeight: '700', paddingHorizontal: 12, paddingTop: 4 },
-  calloutMeta: { color: '#9ca3af', fontSize: 11, paddingHorizontal: 12, paddingTop: 4, paddingBottom: 10 },
+  calloutMeta: { color: '#9ca3af', fontSize: 11, paddingHorizontal: 12, paddingTop: 4, paddingBottom: 6 },
+  lockedText: { color: '#fca5a5', fontSize: 11, fontWeight: '700', paddingHorizontal: 12, paddingBottom: 8 },
   calloutBtns: { flexDirection: 'row', gap: 8, paddingHorizontal: 12, paddingBottom: 12 },
   smallBtn: { flex: 1, backgroundColor: '#e85d2f', borderRadius: 10, paddingVertical: 9, alignItems: 'center' },
   mapBtn: { backgroundColor: '#374151' },
