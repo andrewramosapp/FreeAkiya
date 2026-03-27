@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -72,7 +73,7 @@ function MainTabs() {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<'welcome' | 'signup' | 'signin' | 'premium' | 'app'>('welcome');
+  const [screen, setScreen] = useState<'welcome' | 'signup' | 'signin' | 'app'>('welcome');
   const [member, setMemberState] = useState<Member>(null);
   const [authReady, setAuthReady] = useState(false);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
@@ -136,6 +137,7 @@ export default function App() {
         await setMember({ email: member.email, tier: 'premium' });
       }
       setShowPaywall(false);
+      Alert.alert('Premium unlocked', 'Cheap Akiya Pro is now active on this device.');
     } catch (e: any) {
       setPurchaseError(e?.message || 'Purchase failed');
     } finally {
@@ -153,6 +155,7 @@ export default function App() {
         await setMember({ email: member.email, tier: 'premium' });
       }
       setShowPaywall(false);
+      Alert.alert('Restored', 'Purchases restored successfully.');
     } catch (e: any) {
       setPurchaseError(e?.message || 'Restore failed');
     } finally {
@@ -169,10 +172,10 @@ export default function App() {
       <NavigationContainer>
         {screen === 'welcome' && (
           <WelcomeScreen
-            onBrowse={() => setScreen('app')}
             onSignUp={() => setScreen('signup')}
             onSignIn={() => setScreen('signin')}
             onPremium={() => setShowPaywall(true)}
+            onGoogle={() => Alert.alert('Google sign-in next', 'Google sign-in still needs backend OAuth support. Email auth is live now.')}
           />
         )}
         {screen === 'signup' && (
