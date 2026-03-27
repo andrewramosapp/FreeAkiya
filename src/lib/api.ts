@@ -53,6 +53,10 @@ export type VerifyMemberResult = {
   error?: string;
 };
 
+async function parseJsonSafely(res: Response) {
+  return res.json().catch(() => null);
+}
+
 async function getJson(path: string, init?: RequestInit) {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
@@ -63,13 +67,30 @@ async function getJson(path: string, init?: RequestInit) {
     },
   });
 
-  const data = await res.json().catch(() => null);
+  const data = await parseJsonSafely(res);
   if (!res.ok) throw new Error(data?.error || `API ${res.status}: ${path}`);
   return data;
 }
 
 export async function getListingsPage(page = 0, sort: 'price_asc' | 'price_desc' | 'newest' = 'price_asc') {
   return getJson(`/api/listings-page?page=${page}&sort=${sort}`);
+}
+
+export async function getAllListings(sort: 'price_asc' | 'price_desc' | 'newest' = 'price_asc', maxPages = 30): Promise<Listing[]> {
+  const seen = new Map<string, Listing>();
+
+  for (let page = 0; page < maxPages; page += 1) {
+    const data = await getListingsPage(page, sort);
+    const pageListings = (data?.listings || []) as Listing[];
+
+    for (const item of pageListings) {
+      seen.set(item.id, item);
+    }
+
+    if (!data?.hasMore || pageListings.length === 0) break;
+  }
+
+  return Array.from(seen.values());
 }
 
 export async function getMemberStatus(): Promise<MemberStatus> {
@@ -116,6 +137,16 @@ export async function setSavedListing(listingId: string, shouldSave: boolean) {
   });
 }
 
+export async function logoutMemberSession() {
+  const res = await fetch(`${API_BASE}/api/logout`, {
+    method: 'GET',
+    credentials: 'include',
+    redirect: 'manual',
+    headers: { Accept: 'application/json,text/html' },
+  });
+  return res;
+}
+
 export async function submitInquiry(input: {
   name: string;
   email: string;
@@ -132,7 +163,7 @@ export async function submitInquiry(input: {
     credentials: 'include',
     body: JSON.stringify(input),
   });
-  const data = await res.json().catch(() => null);
+  const data = await parseJsonSafely(res);
   if (!res.ok) throw new Error(data?.error || 'Inquiry failed');
   return data;
 }

@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, TextInput,
   TouchableOpacity, ActivityIndicator, Linking
 } from 'react-native';
-import { getMemberStatus, verifyMember } from '../lib/api';
+import { getMemberStatus, logoutMemberSession, verifyMember } from '../lib/api';
 
 export default function AccountScreen() {
   const [email, setEmail] = useState('');
@@ -50,6 +50,22 @@ export default function AccountScreen() {
     }
   }
 
+  async function onSignOut() {
+    try {
+      setSubmitting(true);
+      setError(null);
+      setStatusMsg(null);
+      await logoutMemberSession();
+      setMemberEmail(null);
+      setPremium(false);
+      setStatusMsg('Local app session cleared. If the site still shows you signed in, use the web logout too.');
+    } catch (e: any) {
+      setError(e?.message || 'Sign out failed');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <SafeAreaView style={s.wrap}>
       <View style={s.header}>
@@ -84,19 +100,28 @@ export default function AccountScreen() {
           style={s.input}
         />
         <TouchableOpacity style={s.primaryBtn} onPress={onVerify} disabled={submitting}>
-          <Text style={s.primaryBtnText}>{submitting ? 'Verifying…' : 'Verify member email'}</Text>
+          <Text style={s.primaryBtnText}>{submitting ? 'Working…' : 'Verify member email'}</Text>
         </TouchableOpacity>
+        {memberEmail ? (
+          <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={onSignOut} disabled={submitting}>
+            <Text style={s.secondaryBtnText}>Clear app session</Text>
+          </TouchableOpacity>
+        ) : null}
         {statusMsg ? <Text style={s.success}>{statusMsg}</Text> : null}
         {error ? <Text style={s.error}>{error}</Text> : null}
       </View>
 
       <View style={s.card}>
-        <Text style={s.label}>Manage on the web</Text>
-        <TouchableOpacity style={s.secondaryBtn} onPress={() => Linking.openURL('https://cheapakiya.com/join')}>
+        <Text style={s.label}>Web handoff</Text>
+        <Text style={s.help}>If cookies are fussy in native mode, open the site directly. This is the escape hatch while we harden the mobile auth story.</Text>
+        <TouchableOpacity style={s.secondaryBtn} onPress={() => Linking.openURL('https://cheapakiya.com/members')}>
+          <Text style={s.secondaryBtnText}>Open member page on CheapAkiya</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={() => Linking.openURL('https://cheapakiya.com/join')}>
           <Text style={s.secondaryBtnText}>Join / upgrade on CheapAkiya</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={() => Linking.openURL('https://cheapakiya.com/saved')}>
-          <Text style={s.secondaryBtnText}>Open saved listings on the web</Text>
+        <TouchableOpacity style={[s.secondaryBtn, { marginTop: 10 }]} onPress={() => Linking.openURL('https://cheapakiya.com/api/logout')}>
+          <Text style={s.secondaryBtnText}>Open web logout</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
