@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getListings } from "@/lib/db";
 
-// Cache for 5 minutes — same strategy as map-pins
+export const dynamic = "force-dynamic";
 export const revalidate = 300;
 
 export async function GET() {
