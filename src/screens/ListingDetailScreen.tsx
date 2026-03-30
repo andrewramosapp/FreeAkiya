@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, ScrollView, Image, TouchableOpacity, StyleSheet,
-  Dimensions, FlatList, Linking, SafeAreaView, TextInput, Alert
+  View, Text, ScrollView, Image,
+  TouchableOpacity, StyleSheet,
+  Dimensions, FlatList, Linking,
+  SafeAreaView, TextInput, Alert,
+  KeyboardAvoidingView, Platform,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Listing, getSavedListingIds, setSavedListing, submitInquiry } from '../lib/api';
 import { useAuth } from '../../App';
+import { Listing, getSavedListingIds, setSavedListing, submitInquiry } from '../lib/api';
 
 const W = Dimensions.get('window').width;
 
 function Stat({ label, value }: { label: string; value: string }) {
   return <View style={s.stat}><Text style={s.statL}>{label}</Text><Text style={s.statV}>{value}</Text></View>;
 }
+
 function Pill({ text, tone = 'default' }: { text: string; tone?: 'default' | 'green' | 'blue' | 'orange' | 'purple' }) {
   const tones = {
     default: { bg: 'rgba(255,255,255,0.06)', color: '#d1d5db', border: 'rgba(255,255,255,0.1)' },
@@ -27,11 +32,12 @@ function Pill({ text, tone = 'default' }: { text: string; tone?: 'default' | 'gr
 export default function ListingDetailScreen() {
   const { params } = useRoute<any>();
   const nav = useNavigation<any>();
-  const { member } = useAuth();
+  const { member, setShowPaywall } = useAuth();
+  const insets = useSafeAreaInsets();
   const l: Listing | undefined = params?.listing;
   const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState(member?.email || '');
-  const [leadMessage, setLeadMessage] = useState('I’m interested in this property. Please send me more details.');
+  const [leadMessage, setLeadMessage] = useState("I'm interested in this property. Please send me more details.");
   const [leadStatus, setLeadStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
   const [leadError, setLeadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -42,7 +48,7 @@ export default function ListingDetailScreen() {
     async function loadSavedState() {
       if (!l?.id || !member?.email) return;
       try {
-        const savedIds = await getSavedListingIds();
+        const savedIds = await getSavedListingIds(member?.email || undefined);
         if (!active) return;
         setSaved(savedIds.includes(l.id));
       } catch {
@@ -59,6 +65,30 @@ export default function ListingDetailScreen() {
   }, [member?.email]);
 
   if (!l) return <View style={s.center}><Text style={{ color: '#fff' }}>No listing data</Text></View>;
+
+  // Hard gate: premium listing + non-premium user → show paywall, nothing else
+  if (l.isPremium && member?.tier !== 'premium') {
+    return (
+      <SafeAreaView style={s.gateWrap}>
+        <TouchableOpacity style={s.gateBack} onPress={() => nav.goBack()}>
+          <Text style={s.gateBackText}>← Back</Text>
+        </TouchableOpacity>
+        <View style={s.gateContent}>
+          <Text style={s.gateLock}>🔒</Text>
+          <Text style={s.gateTitle}>Premium Listing</Text>
+          <Text style={s.gateSubtitle}>
+            This property is reserved for premium members. Upgrade to unlock full details, photos, location, and direct seller contact.
+          </Text>
+          <TouchableOpacity style={s.gateBtn} onPress={() => setShowPaywall(true)}>
+            <Text style={s.gateBtnText}>Upgrade to Premium — $12/mo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.gateSecondary} onPress={() => nav.goBack()}>
+            <Text style={s.gateSecondaryText}>Browse free listings →</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const listing = l;
   const imgs = listing.images?.length > 0 ? listing.images : [''];
@@ -78,7 +108,7 @@ export default function ListingDetailScreen() {
 
     try {
       setSaving(true);
-      await setSavedListing(listing.id, !saved);
+      await setSavedListing(listing.id, !saved, member?.email || undefined);
       setSaved(!saved);
     } catch (e: any) {
       Alert.alert('Could not update saved listings', e?.message || 'Try again in a moment.');
@@ -126,7 +156,7 @@ export default function ListingDetailScreen() {
         member_tier: isPremiumMember ? 'premium' : 'free',
       });
       setLeadStatus('done');
-      setLeadMessage('I’m interested in this property. Please send me more details.');
+      setLeadMessage("I'm interested in this property. Please send me more details.");
     } catch (e: any) {
       setLeadStatus('error');
       setLeadError(e?.message || 'Failed to send inquiry');
@@ -134,7 +164,7 @@ export default function ListingDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={s.container}>
+    <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ height: 300 }}>
           <FlatList
@@ -145,7 +175,14 @@ export default function ListingDetailScreen() {
             keyExtractor={(_, i) => String(i)}
             renderItem={({ item }) => <Image source={{ uri: item || '' }} style={{ width: W, height: 300 }} resizeMode="cover" />}
           />
-          <TouchableOpacity style={s.back} onPress={() => nav.goBack()}><Text style={{ color: '#fff', fontSize: 20 }}>←</Text></TouchableOpacity>
+          {/* Back button with higher zIndex so it's always tappable over the image */}
+          <TouchableOpacity
+            style={[s.back, { zIndex: 100, elevation: 10, top: insets.top + 10 }]}
+            onPress={() => nav.goBack()}
+            hitSlop={{ top: 16, left: 16, right: 16, bottom: 16 }}
+          >
+            <Text style={{ color: '#fff', fontSize: 22, fontWeight: '700' }}>←</Text>
+          </TouchableOpacity>
           {listing.isPremium && <View style={s.topPremium}><Text style={s.topPremiumText}>PREMIUM</Text></View>}
         </View>
 
@@ -158,11 +195,7 @@ export default function ListingDetailScreen() {
             <TouchableOpacity style={[s.btnPrimary, s.actionBtn]} onPress={onToggleSave} disabled={saving}>
               <Text style={s.btnPrimaryText}>{saving ? 'Saving…' : saved ? '♥ Saved' : '♡ Save listing'}</Text>
             </TouchableOpacity>
-            {!!hasCoords && (
-              <TouchableOpacity style={[s.btn, s.actionBtn]} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${listing.lat},${listing.lng}`)}>
-                <Text style={s.btnT}>Open Google Maps</Text>
-              </TouchableOpacity>
-            )}
+            {/* Google Maps external link removed — map interaction is in-app only */}
           </View>
 
           {isGuest && (
@@ -176,7 +209,7 @@ export default function ListingDetailScreen() {
             <View style={s.upgradeBox}>
               <Text style={s.upgradeTitle}>Premium listing</Text>
               <Text style={s.upgradeText}>This listing is reserved for premium members. Upgrade to unlock full access, member-only listings, and direct contact details.</Text>
-              <TouchableOpacity style={s.btnPrimary} onPress={() => Linking.openURL('https://cheapakiya.com/upgrade')}>
+              <TouchableOpacity style={s.btnPrimary} onPress={() => setShowPaywall(true)}>
                 <Text style={s.btnPrimaryText}>Upgrade to premium →</Text>
               </TouchableOpacity>
             </View>
@@ -190,7 +223,7 @@ export default function ListingDetailScreen() {
             <Stat label="Nearest Station" value={isLockedPremium ? 'Premium only' : (listing.stationName || '—')} />
             <Stat label="Walk Time" value={isLockedPremium ? 'Premium only' : (listing.stationWalkMin ? `${listing.stationWalkMin} min` : '—')} />
             <Stat label="Internet" value={isLockedPremium ? 'Premium only' : (listing.internetType ? `${listing.internetType}${listing.internetSpeedMbps ? ` · ${listing.internetSpeedMbps} Mbps` : ''}` : '—')} />
-            <Stat label="Risk Score" value={isLockedPremium ? 'Premium only' : (listing.disasterScore ? `${listing.disasterScore}/5` : '—')} />
+            <Stat label="Disaster Safety Score" value={isLockedPremium ? 'Premium only' : (listing.disasterScore ? `${'⭐'.repeat(listing.disasterScore)}${'☆'.repeat(5 - listing.disasterScore)} ${listing.disasterScore}/5` : '—')} />
           </View>
 
           <View style={s.badges}>
@@ -200,34 +233,38 @@ export default function ListingDetailScreen() {
             {!isLockedPremium && listing.condition === 'move_in_ready' ? <Pill text="✓ Move-in ready" tone="blue" /> : null}
           </View>
 
-          {!isLockedPremium && !!listing.notes && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>{listing.notes}</Text></View>}
+          {!isLockedPremium && listing.notes && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>{listing.notes}</Text></View>}
           {isLockedPremium && <View style={s.sec}><Text style={s.secT}>About this property</Text><Text style={s.notes}>Upgrade to premium to view the full property notes, logistics, and enriched details.</Text></View>}
 
           <View style={s.mapSection}>
             <Text style={s.secT}>Location</Text>
             {hasCoords ? (
-              <View style={s.mapFrame}>
-                <MapView
-                  style={s.map}
-                  initialRegion={{
-                    latitude: listing.lat!,
-                    longitude: listing.lng!,
-                    latitudeDelta: 0.02,
-                    longitudeDelta: 0.02,
-                  }}
-                  scrollEnabled={false}
-                  zoomEnabled={false}
-                  rotateEnabled={false}
-                  pitchEnabled={false}
-                  toolbarEnabled={false}
-                >
-                  <Marker coordinate={{ latitude: listing.lat!, longitude: listing.lng! }} />
-                </MapView>
-              </View>
+              <>
+                <View style={s.mapFrame}>
+                  <MapView
+                    style={s.map}
+                    initialRegion={{
+                      latitude: listing.lat!,
+                      longitude: listing.lng!,
+                      latitudeDelta: 0.02,
+                      longitudeDelta: 0.02,
+                    }}
+                    scrollEnabled={true}
+                    zoomEnabled={true}
+                    rotateEnabled={false}
+                    pitchEnabled={false}
+                    toolbarEnabled={false}
+                    zoomTapEnabled={true}
+                    zoomControlEnabled={false}
+                  >
+                    <Marker coordinate={{ latitude: listing.lat!, longitude: listing.lng! }} />
+                  </MapView>
+                </View>
+                <Text style={s.mapCaption}>📍 {listing.city}, {listing.prefecture} Prefecture, Japan</Text>
+              </>
             ) : (
-              <View style={s.mapFallback}><Text style={s.mapFallbackText}>Location available for {listing.city}, {listing.prefecture}</Text></View>
+              <Text style={s.mapCaption}>📍 {[listing.city, listing.prefecture].filter(Boolean).join(', ')}{listing.prefecture ? ' Prefecture' : ''}, Japan</Text>
             )}
-            <Text style={s.mapCaption}>📍 {listing.city}, {listing.prefecture} Prefecture, Japan</Text>
           </View>
 
           {canSeeMemberActions ? (
@@ -245,13 +282,26 @@ export default function ListingDetailScreen() {
             </View>
           ) : null}
 
-          {!isLockedPremium && (listing.subsidyNotes || listing.subsidyAmountJPY) && (
-            <View style={s.secBox}>
-              <Text style={s.secT}>Subsidy / relocation support</Text>
-              {!!listing.subsidyAmountJPY && <Text style={s.boxBig}>Up to ¥{listing.subsidyAmountJPY.toLocaleString()}</Text>}
-              {!!listing.subsidyNotes && <Text style={s.boxText}>{listing.subsidyNotes}</Text>}
-              {!!listing.subsidyUrl && <TouchableOpacity style={[s.btn, { marginTop: 10 }]} onPress={() => Linking.openURL(listing.subsidyUrl!)}><Text style={s.btnT}>Open subsidy source →</Text></TouchableOpacity>}
-            </View>
+          {!isLockedPremium && (listing.subsidyNotes || listing.subsidyAmountJPY || listing.subsidyAvailable) && (
+            <TouchableOpacity
+              style={[s.secBox, s.subsidyTouchable]}
+              activeOpacity={0.75}
+              onPress={() => nav.navigate('Subsidy', { listing })}
+            >
+              <View style={s.subsidyHeader}>
+                <View>
+                  <Text style={s.secT}>🏛 Subsidy / relocation support</Text>
+                  {!!listing.subsidyAmountJPY && (
+                    <Text style={s.boxBig}>Up to ¥{listing.subsidyAmountJPY.toLocaleString()}</Text>
+                  )}
+                  {!!listing.subsidyNotes && (
+                    <Text style={s.boxText} numberOfLines={2}>{listing.subsidyNotes}</Text>
+                  )}
+                </View>
+                <Text style={s.subsidyArrow}>›</Text>
+              </View>
+              <Text style={s.subsidyHint}>Tap to see full subsidy details →</Text>
+            </TouchableOpacity>
           )}
 
           {!isLockedPremium && (
@@ -266,27 +316,41 @@ export default function ListingDetailScreen() {
 
           <View style={s.cBox}>
             <Text style={s.cTitle}>Quick actions</Text>
-            {!!(listing.lat && listing.lng) && <TouchableOpacity style={s.btn} onPress={() => Linking.openURL(`https://www.google.com/maps?q=${listing.lat},${listing.lng}`)}><Text style={s.btnT}>🗺 Open in Google Maps</Text></TouchableOpacity>}
-            <TouchableOpacity style={[s.btn, { marginTop: 8 }]} onPress={() => Linking.openURL(`https://cheapakiya.com/listings/${listing.slug}`)}><Text style={s.btnT}>View full listing →</Text></TouchableOpacity>
+            <TouchableOpacity style={s.btn} onPress={() => Linking.openURL(`https://cheapakiya.com/listings/${listing.slug}`)}><Text style={s.btnT}>View full listing on web →</Text></TouchableOpacity>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const s = StyleSheet.create({
+  gateWrap:          { flex: 1, backgroundColor: '#0a0a0a' },
+  gateBack:          { padding: 20 },
+  gateBackText:      { color: '#9ca3af', fontSize: 14, fontWeight: '600' },
+  gateContent:       { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
+  gateLock:          { fontSize: 56, marginBottom: 20 },
+  gateTitle:         { color: '#fff', fontSize: 28, fontWeight: '900', marginBottom: 12, textAlign: 'center' },
+  gateSubtitle:      { color: '#9ca3af', fontSize: 15, lineHeight: 24, textAlign: 'center', marginBottom: 32 },
+  gateBtn:           { backgroundColor: '#e85d2f', borderRadius: 16, paddingVertical: 16, paddingHorizontal: 28, width: '100%', alignItems: 'center', marginBottom: 14 },
+  gateBtnText:       { color: '#fff', fontSize: 16, fontWeight: '800' },
+  gateSecondary:     { paddingVertical: 10 },
+  gateSecondaryText: { color: '#6b7280', fontSize: 14, fontWeight: '600' },
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, backgroundColor: '#0a0a0a', justifyContent: 'center', alignItems: 'center' },
-  back: { position: 'absolute', top: 14, left: 14, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 18, width: 34, height: 34, justifyContent: 'center', alignItems: 'center' },
-  topPremium: { position: 'absolute', top: 14, right: 14, backgroundColor: '#e85d2f', borderRadius: 9, paddingHorizontal: 8, paddingVertical: 4 },
-  topPremiumText: { color: '#fff', fontSize: 10, fontWeight: '800' },
+  back: { position: 'absolute', top: 14, left: 14, backgroundColor: 'rgba(0,0,0,0.65)', borderRadius: 22, width: 42, height: 42, justifyContent: 'center', alignItems: 'center' },
   content: { padding: 18 },
   price: { color: '#e85d2f', fontSize: 30, fontWeight: '900', marginBottom: 4 },
   name: { color: '#fff', fontSize: 20, fontWeight: '800', lineHeight: 26, marginBottom: 5 },
   loc: { color: '#6b7280', fontSize: 12, marginBottom: 18 },
   actionRow: { flexDirection: 'row', gap: 10, marginBottom: 14 },
+  btnPrimary: { backgroundColor: '#e85d2f', borderRadius: 28, paddingVertical: 12, alignItems: 'center' },
+  btnPrimaryText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  btn: { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 28, paddingVertical: 12, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  btnT: { color: '#d1d5db', fontSize: 13, fontWeight: '600' },
   actionBtn: { flex: 1 },
+  topPremium: { position: 'absolute', top: 14, right: 14, backgroundColor: '#e85d2f', borderRadius: 9, paddingHorizontal: 8, paddingVertical: 4 },
+  topPremiumText: { color: '#fff', fontSize: 10, fontWeight: '800' },
   noticeBox: { backgroundColor: 'rgba(59,130,246,0.10)', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: 'rgba(59,130,246,0.22)', marginBottom: 16 },
   noticeTitle: { color: '#fff', fontSize: 16, fontWeight: '800', marginBottom: 6 },
   noticeText: { color: '#dbeafe', fontSize: 13, lineHeight: 20 },
@@ -317,10 +381,10 @@ const s = StyleSheet.create({
   textarea: { minHeight: 110, textAlignVertical: 'top' },
   cBox: { backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 14, padding: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginBottom: 30 },
   cTitle: { color: '#fff', fontSize: 15, fontWeight: '700', marginBottom: 10 },
-  btn: { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 28, paddingVertical: 12, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  btnPrimary: { backgroundColor: '#e85d2f', borderColor: '#e85d2f', borderWidth: 1, borderRadius: 28, paddingVertical: 12, alignItems: 'center' },
-  btnPrimaryText: { color: '#fff', fontSize: 13, fontWeight: '700' },
-  btnT: { color: '#d1d5db', fontSize: 13, fontWeight: '600' },
   success: { color: '#86efac', marginTop: 10, fontWeight: '700' },
   error: { color: '#f87171', marginTop: 10, fontWeight: '700' },
+  subsidyTouchable: { borderColor: 'rgba(34,197,94,0.3)', backgroundColor: 'rgba(34,197,94,0.06)' },
+  subsidyHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  subsidyArrow: { color: '#4ade80', fontSize: 28, fontWeight: '300', lineHeight: 32 },
+  subsidyHint: { color: '#4ade80', fontSize: 12, fontWeight: '700', marginTop: 8 },
 });

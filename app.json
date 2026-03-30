@@ -1,23 +1,30 @@
 {
   "expo": {
-    "name": "CheapAkiyaApp",
+    "name": "CheapAkiya",
     "slug": "CheapAkiyaApp",
     "version": "1.0.0",
+    "scheme": "cheapakiya",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#e85d2f"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.CheapAkiyaApp"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cheapakiya.app",
+      "buildNumber": "1",
+
+      "infoPlist": {
+        "NSCameraUsageDescription": "CheapAkiya does not use the camera.",
+        "NSLocationWhenInUseUsageDescription": "CheapAkiya uses your location to show nearby listings on the map."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#e85d2f",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -28,7 +35,17 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-web-browser",
+      "expo-apple-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#e85d2f",
+          "sounds": []
+        }
+      ]
     ]
   }
 }

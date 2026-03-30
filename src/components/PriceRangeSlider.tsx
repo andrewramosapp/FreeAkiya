@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function PriceRangeSlider({
   min,
@@ -28,7 +30,7 @@ export default function PriceRangeSlider({
           min={min}
           max={max}
           step={1000}
-          sliderLength={280}
+          sliderLength={SCREEN_WIDTH - 72}
           onValuesChange={([nextMin, nextMax]) => onChange(nextMin, nextMax)}
           selectedStyle={{ backgroundColor: '#e85d2f' }}
           unselectedStyle={{ backgroundColor: '#374151' }}

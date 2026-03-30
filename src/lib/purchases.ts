@@ -1,10 +1,16 @@
 import Purchases, { LOG_LEVEL, CustomerInfo, PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 
+// NOTE: This is the RevenueCat PUBLIC API key (safe to ship in the binary).
+// It is NOT a secret. Replace 'test_juUSmfQDXDHNARmeRsgqbKlCLpJ' with
+// your production key before submitting to the App Store.
 export const REVENUECAT_API_KEY = 'test_juUSmfQDXDHNARmeRsgqbKlCLpJ';
 export const PRO_ENTITLEMENT = 'Cheap Akiya Pro';
 
 export async function configurePurchases(appUserID?: string | null) {
-  Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+  // Only enable verbose logging in development builds
+  if (__DEV__) {
+    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+  }
   await Purchases.configure({ apiKey: REVENUECAT_API_KEY, appUserID: appUserID || undefined });
 }
 

@@ -1,9 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const supabase = createClient(
-  'https://vgimmkgssmfgnokdnami.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnaW1ta2dzc21mZ25va2RuYW1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwODc5MjAsImV4cCI6MjA4OTY2MzkyMH0.GrwKp_lnR_4yZQZ1K5YhMkgGQJzXdCfGZcOaUFxMUQs'
-);
+// SUPABASE_URL and SUPABASE_ANON_KEY are intentionally public (anon key has RLS applied).
+const SUPABASE_URL = 'https://vgimmkgssmfgnokdnami.supabase.co';
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnaW1ta2dzc21mZ25va2RuYW1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwODc5MjAsImV4cCI6MjA4OTY2MzkyMH0.GrwKp_lnR_4yZQZ1K5YhMkgGQJzXdCfGZcOaUFxMUQs';
+
+// AsyncStorage adapter is REQUIRED for PKCE OAuth on React Native.
+// Without it, the code verifier is stored in memory, lost when the
+// browser opens, and exchangeCodeForSession silently fails.
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,  // React Native handles URLs manually
+    flowType: 'pkce',           // Explicit PKCE — required for native apps
+  },
+});
 
 export type Listing = {
   id: string;

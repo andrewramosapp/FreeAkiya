@@ -29,7 +29,7 @@ export default function SavedScreen() {
     if (mode === 'refresh') setRefreshing(true);
     setError(null);
     try {
-      const data = await getSavedListings();
+      const data = await getSavedListings(member?.email || undefined);
       setItems((data?.listings || []) as Listing[]);
     } catch (e: any) {
       setError(e?.message || 'Failed to load saved listings');
@@ -89,8 +89,8 @@ export default function SavedScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load('refresh')} tintColor="#e85d2f" />}
         contentContainerStyle={{ padding: 16, paddingBottom: 110 }}
         renderItem={({ item }) => (
-          <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listings', { screen: 'Listing', params: { slug: item.slug, listing: item, memberEmail: member.email } })}>
-            <Image source={{ uri: item.images?.[0] || PH }} style={s.image} />
+          <TouchableOpacity style={s.card} onPress={() => nav.navigate('Listing', { slug: item.slug, listing: item, memberEmail: member.email })}>
+            <Image key={item.images?.[0] || PH} source={{ uri: item.images?.[0] || PH }} style={s.image} />
             <View style={s.body}>
               <Text style={s.price}>{item.price}</Text>
               <Text style={s.name} numberOfLines={2}>{item.name}</Text>
@@ -104,8 +104,8 @@ export default function SavedScreen() {
 }
 
 const s = StyleSheet.create({
-  wrap: { flex: 1, backgroundColor: '#0b0b0b' },
-  center: { flex: 1, backgroundColor: '#0b0b0b', justifyContent: 'center', alignItems: 'center', padding: 24 },
+  wrap: { flex: 1, backgroundColor: '#0a0a0a' },
+  center: { flex: 1, backgroundColor: '#0a0a0a', justifyContent: 'center', alignItems: 'center', padding: 24 },
   header: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8 },
   title: { color: '#fff', fontSize: 28, fontWeight: '800' },
   sub: { color: '#9ca3af', fontSize: 14, marginTop: 8, textAlign: 'center' },

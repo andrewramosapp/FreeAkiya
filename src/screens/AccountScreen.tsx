@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TextInput,
-  TouchableOpacity, ActivityIndicator, Linking, ScrollView
+  TouchableOpacity, ActivityIndicator, Linking, ScrollView, Switch
 } from 'react-native';
 import RevenueCatUI from 'react-native-purchases-ui';
-import { logoutMemberSession, verifyMember } from '../lib/api';
+import { logoutMemberSession, verifyMember, updateNewsletterConsent } from '../lib/api';
 import { useAuth } from '../../App';
 
 export default function AccountScreen() {
@@ -13,6 +13,30 @@ export default function AccountScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [newsletterOn, setNewsletterOn] = useState<boolean | null>(null);
+  const [newsletterSaving, setNewsletterSaving] = useState(false);
+
+  // Load newsletter consent state from Beehiiv on mount
+  React.useEffect(() => {
+    if (!member?.email) return;
+    fetch(`https://cheapakiya.com/api/mobile/newsletter-consent?email=${encodeURIComponent(member.email)}`)
+      .then(r => r.json())
+      .then(d => { if (typeof d?.consent === 'boolean') setNewsletterOn(d.consent); })
+      .catch(() => setNewsletterOn(false));
+  }, [member?.email]);
+
+  async function onToggleNewsletter(val: boolean) {
+    if (!member?.email) return;
+    setNewsletterOn(val);
+    setNewsletterSaving(true);
+    try {
+      await updateNewsletterConsent(member.email, val);
+    } catch {
+      setNewsletterOn(v => v === null ? null : !val); // revert on error
+    } finally {
+      setNewsletterSaving(false);
+    }
+  }
 
   async function onVerify() {
     if (!email.trim()) {
@@ -119,6 +143,31 @@ export default function AccountScreen() {
           {error ? <Text style={s.error}>{error}</Text> : null}
         </View>
 
+        {member?.email && (
+          <View style={s.card}>
+            <Text style={s.label}>Email preferences</Text>
+            <View style={s.newsletterRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={s.newsletterTitle}>Property update emails</Text>
+                <Text style={s.newsletterSub}>
+                  Receive our newsletter with new listings and akiya tips.
+                  {newsletterSaving ? '  Saving...' : ''}
+                </Text>
+              </View>
+              <Switch
+                value={newsletterOn === true}
+                onValueChange={onToggleNewsletter}
+                trackColor={{ false: '#374151', true: '#e85d2f' }}
+                thumbColor="#fff"
+                disabled={newsletterSaving || newsletterOn === null}
+              />
+            </View>
+            <Text style={s.newsletterNote}>
+              App sign-ups are not added to our mailing list by default. Toggle on to subscribe.
+            </Text>
+          </View>
+        )}
+
         <View style={s.card}>
           <Text style={s.label}>Web handoff</Text>
           <TouchableOpacity style={s.secondaryBtn} onPress={() => Linking.openURL('https://cheapakiya.com/members')}>
@@ -134,7 +183,7 @@ export default function AccountScreen() {
 }
 
 const s = StyleSheet.create({
-  wrap: { flex: 1, backgroundColor: '#0b0b0b' },
+  wrap: { flex: 1, backgroundColor: '#0a0a0a' },
   scroll: { padding: 16, paddingBottom: 120 },
   header: { paddingTop: 12, paddingBottom: 8 },
   title: { color: '#fff', fontSize: 28, fontWeight: '800' },
@@ -148,6 +197,10 @@ const s = StyleSheet.create({
   primaryBtnText: { color: '#fff', fontWeight: '800' },
   secondaryBtn: { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 12, paddingVertical: 13, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   secondaryBtnText: { color: '#fff', fontWeight: '700' },
+  newsletterRow:   { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 },
+  newsletterTitle: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 2 },
+  newsletterSub:   { color: '#9ca3af', fontSize: 12, lineHeight: 17 },
+  newsletterNote:  { color: '#4b5563', fontSize: 11, lineHeight: 16, marginTop: 4 },
   success: { color: '#86efac', fontWeight: '700', marginTop: 10 },
   error: { color: '#f87171', fontWeight: '700', marginTop: 10 },
   badge: { alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 6, marginTop: 12 },

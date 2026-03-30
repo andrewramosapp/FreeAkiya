@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Linking, KeyboardAvoidingView, Platform } from 'react-native';
 import { createPremiumCheckout, subscribeEmail, verifyMember } from '../lib/api';
 
 export default function AuthEmailScreen({
@@ -15,6 +15,7 @@ export default function AuthEmailScreen({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   async function onSubmit() {
     const clean = email.trim().toLowerCase();
@@ -30,7 +31,7 @@ export default function AuthEmailScreen({
 
       if (mode === 'signup') {
         await subscribeEmail(clean);
-        setMessage('Subscribed. Verifying membership…');
+        setShowSuccess(true);
       }
 
       if (mode === 'premium') {
@@ -54,8 +55,8 @@ export default function AuthEmailScreen({
   }
 
   return (
-    <SafeAreaView style={s.wrap}>
-      <View style={s.inner}>
+    <KeyboardAvoidingView style={s.wrap} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <SafeAreaView style={s.inner}>
         <TouchableOpacity onPress={onBack}><Text style={s.back}>← Back</Text></TouchableOpacity>
         <Text style={s.title}>
           {mode === 'signup' ? 'Join free with email' : mode === 'premium' ? 'Start premium' : 'Sign in with email'}
@@ -82,10 +83,11 @@ export default function AuthEmailScreen({
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryBtnText}>{mode === 'signup' ? 'Join free' : mode === 'premium' ? 'Continue to premium' : 'Sign in'}</Text>}
         </TouchableOpacity>
 
+        {showSuccess && <Text style={s.success}>You’re in! Welcome to CheapAkiya.</Text>}
         {message ? <Text style={s.success}>{message}</Text> : null}
         {error ? <Text style={s.error}>{error}</Text> : null}
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
