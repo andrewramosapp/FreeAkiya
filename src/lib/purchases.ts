@@ -3,7 +3,7 @@ import Purchases, { LOG_LEVEL, CustomerInfo, PurchasesOffering, PurchasesPackage
 // NOTE: This is the RevenueCat PUBLIC API key (safe to ship in the binary).
 // It is NOT a secret. Replace 'test_juUSmfQDXDHNARmeRsgqbKlCLpJ' with
 // your production key before submitting to the App Store.
-export const REVENUECAT_API_KEY = 'test_juUSmfQDXDHNARmeRsgqbKlCLpJ';
+export const REVENUECAT_API_KEY = 'appl_PigLCYkHVkwwhpzLsfCVNrhWfEK';
 export const PRO_ENTITLEMENT = 'Cheap Akiya Pro';
 
 export async function configurePurchases(appUserID?: string | null) {

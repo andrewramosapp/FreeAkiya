@@ -12,6 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import ScrollTestScreen from './src/screens/ScrollTestScreen';
 import type { CustomerInfo, PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 import ListingsScreen from './src/screens/ListingsScreen';
 import ListingDetailScreen from './src/screens/ListingDetailScreen';
@@ -37,9 +38,10 @@ type AuthContextValue = {
   refreshPurchases: () => Promise<void>;
   showPaywall: boolean;
   setShowPaywall: (show: boolean) => void;
+  setShowScrollTest: (show: boolean) => void;
 };
 
-const AuthContext = createContext<AuthContextValue>({ member: null, setMember: () => {}, authReady: false, customerInfo: null, offering: null, refreshPurchases: async () => {}, showPaywall: false, setShowPaywall: () => {} });
+const AuthContext = createContext<AuthContextValue>({ member: null, setMember: () => {}, authReady: false, customerInfo: null, offering: null, refreshPurchases: async () => {}, showPaywall: false, setShowPaywall: () => {}, setShowScrollTest: () => {} });
 export const useAuth = () => useContext(AuthContext);
 const MEMBER_STORAGE_KEY = 'cheapakiya.member';
 
@@ -48,7 +50,7 @@ const Tab = createBottomTabNavigator();
 
 function ListingsStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
       <Stack.Screen name="ListingsList" component={ListingsScreen} />
       <Stack.Screen name="Listing" component={ListingDetailScreen} />
       <Stack.Screen name="Subsidy" component={SubsidyScreen} />
@@ -113,6 +115,7 @@ export default function App() {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [offering, setOffering] = useState<PurchasesOffering | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showScrollTest, setShowScrollTest] = useState(false);
   const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
@@ -289,8 +292,8 @@ export default function App() {
   }
 
   const authValue = useMemo(
-    () => ({ member, setMember, authReady, customerInfo, offering, refreshPurchases, showPaywall, setShowPaywall }),
-    [member, setMember, authReady, customerInfo, offering, refreshPurchases, showPaywall],
+    () => ({ member, setMember, authReady, customerInfo, offering, refreshPurchases, showPaywall, setShowPaywall, setShowScrollTest }),
+    [member, setMember, authReady, customerInfo, offering, refreshPurchases, showPaywall, setShowScrollTest],
   );
 
   if (!authReady) return null;
@@ -349,6 +352,14 @@ export default function App() {
           onRestore={handleRestore}
           onClose={() => setShowPaywall(false)}
         />
+      </Modal>
+      <Modal
+        visible={showScrollTest}
+        animationType="slide"
+        presentationStyle="fullScreen"
+        onRequestClose={() => setShowScrollTest(false)}
+      >
+        <ScrollTestScreen onClose={() => setShowScrollTest(false)} />
       </Modal>
     </AuthContext.Provider>
     </SafeAreaProvider>

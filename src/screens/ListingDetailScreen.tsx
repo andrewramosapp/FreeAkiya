@@ -221,7 +221,7 @@ export default function ListingDetailScreen() {
             <Stat label="Year Built" value={listing.built || '—'} />
             <Stat label="Condition" value={isLockedPremium ? 'Premium only' : (listing.condition === 'move_in_ready' ? 'Move-in ready' : listing.condition === 'renovation_needed' ? 'Needs work' : (listing.condition || '—'))} />
             <Stat label="Nearest Station" value={isLockedPremium ? 'Premium only' : (listing.stationName || '—')} />
-            <Stat label="Walk Time" value={isLockedPremium ? 'Premium only' : (listing.stationWalkMin ? `${listing.stationWalkMin} min` : '—')} />
+            <Stat label="Walk Time" value={isLockedPremium ? 'Premium only' : (listing.stationWalkMin ? `${listing.stationWalkMin} min walk` : '—')} />
             <Stat label="Internet" value={isLockedPremium ? 'Premium only' : (listing.internetType ? `${listing.internetType}${listing.internetSpeedMbps ? ` · ${listing.internetSpeedMbps} Mbps` : ''}` : '—')} />
             <Stat label="Disaster Safety Score" value={isLockedPremium ? 'Premium only' : (listing.disasterScore ? `${'⭐'.repeat(listing.disasterScore)}${'☆'.repeat(5 - listing.disasterScore)} ${listing.disasterScore}/5` : '—')} />
           </View>

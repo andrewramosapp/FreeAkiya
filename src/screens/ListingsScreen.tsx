@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
-  SafeAreaView, View, Text, StyleSheet, FlatList, TouchableOpacity,
-  ActivityIndicator, Alert, RefreshControl, ScrollView, Dimensions, Image,
+  View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity,
+  ActivityIndicator, Alert, RefreshControl, Dimensions, Image,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Listing, getSavedListingIds, setSavedListing } from '../lib/api';
 import { useNavigation } from '@react-navigation/native';
 import PriceRangeSlider from '../components/PriceRangeSlider';
@@ -39,6 +40,54 @@ function cleanValue(v?: string | null) {
   return v;
 }
 
+function ListingCard({ item, nav, member, savedIds, savingId, toggleSave }: {
+  item: Listing;
+  nav: any;
+  member: any;
+  savedIds: string[];
+  savingId: string | null;
+  toggleSave: (item: Listing) => void;
+}) {
+  const img = item.images?.[0] || PH;
+  const sizeText = cleanValue(item.size);
+  const stationText = item.stationWalkMin ? `${item.stationWalkMin} min to station` : null;
+  const isSaved = savedIds.includes(item.id);
+  const isSaving = savingId === item.id;
+  return (
+    <TouchableOpacity
+      style={s.card}
+      onPress={() => nav.navigate('Listing', { slug: item.slug, listing: item, memberEmail: member?.email || null })}
+      activeOpacity={0.85}
+    >
+      <View style={s.imgBox}>
+        <Image key={img} source={{ uri: img }} style={s.img} resizeMode="cover" />
+        <View style={s.priceTag}><Text style={s.priceTagText}>{item.price}</Text></View>
+        <TouchableOpacity style={s.savePill} onPress={(e) => { e.stopPropagation?.(); toggleSave(item); }}>
+          <Text style={s.savePillText}>{isSaving ? '…' : isSaved ? '♥' : '♡'}</Text>
+        </TouchableOpacity>
+        {item.isPremium && (
+          <View style={s.lockTag}>
+            <Text style={s.lockTagText}>{member?.tier === 'premium' ? '⭐ PREMIUM' : '🔒 PREMIUM'}</Text>
+          </View>
+        )}
+      </View>
+      <View style={s.body}>
+        <Text style={s.pref}>{item.prefecture}{item.city ? ` · ${item.city}` : ''}</Text>
+        <Text style={s.name} numberOfLines={2}>{item.name}</Text>
+        <Text style={s.spec} numberOfLines={2}>
+          {[item.beds ? `${item.beds} bed` : null, sizeText, stationText].filter(Boolean).join(' · ') || '—'}
+        </Text>
+        <View style={s.badgesRow}>
+          {item.subsidyAvailable ? <Badge text="Subsidy" tone="green" /> : null}
+          {item.condition === 'move_in_ready' ? <Badge text="Move-in" tone="blue" /> : null}
+          {item.internetType === 'fiber' ? <Badge text="Fiber" tone="purple" /> : null}
+          {(item.disasterScore || 0) >= 4 ? <Badge text="🛡 Safe area" tone="green" /> : null}
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
 // Skeleton card shown while loading
 function SkeletonCard() {
   return (
@@ -55,7 +104,8 @@ function SkeletonCard() {
 
 export default function ListingsScreen() {
   const nav = useNavigation<any>();
-  const { member } = useAuth();
+  const { member, setShowScrollTest } = useAuth();
+  const insets = useSafeAreaInsets();
 
   // All listings — loaded once, cached
   const [allListings, setAllListings] = useState<Listing[]>([]);
@@ -78,34 +128,26 @@ export default function ListingsScreen() {
   // Saved state
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(100);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
 
   async function fetchAll(isRefresh = false) {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
     setError(null);
     try {
-      // Try the full dataset endpoint first; fall back to paginated if not yet deployed
-      let res = await fetch(`${API_BASE}/api/listings-all`, { headers: { Accept: 'application/json' } });
-      if (!res.ok) {
-        // Fallback: paginate through ALL pages until hasMore=false
-        let allItems: any[] = [];
-        let page = 0;
-        let keepGoing = true;
-        while (keepGoing) {
-          const r = await fetch(`${API_BASE}/api/listings-page?page=${page}&sort=newest`);
-          if (!r.ok) break;
-          const d = await r.json();
-          const items = d?.listings || [];
-          allItems = [...allItems, ...items];
-          keepGoing = !!d?.hasMore && items.length > 0;
-          page++;
-          // Update state incrementally so user sees listings appearing
-          setAllListings([...allItems]);
-        }
-      } else {
-        const data = await res.json();
-        setAllListings((data?.listings || []) as Listing[]);
-      }
+      // Fetch first 5 pages in parallel for fast initial load
+      const requests = [0,1,2,3,4].map(p => fetch(`${API_BASE}/api/listings-page?page=${p}&sort=newest`).then(r => r.json()));
+      const results = await Promise.all(requests);
+      const allItems = results.flatMap(d => (d?.listings || []) as Listing[]);
+      const firstResult = results[0];
+      setAllListings(allItems);
+      setTotalCount(firstResult?.total ?? null);
+      setHasMore(!!results[4]?.hasMore);
+      setPage(5);
       if (member?.email) {
         try {
           const ids = await getSavedListingIds(member.email);
@@ -120,13 +162,37 @@ export default function ListingsScreen() {
     }
   }
 
+  async function loadMore() {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      let currentPage = page;
+      let newItems: Listing[] = [];
+      let more: boolean = hasMore;
+      // Fetch up to 5 pages at once to ensure enough visible results
+      for (let i = 0; i < 5 && more; i++) {
+        const r = await fetch(`${API_BASE}/api/listings-page?page=${currentPage}&sort=newest`);
+        const d = await r.json();
+        const items = (d?.listings || []) as Listing[];
+        newItems = [...newItems, ...items];
+        more = !!d?.hasMore;
+        currentPage++;
+      }
+      setAllListings(prev => [...prev, ...newItems]);
+      setHasMore(more);
+      setPage(currentPage);
+    } catch { /* silently fail */ } finally {
+      setLoadingMore(false);
+    }
+  }
+
   useEffect(() => { fetchAll(); }, [member?.email]);
 
   // All filtering + sorting in memory — instant, no network calls
   const filtered = useMemo(() => {
     let list = allListings;
     if (region !== 'All') list = list.filter(l => l.region === region);
-    if (photosOnly) list = list.filter(l => l.images?.length > 0);
+    if (photosOnly) list = list.filter(l => l.images?.length > 0 && !l.images[0].includes('OLD%20HOUSES'));
     if (premiumOnly) list = list.filter(l => l.isPremium);
     if (freeOnly) list = list.filter(l => !l.isPremium);
     if (subsidyOnly) list = list.filter(l => l.subsidyAvailable);
@@ -151,6 +217,7 @@ export default function ListingsScreen() {
     setMinPrice(0);
     setMaxPrice(MAX_PRICE);
     setCondition('all');
+    setVisibleCount(50);
   }, []);
 
   async function toggleSave(item: Listing) {
@@ -229,24 +296,24 @@ export default function ListingsScreen() {
   ].filter(Boolean).length;
 
   return (
-    <SafeAreaView style={s.container}>
+    <View style={[s.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={s.header}>
         <View>
           <Text style={s.logo}>CheapAkiya</Text>
           <Text style={s.subhead}>
-            {loading ? 'Loading…' : `${allListings.length.toLocaleString()} homes in Japan`}
+            {totalCount != null ? `${totalCount.toLocaleString()} homes in Japan` : 'Loading…'}
             {member ? ` · ${member.tier}` : ''}
           </Text>
         </View>
         <View style={s.headerRight}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             {([['newest', 'Newest'], ['price_asc', 'Cheapest'], ['price_desc', 'Priciest']] as const).map(([value, label]) => (
               <TouchableOpacity key={value} onPress={() => setSort(value)} style={[s.sortPill, sort === value && s.sortPillActive]}>
                 <Text style={[s.sortPillText, sort === value && s.sortPillTextActive]}>{label}</Text>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </View>
           <TouchableOpacity
             style={[s.filterToggle, activeFilterCount > 0 && s.filterToggleActive]}
             onPress={() => setFiltersOpen(v => !v)}
@@ -255,6 +322,7 @@ export default function ListingsScreen() {
               {activeFilterCount > 0 ? `Filters (${activeFilterCount})` : 'Filters'}
             </Text>
           </TouchableOpacity>
+
         </View>
       </View>
 
@@ -326,7 +394,7 @@ export default function ListingsScreen() {
               <Text style={s.secondaryBtnText}>Reset</Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.primaryBtn} onPress={() => setFiltersOpen(false)}>
-              <Text style={s.primaryBtnText}>Show {filtered.length.toLocaleString()} results</Text>
+              <Text style={s.primaryBtnText}>Show results</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -357,27 +425,40 @@ export default function ListingsScreen() {
           <TouchableOpacity style={s.retryBtn} onPress={resetFilters}><Text style={s.retryBtnText}>Clear filters</Text></TouchableOpacity>
         </View>
       ) : (
-        <FlatList
-          data={filtered}
-          keyExtractor={i => i.id}
-          renderItem={renderItem}
-          numColumns={2}
-          columnWrapperStyle={s.row}
+        <ScrollView
+          style={{ flex: 1 }}
           contentContainerStyle={{ padding: 8, paddingBottom: 120 }}
           showsVerticalScrollIndicator={false}
-          removeClippedSubviews={true}
-          initialNumToRender={12}
-          maxToRenderPerBatch={12}
-          windowSize={5}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchAll(true)} tintColor="#e85d2f" />}
-          ListFooterComponent={
-            <View style={{ paddingVertical: 14, alignItems: 'center' }}>
-              <Text style={s.endText}>{filtered.length.toLocaleString()} homes</Text>
-            </View>
-          }
-        />
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setVisibleCount(50); fetchAll(true); }} tintColor="#e85d2f" />}
+        >
+          {filtered.slice(0, visibleCount).map((item, index, arr) => {
+            if (index % 2 !== 0) return null;
+            const next = arr[index + 1];
+            return (
+              <View key={item.id} style={s.row}>
+                <ListingCard item={item} nav={nav} member={member} savedIds={savedIds} savingId={savingId} toggleSave={toggleSave} />
+                {next
+                  ? <ListingCard item={next} nav={nav} member={member} savedIds={savedIds} savingId={savingId} toggleSave={toggleSave} />
+                  : <View style={{ width: CARD_W }} />}
+              </View>
+            );
+          })}
+          <View style={{ paddingVertical: 14, alignItems: 'center' }}>
+            {visibleCount < filtered.length ? (
+              <TouchableOpacity style={s.retryBtn} onPress={() => setVisibleCount(v => v + 50)}>
+                <Text style={s.retryBtnText}>Show more listings</Text>
+              </TouchableOpacity>
+            ) : hasMore ? (
+              <TouchableOpacity style={s.retryBtn} onPress={loadMore} disabled={loadingMore}>
+                <Text style={s.retryBtnText}>{loadingMore ? 'Loading…' : 'Load more listings'}</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text style={s.endText}>{filtered.length.toLocaleString()} loaded</Text>
+            )}
+          </View>
+        </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -414,8 +495,8 @@ const s = StyleSheet.create({
   secondaryBtnText:   { color: '#fff', fontWeight: '700' },
   primaryBtn:         { flex: 1, backgroundColor: '#e85d2f', borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
   primaryBtnText:     { color: '#fff', fontWeight: '700', fontSize: 12 },
-  row:                { justifyContent: 'space-between' },
-  card:               { width: CARD_W, marginBottom: 8, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  row:                { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  card:               { width: CARD_W, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   cardLocked:         { borderColor: 'rgba(232,93,47,0.28)' },
   imgBox:             { position: 'relative', height: 142 },
   img:                { width: '100%', height: '100%' },

@@ -19,7 +19,7 @@ export type MapPin = {
 
 /** Fetch all map pins in one shot from the optimised endpoint */
 export async function getMapPins(): Promise<MapPin[]> {
-  const res = await fetch(`${API_BASE}/api/map-pins`, {
+  const res = await fetch(`${API_BASE}/api/map-pins-lite`, {
     headers: { Accept: 'application/json' },
   });
   if (!res.ok) throw new Error(`map-pins ${res.status}`);

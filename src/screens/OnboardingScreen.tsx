@@ -98,12 +98,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         <Text style={s.btnText}>{isLast ? 'Get Started →' : 'Next'}</Text>
       </TouchableOpacity>
 
-      {/* Free access note on last slide */}
-      {isLast && (
-        <TouchableOpacity onPress={onDone} style={s.freeLink}>
-          <Text style={s.freeLinkText}>Browse free listings without signing up →</Text>
-        </TouchableOpacity>
-      )}
+      {/* Free access note removed — sign-up required */}
     </View>
   );
 }
